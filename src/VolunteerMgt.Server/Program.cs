@@ -1,9 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using VolunteerMgt.Server.Authorization;
 using VolunteerMgt.Server.Common.Config;
 using VolunteerMgt.Server.Common.Logger;
+using VolunteerMgt.Server.Endpoints;
+using VolunteerMgt.Server.Entities.Identity;
 using VolunteerMgt.Server.Exceptions;
 using VolunteerMgt.Server.Persistence;
 
@@ -15,18 +18,32 @@ try
     logger.LogInformation("Starting web application");
     var builder = WebApplication.CreateBuilder(args);
 
+    builder.Host.UseSerilog((hc, lc) => lc.ReadFrom.Configuration(hc.Configuration));
+
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                            throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
     builder.Services.AddDbContext<DatabaseContext>(options =>
     {
-        options.UseSqlServer(connectionString);
+        options.UseSqlServer(connectionString,
+           b => b.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName));
     });
 
     // Add Identity
     builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
         .AddEntityFrameworkStores<DatabaseContext>()
+        .AddSignInManager()
         .AddDefaultTokenProviders();
+
+    builder.Services.AddAuthentication().AddJwtBearer();
+    builder.Services.AddAuthorizationBuilder();
+
+    // Add Anti-CSRF/XSRF services
+    //builder.Services.AddAntiforgery();
+
+    var jwtSettings = new JwtSettings();
+    builder.Configuration.Bind(nameof(JwtSettings), jwtSettings);
+    builder.Services.AddSingleton(jwtSettings);
 
     // Configure Identity options and password complexity here
     builder.Services.Configure<IdentityOptions>(options =>
@@ -87,6 +104,8 @@ try
     //add exception handler to the pipeline
     app.UseExceptionHandler();
 
+    //app.UseAntiforgery();
+
     app.UseDefaultFiles();
     app.UseStaticFiles();
 
@@ -113,6 +132,8 @@ try
 
     app.UseAuthentication();
     app.UseAuthorization();
+
+    app.MapTodoEndpoints();
 
     app.MapFallbackToFile("/index.html");
 
