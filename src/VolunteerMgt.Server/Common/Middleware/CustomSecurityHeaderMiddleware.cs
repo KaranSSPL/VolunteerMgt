@@ -1,4 +1,4 @@
-﻿namespace VolunteerMgt.Server.Middleware;
+﻿namespace VolunteerMgt.Server.Common.Middleware;
 public class CustomSecurityHeaderMiddleware : IMiddleware
 {
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)

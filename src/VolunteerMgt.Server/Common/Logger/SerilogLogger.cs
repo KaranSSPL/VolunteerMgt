@@ -1,4 +1,5 @@
 ﻿using Serilog;
+using VolunteerMgt.Server.Abstraction.Common.Logger;
 
 namespace VolunteerMgt.Server.Common.Logger;
 public class SerilogLogger : ILoggerService, IDisposable

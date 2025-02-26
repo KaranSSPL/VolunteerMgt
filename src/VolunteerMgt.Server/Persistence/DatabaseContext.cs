@@ -1,15 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using VolunteerMgt.Server.Entities;
 using VolunteerMgt.Server.Entities.Identity;
 
 namespace VolunteerMgt.Server.Persistence;
 
-public class DatabaseContext : IdentityDbContext<ApplicationUser>
+public class DatabaseContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
 {
     public DatabaseContext() { }
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
-    public virtual DbSet<ToDo> ToDos { get; set; } = default!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

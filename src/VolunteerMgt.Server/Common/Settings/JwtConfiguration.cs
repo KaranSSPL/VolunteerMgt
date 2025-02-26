@@ -1,4 +1,4 @@
-﻿namespace VolunteerMgt.Server.Settings;
+﻿namespace VolunteerMgt.Server.Common.Settings;
 
 public class JwtConfiguration
 {

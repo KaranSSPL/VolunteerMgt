@@ -4,12 +4,11 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using VolunteerMgt.Server.Abstraction.Persistence;
 using VolunteerMgt.Server.Abstraction.Service.Identity;
+using VolunteerMgt.Server.Common.Settings;
 using VolunteerMgt.Server.Entities.Identity;
 using VolunteerMgt.Server.Models.Auth;
 using VolunteerMgt.Server.Models.Wrapper;
-using VolunteerMgt.Server.Settings;
 
 namespace VolunteerMgt.Server.Services.Identity;
 

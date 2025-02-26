@@ -1,4 +1,4 @@
-﻿namespace VolunteerMgt.Server.Helpers;
+﻿namespace VolunteerMgt.Server.Common.Authorization;
 
 public static class Claims
 {

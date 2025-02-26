@@ -2,7 +2,12 @@
 
 namespace VolunteerMgt.Server.Entities;
 
-public class BaseEntity: IBaseEntity<int>
+public class BaseEntity : BaseEntity<int> 
 {
-    public int Id { get; set; }
+
+}
+
+public class BaseEntity<TKey> : IBaseEntity<TKey>
+{
+    public TKey Id { get; set; } = default!;
 }

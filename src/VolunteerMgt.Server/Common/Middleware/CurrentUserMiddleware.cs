@@ -1,6 +1,6 @@
 ﻿using VolunteerMgt.Server.Abstraction.Service.Identity;
 
-namespace VolunteerMgt.Server.Middleware;
+namespace VolunteerMgt.Server.Common.Middleware;
 
 public sealed class CurrentUserMiddleware(ICurrentUserInitializer currentUserInitializer) : IMiddleware
 {

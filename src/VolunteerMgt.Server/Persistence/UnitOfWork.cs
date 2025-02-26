@@ -1,5 +1,4 @@
 ﻿using VolunteerMgt.Server.Abstraction.Persistence;
-using VolunteerMgt.Server.Entities;
 
 namespace VolunteerMgt.Server.Persistence;
 
@@ -7,7 +6,7 @@ public sealed class UnitOfWork(DatabaseContext dbContext) : IDisposable, IUnitOf
 {
     private bool _isDisposed;
 
-    public IBaseRepository<ToDo, long> ToDos { get; } = new BaseRepository<ToDo, long>(dbContext);
+    //public IBaseRepository<EntityName, EntityKeyType> EntityNames { get; } = new BaseRepository<EntityName, EntityKeyType>(dbContext);
 
     public async Task<int> SaveChangesAsync() => await dbContext.SaveChangesAsync();
 

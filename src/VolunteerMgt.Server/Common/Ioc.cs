@@ -1,8 +1,8 @@
 ﻿using VolunteerMgt.Server.Abstraction.Service.Common;
 
-namespace VolunteerMgt.Server.Extensions;
+namespace VolunteerMgt.Server.Common;
 
-public static class ServiceExtension
+public static class Ioc
 {
     /// <summary>
     /// Register services dynamically. 

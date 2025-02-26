@@ -2,7 +2,7 @@
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
-namespace VolunteerMgt.Server.Authorization;
+namespace VolunteerMgt.Server.Common.Authorization;
 
 // Swagger IOperationFilter implementation that will decide which api action needs authorization
 internal class SwaggerAuthorizeOperationFilter : IOperationFilter

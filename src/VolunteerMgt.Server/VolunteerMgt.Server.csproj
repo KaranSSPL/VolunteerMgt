@@ -49,4 +49,9 @@
     </ProjectReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Abstraction\Service\Features\" />
+    <Folder Include="Services\Features\" />
+  </ItemGroup>
+
 </Project>

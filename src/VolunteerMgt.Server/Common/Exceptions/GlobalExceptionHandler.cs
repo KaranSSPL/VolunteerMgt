@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace VolunteerMgt.Server.Exceptions;
+namespace VolunteerMgt.Server.Common.Exceptions;
 
 public class GlobalExceptionHandler(ILogger<GlobalExceptionHandler> logger, IHostEnvironment environment) : IExceptionHandler
 {

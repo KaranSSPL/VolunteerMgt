@@ -1,6 +1,6 @@
 ﻿namespace VolunteerMgt.Server.Abstraction.Entity;
 
-public interface IAuditableEntity
+public interface IAuditEntity
 {
     public DateTime CreatedDate { get; set; }
     public string CreatedBy { get; set; }

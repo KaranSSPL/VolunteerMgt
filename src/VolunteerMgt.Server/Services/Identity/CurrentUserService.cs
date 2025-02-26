@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 using VolunteerMgt.Server.Abstraction.Service.Identity;
-using VolunteerMgt.Server.Extensions;
+using VolunteerMgt.Server.Common.Authorization;
 
 namespace VolunteerMgt.Server.Services.Identity;
 public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICurrentUserService, ICurrentUserInitializer

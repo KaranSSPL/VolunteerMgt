@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace VolunteerMgt.Server.Exceptions;
+namespace VolunteerMgt.Server.Common.Exceptions;
 
 public class CustomException : Exception
 {

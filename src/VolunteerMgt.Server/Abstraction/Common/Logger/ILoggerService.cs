@@ -1,4 +1,4 @@
-﻿namespace VolunteerMgt.Server.Common.Logger;
+﻿namespace VolunteerMgt.Server.Abstraction.Common.Logger;
 
 public interface ILoggerService
 {

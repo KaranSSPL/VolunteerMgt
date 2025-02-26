@@ -1,23 +1,21 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
 using System.Text;
-using VolunteerMgt.Server.Abstraction.Persistence;
 using VolunteerMgt.Server.Abstraction.Service.Identity;
-using VolunteerMgt.Server.Authorization;
+using VolunteerMgt.Server.Common;
+using VolunteerMgt.Server.Common.Authorization;
 using VolunteerMgt.Server.Common.Config;
+using VolunteerMgt.Server.Common.Exceptions;
 using VolunteerMgt.Server.Common.Logger;
+using VolunteerMgt.Server.Common.Middleware;
+using VolunteerMgt.Server.Common.Settings;
 using VolunteerMgt.Server.Endpoints;
 using VolunteerMgt.Server.Entities.Identity;
-using VolunteerMgt.Server.Exceptions;
-using VolunteerMgt.Server.Extensions;
-using VolunteerMgt.Server.Middleware;
 using VolunteerMgt.Server.Persistence;
-using VolunteerMgt.Server.Settings;
 
 //Init the logger and get the active config
 using var logger = new SerilogLogger(ConfigurationHelper.ActiveConfiguration);
@@ -207,7 +205,6 @@ try
 
     // Add all endpoints here.
     app.MapAuthenticationEndpoints();
-    app.MapTodoEndpoints();
 
     app.MapFallbackToFile("/index.html");
 

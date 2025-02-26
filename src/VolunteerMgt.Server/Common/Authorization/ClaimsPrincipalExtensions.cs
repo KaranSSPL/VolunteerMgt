@@ -1,7 +1,6 @@
 ﻿using System.Security.Claims;
-using VolunteerMgt.Server.Helpers;
 
-namespace VolunteerMgt.Server.Extensions;
+namespace VolunteerMgt.Server.Common.Authorization;
 
 public static class ClaimsPrincipalExtensions
 {

@@ -4,7 +4,7 @@ using VolunteerMgt.Server.Abstraction.Persistence;
 
 namespace VolunteerMgt.Server.Persistence;
 
-public class BaseRepository<T, TKey>(DatabaseContext dbContext) : IBaseRepository<T, TKey> where T : class, IBaseEntity<TKey>, IAuditableEntity
+public class BaseRepository<T, TKey>(DatabaseContext dbContext) : IBaseRepository<T, TKey> where T : class, IBaseEntity<TKey>, IAuditEntity
 {
     public virtual IQueryable<T> All()
     {
