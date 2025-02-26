@@ -4,5 +4,5 @@ namespace VolunteerMgt.Server.Abstraction.Persistence;
 
 public interface IUnitOfWork : IScopedService
 {
-
+    //IBaseRepository<EntityName, EntityKeyType> EntityNames { get; }
 }

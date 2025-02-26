@@ -51,6 +51,7 @@
 
   <ItemGroup>
     <Folder Include="Abstraction\Service\Features\" />
+    <Folder Include="wwwroot\" />
     <Folder Include="Services\Features\" />
   </ItemGroup>
 

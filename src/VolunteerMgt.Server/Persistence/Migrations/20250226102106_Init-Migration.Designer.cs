@@ -9,10 +9,10 @@ using VolunteerMgt.Server.Persistence;
 
 #nullable disable
 
-namespace VolunteerMgt.Server.Migrations
+namespace VolunteerMgt.Server.Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250226094542_Init-Migration")]
+    [Migration("20250226102106_Init-Migration")]
     partial class InitMigration
     {
         /// <inheritdoc />

@@ -31,10 +31,10 @@ public class AuthService(
 
         return await Result<TokenResponse>.SuccessAsync(new TokenResponse
         {
-            AccessToken = new JwtSecurityTokenHandler().WriteToken(token),
+            Token = new JwtSecurityTokenHandler().WriteToken(token),
             Expiry = expiry,
             Email = user.Email ?? ""
-        }, "Token received successfully");
+        });
     }
 
     private Tuple<JwtSecurityToken, DateTime> GetJwtSecurityToken(ApplicationUser applicationUser)
@@ -56,7 +56,7 @@ public class AuthService(
 
     private Tuple<JwtSecurityToken, DateTime> GetToken(IEnumerable<Claim> authClaims)
     {
-        // ToDo: set this expiration time in configurations.
+        logger.LogInformation("Generating token");
         // Set token expiry
         var tokenExpiry = DateTime.UtcNow.AddMinutes(jwtConfiguration.Value.TokenExpiry);
 

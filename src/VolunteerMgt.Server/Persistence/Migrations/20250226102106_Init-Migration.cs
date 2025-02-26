@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace VolunteerMgt.Server.Migrations
+namespace VolunteerMgt.Server.Persistence.Migrations
 {
     /// <inheritdoc />
     public partial class InitMigration : Migration
