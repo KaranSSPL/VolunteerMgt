@@ -44,15 +44,23 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\volunteermgt.client\volunteermgt.client.esproj">
-      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
-    </ProjectReference>
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Abstraction\Service\Features\" />
     <Folder Include="wwwroot\" />
     <Folder Include="Services\Features\" />
   </ItemGroup>
+	
+  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+    <!-- Build the Angular app -->
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" Condition="Exists('$(SpaRoot)package.json')" ContinueOnError="false" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --configuration production" Condition="Exists('$(SpaRoot)package.json')" ContinueOnError="false" />
+    <!-- Copy Angular output to wwwroot -->
+    <ItemGroup>
+      <DistFiles Include="$(SpaRoot)\dist\volunteermgt.client\browser\**" />
+      <ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+        <RelativePath>wwwroot\%(RecursiveDir)%(FileName)%(Extension)</RelativePath>
+        <CopyToPublishDirectory>Always</CopyToPublishDirectory>
+      </ResolvedFileToPublish>
+    </ItemGroup>
+  </Target>
 
 </Project>
