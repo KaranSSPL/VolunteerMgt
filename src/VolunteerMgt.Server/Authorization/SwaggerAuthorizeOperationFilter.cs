@@ -21,7 +21,7 @@ internal class SwaggerAuthorizeOperationFilter : IOperationFilter
 
             var oAuthScheme = new OpenApiSecurityScheme
             {
-                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "oauth2" }
+                Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
             };
 
             operation.Security =

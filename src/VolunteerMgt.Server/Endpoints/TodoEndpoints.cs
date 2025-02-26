@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using VolunteerMgt.Server.Abstraction.Service;
+using VolunteerMgt.Server.Models.ToDo;
 
 namespace VolunteerMgt.Server.Endpoints;
 
@@ -6,16 +8,6 @@ public static class TodoEndpoints
 {
     public static void MapTodoEndpoints(this WebApplication app)
     {
-        //app.MapGet("/api/todos", GetToDo)
-        //    .RequireAuthorization()
-        //    .WithOpenApi()
-        //    .WithName("getTodo");
-
-        //app.MapPost("/api/todos", PostTodo)
-        //    .RequireAuthorization()
-        //    .WithOpenApi()
-        //    .WithName("postTodo");
-
         var group = app.MapGroup("/api/todos")
             .WithOpenApi()
             .RequireAuthorization();
@@ -27,13 +19,13 @@ public static class TodoEndpoints
             .WithName("postTodo");
     }
 
-    private static string GetToDo(ITodoService todoService)
+    private static string GetToDo([FromServices] ITodoService todoService)
     {
-        return "helloService.FetchHello()";
+        return "todoService.FetchHello()";
     }
 
-    private static string PostTodo(ITodoService todoService, [FromBody] PostTodoRequest request)
+    private static string PostTodo([FromServices] ITodoService todoService, [FromBody] PostTodoRequest request)
     {
-        return "helloService.SendHello(request.Name)";
+        return "todoService.SendHello(request.Name)";
     }
 }

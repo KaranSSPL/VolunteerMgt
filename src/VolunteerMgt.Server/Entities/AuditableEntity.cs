@@ -2,13 +2,8 @@
 
 namespace VolunteerMgt.Server.Entities;
 
-public class ToDo : IBaseEntity<long>, IAuditableEntity
+public class AuditableEntity : IAuditableEntity
 {
-    public long Id { get; set; }
-
-    public string Title { get; set; }
-    public string Description { get; set; } = string.Empty;
-
     public DateTime CreatedDate { get; set; }
     public string CreatedBy { get; set; }
 
