@@ -1,0 +1,25 @@
+<header>
+  <div class="container">
+    <a routerLink="/" class="logo">
+    </a>
+
+    <nav>
+      <ul class="nav-links">
+      </ul>
+    </nav>
+
+    <div class="icons">
+      <div class="user-dropdown">
+        <a href="#" class="user-icon" (click)="toggleDropdown($event)">👤</a>
+        <div class="dropdown-menu" *ngIf="dropdownOpen">
+          <a routerLink="/profile" routerLinkActive="active">Register</a>
+          <a href="#" (click)="logout()">Logout</a>
+        </div>
+      </div>
+      <a routerLink="/cart" class="cart-icon" routerLinkActive="active">
+        🛒 <span class="cart-count">3</span>
+      </a>
+    </div>
+    <button class="menu-toggle">&#9776;</button>
+  </div>
+</header>

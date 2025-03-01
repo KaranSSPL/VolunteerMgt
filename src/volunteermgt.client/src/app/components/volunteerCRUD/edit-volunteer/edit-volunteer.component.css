@@ -1,0 +1,142 @@
+.edit-volunteer-container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 25px;
+  background: #ffffff;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  font-family: 'Arial', sans-serif;
+}
+
+h2 {
+  text-align: center;
+  color: #333;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+  .form-group label {
+    flex: 1;
+    font-weight: 600;
+    color: #444;
+  }
+
+  .form-group input {
+    flex: 2;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s ease-in-out;
+  }
+
+    .form-group input:focus {
+      border-color: #007bff;
+      outline: none;
+      box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.4);
+    }
+
+h3 {
+  margin-top: 20px;
+  font-size: 20px;
+  color: #333;
+}
+
+.availability-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+  .availability-group input {
+    flex: 1;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+  }
+
+.add-btn,
+.remove-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.3s ease;
+}
+
+.add-btn {
+  background: #28a745;
+  margin-top: 10px;
+}
+
+  .add-btn:hover {
+    background: #218838;
+  }
+
+.remove-btn:hover {
+  background: #c82333;
+}
+
+.update-btn {
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background 0.3s ease-in-out;
+}
+
+.update-btn {
+  background: #007bff;
+  color: white;
+}
+
+  .update-btn:hover {
+    background: #0056b3;
+  }
+
+.cancel-btn {
+  background: white;
+  margin-top: 10px;
+  color: white;
+  width: 100%;
+  height: 38px;
+  color: black;
+  font-size: x-large;
+}
+
+  .cancel-btn:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 1.0);
+  }
+.suggestion-text {
+  display: inline-block;
+  margin-top: 5px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #007bff;
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+  transition: 0.3s;
+}
+
+  .suggestion-text:hover {
+    background: #f1f1f1;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+  }
+

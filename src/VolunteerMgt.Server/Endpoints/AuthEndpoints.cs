@@ -2,6 +2,8 @@
 using VolunteerMgt.Server.Abstraction.Service.Identity;
 using VolunteerMgt.Server.Models.Auth;
 using VolunteerMgt.Server.Models.Wrapper;
+using VolunteerMgt.Server.Models.User;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace VolunteerMgt.Server.Endpoints;
 
@@ -12,12 +14,24 @@ public static class AuthEndpoints
         var group = app.MapGroup("/api/authentication")
             .WithOpenApi();
 
-        group.MapPost("/", GetAuthTokenAsync)
-            .WithName("token");
+        group.MapPost("/login", GetAuthTokenAsync)
+            .WithName("login");
+
+        group.MapPost("/register", RegisterAsync)
+            .WithName("register");
     }
 
-    private static async Task<Result<TokenResponse>> GetAuthTokenAsync([FromServices] IAuthService authService, [FromBody] TokenRequest request)
+    private static async Task<Result<TokenResponse>> GetAuthTokenAsync(
+        [FromServices] IAuthService authService,
+        [FromBody] TokenRequest request)
     {
-        return await authService.GetTokenAsync(request);
+        return await authService.LoginAsync(request);
+    }
+
+    private static async Task<Result<TokenResponse>> RegisterAsync(
+        [FromServices] IAuthService authService,
+        [FromBody] UserModel request)
+    {
+        return await authService.RegisterAsync(request);
     }
 }

@@ -7,4 +7,8 @@
     <!-- Folder where production build objects will be placed -->
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\volunteermgt.client\browser\</BuildOutputFolder>
   </PropertyGroup>
+  <ItemGroup>
+    <Folder Include="src\app\Models\" />
+    <Folder Include="src\app\components\volunteerCRUD\" />
+  </ItemGroup>
 </Project>

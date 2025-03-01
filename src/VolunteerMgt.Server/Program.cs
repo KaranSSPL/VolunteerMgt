@@ -110,6 +110,12 @@ try
     // Add cors
     builder.Services.AddCors();
 
+    builder.Services.AddControllers().AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
+
+
     // Add application service
     builder.Services.AddServices();
 
@@ -167,6 +173,7 @@ try
 
     var app = builder.Build();
 
+
     //add exception handler to the pipeline
     app.UseExceptionHandler();
     //app.UseMiddleware<ExceptionMiddleware>();
@@ -205,6 +212,9 @@ try
 
     // Add all endpoints here.
     app.MapAuthenticationEndpoints();
+    app.MapVolunteerEndpoints();
+
+    app.MapGet("/weatherforecast", () => "Hello world");
 
     app.MapFallbackToFile("/index.html");
 
