@@ -10,4 +10,14 @@ public class ApplicationRole : IdentityRole, IAuditEntity
 
     public DateTime? ModifiedDate { get; set; }
     public string? ModifiedBy { get; set; }
+
+    public ApplicationRole()
+    {
+
+    }
+    public ApplicationRole(string roleName, string username) : base(roleName)
+    {
+        CreatedDate = DateTime.UtcNow;
+        CreatedBy = username;
+    }
 }

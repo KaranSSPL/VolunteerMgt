@@ -9,6 +9,9 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public DatabaseContext() { }
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
+    public DbSet<Permission> Permissions { get; set; }
+
+    public DbSet<PermissionRoles> PermissionRoles { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);

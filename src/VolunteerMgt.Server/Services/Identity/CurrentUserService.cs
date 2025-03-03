@@ -41,7 +41,13 @@ public class CurrentUserService(IHttpContextAccessor httpContextAccessor) : ICur
             ? _user?.GetRoles()
             : null;
 
-    public bool IsAuthenticated() => _user?.Identity?.IsAuthenticated is true;
+    public bool IsAuthenticated()
+    {
+        if (_user == null && httpContextAccessor?.HttpContext?.User != null)
+            SetCurrentUser(httpContextAccessor.HttpContext.User);
+
+        return _user?.Identity?.IsAuthenticated == true;
+    }
 
     public bool IsInRole(string role) => _user?.IsInRole(role) is true;
 

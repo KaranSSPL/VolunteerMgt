@@ -15,6 +15,7 @@ using VolunteerMgt.Server.Common.Middleware;
 using VolunteerMgt.Server.Common.Settings;
 using VolunteerMgt.Server.Endpoints;
 using VolunteerMgt.Server.Entities.Identity;
+using VolunteerMgt.Server.Entities.Mail;
 using VolunteerMgt.Server.Persistence;
 
 //Init the logger and get the active config
@@ -50,11 +51,16 @@ try
 
     // Add Identity
     builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
+        .AddRoleManager<RoleManager<ApplicationRole>>()
         .AddEntityFrameworkStores<DatabaseContext>()
         .AddSignInManager()
         .AddDefaultTokenProviders();
+    //Token Expiration time 
+    builder.Services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromMinutes(10));
 
     builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection(nameof(JwtConfiguration)));
+    builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection(nameof(EmailSettings)));
+
     JwtConfiguration? jwtConfiguration = builder.Configuration.GetSection(nameof(JwtConfiguration)).Get<JwtConfiguration>();
 
     builder.Services
@@ -90,21 +96,7 @@ try
     // Configure Identity options and password complexity here
     builder.Services.Configure<IdentityOptions>(options =>
     {
-        // User settings
         options.User.RequireUniqueEmail = true;
-
-        // Password settings
-        /*
-        options.Password.RequireDigit = true;
-        options.Password.RequiredLength = 8;
-        options.Password.RequireNonAlphanumeric = false;
-        options.Password.RequireUppercase = true;
-        options.Password.RequireLowercase = false;
-
-        // Lockout settings
-        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
-        options.Lockout.MaxFailedAccessAttempts = 10;
-        */
     });
 
     // Add cors
@@ -118,7 +110,6 @@ try
     //builder.Services.AddScoped<ExceptionMiddleware>();
     builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
     builder.Services.AddProblemDetails();
-
     builder.Services.AddScoped<CurrentUserMiddleware>();
     builder.Services.AddScoped<CustomSecurityHeaderMiddleware>();
 
@@ -204,7 +195,10 @@ try
     app.UseMiddleware<CustomSecurityHeaderMiddleware>();
 
     // Add all endpoints here.
-    app.MapAuthenticationEndpoints();
+    app.MapAuthEndpoints();
+    app.MapUserEndpoints();
+    app.MapVolunteerEndpoints();
+    app.MapRoleEndpoints();
 
     app.MapFallbackToFile("/index.html");
 

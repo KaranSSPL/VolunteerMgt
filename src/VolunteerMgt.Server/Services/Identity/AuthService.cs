@@ -13,17 +13,18 @@ using VolunteerMgt.Server.Models.Wrapper;
 namespace VolunteerMgt.Server.Services.Identity;
 
 public class AuthService(
-    ILogger<AuthService> logger,
-    UserManager<ApplicationUser> userManager,
-    IOptions<JwtConfiguration> jwtConfiguration) : IAuthService
+    ILogger<AuthService> _logger,
+    UserManager<ApplicationUser> _userManager,
+    IOptions<JwtConfiguration> _jwtConfiguration
+    ) : IAuthService
 {
     public async Task<Result<TokenResponse>> GetTokenAsync(TokenRequest request)
     {
-        ApplicationUser? user = await userManager.FindByEmailAsync(request.Email);
+        ApplicationUser? user = await _userManager.FindByEmailAsync(request.Email);
         if (user == null)
             return await Result<TokenResponse>.FailAsync("Invalid email or password");
 
-        if (!await userManager.CheckPasswordAsync(user, request.Password))
+        if (!await _userManager.CheckPasswordAsync(user, request.Password))
             return await Result<TokenResponse>.FailAsync("Invalid email or password");
 
         // Generate token
@@ -42,12 +43,13 @@ public class AuthService(
         // Security stamp set into the claims
         var securityStampClaimType = new ClaimsIdentityOptions().SecurityStampClaimType;
         // Get user roles
-        var userRoles = userManager.GetRolesAsync(applicationUser);
+        var userRoles = _userManager.GetRolesAsync(applicationUser);
         // User claims
         var authClaims = new List<Claim>
             {
                 new(ClaimTypes.NameIdentifier, applicationUser.Id),
-                new(ClaimTypes.Name, applicationUser.UserName??string.Empty),
+                new(ClaimTypes.Name, applicationUser.UserName?? ""),
+                new(ClaimTypes.Email, applicationUser.Email??string.Empty),
                 new(ClaimTypes.Role, userRoles.Result?.FirstOrDefault()??string.Empty)
             };
 
@@ -56,17 +58,17 @@ public class AuthService(
 
     private Tuple<JwtSecurityToken, DateTime> GetToken(IEnumerable<Claim> authClaims)
     {
-        logger.LogInformation("Generating token");
+        _logger.LogInformation("Generating token");
         // Set token expiry
-        var tokenExpiry = DateTime.UtcNow.AddMinutes(jwtConfiguration.Value.TokenExpiry);
+        var tokenExpiry = DateTime.UtcNow.AddMinutes(_jwtConfiguration.Value.TokenExpiry);
 
         // Get secret key from the appsettings.json file
-        var authSignInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.Value.Secret!));
+        var authSignInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfiguration.Value.Secret!));
 
         // Create token
         var token = new JwtSecurityToken(
-            issuer: jwtConfiguration.Value.ValidIssuer,
-            audience: jwtConfiguration.Value.ValidAudience,
+            issuer: _jwtConfiguration.Value.ValidIssuer,
+            audience: _jwtConfiguration.Value.ValidAudience,
             expires: tokenExpiry,
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSignInKey, SecurityAlgorithms.HmacSha256)
@@ -74,4 +76,5 @@ public class AuthService(
 
         return new Tuple<JwtSecurityToken, DateTime>(token, tokenExpiry);
     }
+
 }
