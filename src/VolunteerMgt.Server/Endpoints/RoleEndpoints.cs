@@ -10,38 +10,49 @@ namespace VolunteerMgt.Server.Endpoints
         public static void MapRoleEndpoints(this WebApplication app)
         {
             var group = app.MapGroup("/api/role")
-                .WithOpenApi();
-
-            group.MapPost("/addRole", AddRoleAsync)
-                .WithName("addRole")
+                .WithOpenApi()
                 .RequireAuthorization();
 
-            group.MapPost("/updateRole", UpdateRoleAsync)
-                .WithName("updateRole")
-                .RequireAuthorization();
+            group.MapPost("/add-role", AddRoleAsync)
+                .WithName("addRole");
 
+            group.MapGet("/get-user-roles/{id}", GetUserRolesAsync)
+                .WithName("getUserRoles");
 
-            group.MapPost("/assignUserRole", AssignUserRoleAsync)
-                .WithName("assignUserRole")
-                .RequireAuthorization();
+            group.MapPut("/update-role", UpdateRoleAsync)
+                .WithName("updateRole");
 
-            group.MapGet("/deleteRole/{id}", DeleteRoleAsync)
-                .WithName("deleteRole")
-                .RequireAuthorization();
+            group.MapDelete("/delete-role", DeleteRoleAsync)
+                .WithName("deleteRole");
+
+            group.MapPost("/assign-user-roles", AssignUserRoleAsync)
+                .WithName("assignUserRoles");
+
+            group.MapPost("/remove-user-roles", RemoveUserRoleAsync)
+                .WithName("removeUserRoles");
+
         }
         private static async Task<Result> AddRoleAsync([FromServices] IRoleService roleService, [FromBody] string role)
         {
             return await roleService.AddRoleAsync(role);
         }
-        private static async Task<Result> UpdateRoleAsync([FromServices] IRoleService roleService, [FromBody] Role role)
+        private static async Task<Result<Role>> UpdateRoleAsync([FromServices] IRoleService roleService, [FromBody] Role role)
         {
             return await roleService.UpdateRoleAsync(role);
+        }
+        private static async Task<Result> GetUserRolesAsync([FromServices] IRoleService roleService, Guid userId)
+        {
+            return await roleService.GetUserRolesAsync(userId);
         }
         private static async Task<Result> AssignUserRoleAsync([FromServices] IRoleService roleService, [FromBody] AssignUser role)
         {
             return await roleService.AssignUserRoleAsync(role);
         }
-        private static async Task<Result> DeleteRoleAsync([FromServices] IRoleService roleService, [FromQuery] string Id)
+        private static async Task<Result> RemoveUserRoleAsync([FromServices] IRoleService roleService, [FromBody] AssignUser role)
+        {
+            return await roleService.RemoveUserRoleAsync(role);
+        }
+        private static async Task<Result> DeleteRoleAsync([FromServices] IRoleService roleService, Guid Id)
         {
             return await roleService.DeleteRoleAsync(Id);
         }

@@ -4,10 +4,10 @@ using VolunteerMgt.Server.Entities.Identity;
 
 namespace VolunteerMgt.Server.Persistence;
 
-public class DatabaseContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
+public class VolunteerDataContext : IdentityDbContext<ApplicationUser, ApplicationRole, string>
 {
-    public DatabaseContext() { }
-    public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
+    public VolunteerDataContext() { }
+    public VolunteerDataContext(DbContextOptions<VolunteerDataContext> options) : base(options) { }
 
     public DbSet<Permission> Permissions { get; set; }
 

@@ -16,7 +16,7 @@ namespace VolunteerMgt.Server.Entities.Identity
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public Guid Id { get; set; }
-        public Guid PermissionId { get; set; }
         public Guid RoleId { get; set; }
+        public Guid PermissionId { get; set; }
     }
 }

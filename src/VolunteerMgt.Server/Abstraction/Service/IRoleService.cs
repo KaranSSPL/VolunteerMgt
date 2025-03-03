@@ -7,8 +7,10 @@ namespace VolunteerMgt.Server.Abstraction.Service
     public interface IRoleService : IScopedService
     {
         Task<Result> AddRoleAsync(string role);
-        Task<Result> DeleteRoleAsync(string roleId);
-        Task<Result> UpdateRoleAsync(Role Role);
+        Task<Result> DeleteRoleAsync(Guid roleId);
+        Task<Result<Role>> UpdateRoleAsync(Role Role);
+        Task<Result<AssignUser>> GetUserRolesAsync(Guid Id);
         Task<Result> AssignUserRoleAsync(AssignUser user);
+        Task<Result> RemoveUserRoleAsync(AssignUser assignUser);
     }
 }

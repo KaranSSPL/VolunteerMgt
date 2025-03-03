@@ -10,21 +10,20 @@ namespace VolunteerMgt.Server.Endpoints
         public static void MapUserEndpoints(this WebApplication app)
         {
             var group = app.MapGroup("/api/user")
-                .WithOpenApi();
+                .WithOpenApi()
+                .RequireAuthorization();
 
             group.MapPost("/register-user", AddUserAsync)
-                .WithName("registerUser")
-                .RequireAuthorization();
+                .WithName("registerUser");
 
-            group.MapGet("/delete-user/{id}", DeleteUserAsync)
-                .WithName("deleteUser")
-                .RequireAuthorization();
+            group.MapDelete("/delete-user", DeleteUserAsync)
+                .WithName("deleteUser");
         }
-        private static async Task<Result> AddUserAsync([FromServices] IUserService userService, [FromBody] RegisterModel model)
+        private static async Task<Result<RegisterModel>> AddUserAsync([FromServices] IUserService userService, [FromBody] RegisterModel model)
         {
             return await userService.AddUserAsync(model);
         }
-        private static async Task<Result> DeleteUserAsync([FromServices] IUserService userService, [FromQuery] string Id)
+        private static async Task<Result> DeleteUserAsync([FromServices] IUserService userService, string Id)
         {
             return await userService.DeleteUserAsync(Id);
         }

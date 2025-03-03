@@ -32,11 +32,11 @@ try
                            throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
     var commandTimeout = (int)TimeSpan.FromMinutes(20).TotalSeconds;
 
-    builder.Services.AddDbContext<DatabaseContext>(options =>
+    builder.Services.AddDbContext<VolunteerDataContext>(options =>
     {
         options.UseSqlServer(connectionString, sqlOpt =>
         {
-            sqlOpt.MigrationsAssembly(typeof(DatabaseContext).Assembly.FullName);
+            sqlOpt.MigrationsAssembly(typeof(VolunteerDataContext).Assembly.FullName);
 
             sqlOpt.CommandTimeout(commandTimeout);
             sqlOpt.EnableRetryOnFailure(maxRetryCount: 10, maxRetryDelay: TimeSpan.FromSeconds(5), errorNumbersToAdd: null);
@@ -52,7 +52,7 @@ try
     // Add Identity
     builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
         .AddRoleManager<RoleManager<ApplicationRole>>()
-        .AddEntityFrameworkStores<DatabaseContext>()
+        .AddEntityFrameworkStores<VolunteerDataContext>()
         .AddSignInManager()
         .AddDefaultTokenProviders();
     //Token Expiration time 
@@ -199,6 +199,7 @@ try
     app.MapUserEndpoints();
     app.MapVolunteerEndpoints();
     app.MapRoleEndpoints();
+    app.MapPermissionEndpoints();
 
     app.MapFallbackToFile("/index.html");
 

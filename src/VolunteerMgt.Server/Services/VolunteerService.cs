@@ -39,15 +39,15 @@ namespace VolunteerMgt.Server.Services
                 return Result<List<ApplicationUser>>.Fail("An internal error occurred while fetching the users.", HttpStatusCode.InternalServerError);
             }
         }
-        public async Task<Result<VolunteerWithId>> GetVolunteerByIdAsync(string Id)
+        public async Task<Result<VolunteerWithId>> GetVolunteerByIdAsync(Guid Id)
         {
             try
             {
-                if (Id == string.Empty)
+                if (Id == Guid.Empty)
                 {
                     return Result<VolunteerWithId>.Fail("User not found, Please Login.", HttpStatusCode.BadRequest);
                 }
-                var user = await _userManager.FindByIdAsync(Id);
+                var user = await _userManager.FindByIdAsync(Id.ToString());
 
                 var volunteer = new VolunteerWithId()
                 {
@@ -70,14 +70,14 @@ namespace VolunteerMgt.Server.Services
                 return Result<VolunteerWithId>.Fail("An internal error occurred while finding the user.", HttpStatusCode.InternalServerError);
             }
         }
-        public async Task<Result<ApplicationUser>> UpdateVolunteerAsync(EditVolunteerModel model)
+        public async Task<Result<EditVolunteerModel>> UpdateVolunteerAsync(EditVolunteerModel model)
         {
             try
             {
                 var user = await _userManager.FindByIdAsync(model.Id);
                 if (user == null)
                 {
-                    return Result<ApplicationUser>.Fail("User not found.", HttpStatusCode.NotFound);
+                    return Result<EditVolunteerModel>.Fail("User not found.", HttpStatusCode.NotFound);
                 }
 
                 // Check if the email is changed and already exists
@@ -86,7 +86,7 @@ namespace VolunteerMgt.Server.Services
                     var existingUser = await _userManager.FindByEmailAsync(model.Email);
                     if (existingUser != null)
                     {
-                        return Result<ApplicationUser>.Fail("Email is already registered.", HttpStatusCode.BadRequest);
+                        return Result<EditVolunteerModel>.Fail("Email is already registered.", HttpStatusCode.BadRequest);
                     }
                 }
 
@@ -102,7 +102,7 @@ namespace VolunteerMgt.Server.Services
                 if (!result.Succeeded)
                 {
                     var errorMessage = result.Errors.Select(e => e.Description).ToList();
-                    return Result<ApplicationUser>.Fail(errorMessage, HttpStatusCode.BadRequest);
+                    return Result<EditVolunteerModel>.Fail(errorMessage, HttpStatusCode.BadRequest);
                 }
 
                 // Handle role update (if role changed)
@@ -116,12 +116,12 @@ namespace VolunteerMgt.Server.Services
                     }
                 }
 
-                return await Result<ApplicationUser>.SuccessAsync("Successfully Updated User");
+                return await Result<EditVolunteerModel>.SuccessAsync(model, "Successfully Updated User");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unexpected error occurred while updating user {Email}.", model.Email);
-                return Result<ApplicationUser>.Fail("An internal error occurred while updating the user.", HttpStatusCode.InternalServerError);
+                return Result<EditVolunteerModel>.Fail("An internal error occurred while updating the user.", HttpStatusCode.InternalServerError);
             }
         }
 

@@ -2,7 +2,7 @@
 
 namespace VolunteerMgt.Server.Persistence;
 
-public sealed class UnitOfWork(DatabaseContext dbContext) : IDisposable, IUnitOfWork
+public sealed class UnitOfWork(VolunteerDataContext dbContext) : IDisposable, IUnitOfWork
 {
     private bool _isDisposed;
 

@@ -15,42 +15,42 @@ namespace VolunteerMgt.Server.Endpoints
         public static void MapVolunteerEndpoints(this WebApplication app)
         {
             var group = app.MapGroup("/api/volunteer")
-                .WithOpenApi();
-
-            group.MapGet("/getVolunteers", GetVolunteersAsync)
-                .WithName("getAllVolunteers")
+                .WithOpenApi()
                 .RequireAuthorization();
 
-            group.MapGet("/getVolunteers/{id}", GetVolunteerbyIdAsync)
-                .WithName("getVolunteerById")
-                .RequireAuthorization();
+            group.MapGet("/get-Volunteers", GetVolunteersAsync)
+                .WithName("getAllVolunteers");
 
-            group.MapPost("/update-volunteer", UpdateVolunteerAsync)
-                .WithName("updateVolunteer")
-                .RequireAuthorization();
+            group.MapGet("/get-Volunteers/{id}", GetVolunteerbyIdAsync)
+                .WithName("getVolunteerById");
+
+            group.MapPut("/update-volunteer", UpdateVolunteerAsync)
+                .WithName("updateVolunteer");
 
             group.MapPost("/forgot-password", ForgotPasswordAsync)
-                .WithName("forgotPassword");
+                .WithName("forgotPassword")
+                .AllowAnonymous();
 
             group.MapGet("/reset-password", ResetPasswordAsync)
-                .WithName("resetPassword");
+                .WithName("resetPassword")
+                .AllowAnonymous();
 
             group.MapPost("/reset-password", ResetPasswordPostAsync)
-                .WithName("resetPasswordPost");
+                .WithName("resetPasswordPost")
+                .AllowAnonymous();
 
-            group.MapPost("/change-password", ChangePasswordAsync)
-                .WithName("changePassword")
-                .RequireAuthorization();
+            group.MapPut("/change-password", ChangePasswordAsync)
+                .WithName("changePassword");
         }
         private static async Task<Result<List<ApplicationUser>>> GetVolunteersAsync([FromServices] IVolunteerService volunteerService)
         {
             return await volunteerService.GetVolunteersAsync();
         }
-        private static async Task<Result<VolunteerWithId>> GetVolunteerbyIdAsync([FromServices] IVolunteerService volunteerService, string Id)
+        private static async Task<Result<VolunteerWithId>> GetVolunteerbyIdAsync([FromServices] IVolunteerService volunteerService, Guid Id)
         {
             return await volunteerService.GetVolunteerByIdAsync(Id);
         }
-        private static async Task<Result<ApplicationUser>> UpdateVolunteerAsync([FromServices] IVolunteerService volunteerService, [FromBody] EditVolunteerModel model)
+        private static async Task<Result<EditVolunteerModel>> UpdateVolunteerAsync([FromServices] IVolunteerService volunteerService, [FromBody] EditVolunteerModel model)
         {
             return await volunteerService.UpdateVolunteerAsync(model);
         }

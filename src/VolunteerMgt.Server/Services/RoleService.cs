@@ -55,14 +55,80 @@ namespace VolunteerMgt.Server.Services
                 return Result.Fail("An internal error occurred while creating the Role.", HttpStatusCode.InternalServerError);
             }
         }
-        public async Task<Result> DeleteRoleAsync(string roleId)
+        public async Task<Result<AssignUser>> GetUserRolesAsync(Guid userId)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(roleId))
+                if (userId == Guid.Empty)
+                    return Result<AssignUser>.Fail("User ID cannot be empty.", HttpStatusCode.BadRequest);
+
+                var user = await _userManager.FindByIdAsync(userId.ToString());
+                if (user == null)
+                    return Result<AssignUser>.Fail($"User with ID '{userId}' not found.", HttpStatusCode.NotFound);
+
+                var roles = await _userManager.GetRolesAsync(user);
+                var assignUser = new AssignUser()
+                {
+                    UserId = userId.ToString(),
+                    RoleIds = roles.ToList()
+                };
+                return await Result<AssignUser>.SuccessAsync(assignUser, HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching roles for user ID '{UserId}'.", userId);
+                return Result<AssignUser>.Fail("An internal error occurred while fetching roles.", HttpStatusCode.InternalServerError);
+            }
+        }
+        public async Task<Result<Role>> UpdateRoleAsync(Role updatedRole)
+        {
+            try
+            {
+                if (updatedRole == null || string.IsNullOrWhiteSpace(updatedRole.Id) || string.IsNullOrWhiteSpace(updatedRole.Name))
+                    return Result<Role>.Fail("Role ID and Name cannot be empty.", HttpStatusCode.BadRequest);
+
+                var existingRole = await _roleManager.FindByIdAsync(updatedRole.Id);
+                if (existingRole == null)
+                {
+                    _logger.LogWarning("Role with ID '{RoleId}' not found.", updatedRole.Id);
+                    return Result<Role>.Fail($"Role with ID '{updatedRole.Id}' not found.", HttpStatusCode.NotFound);
+                }
+                var currentUser = _currentUserService.GetUserEmail();
+                var modifiedBy = _userManager.FindByEmailAsync(currentUser!).Result?.Id ?? string.Empty;
+
+                existingRole.Name = updatedRole.Name;
+
+                if (existingRole is ApplicationRole appRole)
+                {
+                    appRole.ModifiedBy = modifiedBy;
+                    appRole.ModifiedDate = DateTime.Now;
+                }
+
+                var result = await _roleManager.UpdateAsync(existingRole);
+                if (!result.Succeeded)
+                {
+                    _logger.LogError("Failed to update role with ID '{RoleId}'. Errors: {Errors}",
+                                     updatedRole.Id, string.Join(", ", result.Errors.Select(e => e.Description)));
+                    return Result<Role>.Fail("Failed to update the role.", HttpStatusCode.InternalServerError);
+                }
+
+                _logger.LogInformation("Role with ID '{RoleId}' updated successfully by '{ModifiedBy}'.", updatedRole.Id, modifiedBy);
+                return await Result<Role>.SuccessAsync(updatedRole, $"Role '{updatedRole.Name}' updated successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating the role with ID '{RoleId}'.", updatedRole.Id);
+                return Result<Role>.Fail("An internal error occurred while updating the role.", HttpStatusCode.InternalServerError);
+            }
+        }
+        public async Task<Result> DeleteRoleAsync(Guid roleId)
+        {
+            try
+            {
+                if (roleId == Guid.Empty)
                     return Result.Fail("Role ID cannot be empty.", HttpStatusCode.BadRequest);
 
-                var role = await _roleManager.FindByIdAsync(roleId);
+                var role = await _roleManager.FindByIdAsync(roleId.ToString());
                 if (role == null)
                 {
                     _logger.LogWarning("Role with ID '{RoleId}' not found.", roleId);
@@ -84,47 +150,6 @@ namespace VolunteerMgt.Server.Services
             {
                 _logger.LogError(ex, "An error occurred while deleting the role with ID '{RoleId}'.", roleId);
                 return Result.Fail("An internal error occurred while deleting the role.", HttpStatusCode.InternalServerError);
-            }
-        }
-        public async Task<Result> UpdateRoleAsync(Role updatedRole)
-        {
-            try
-            {
-                if (updatedRole == null || string.IsNullOrWhiteSpace(updatedRole.Id) || string.IsNullOrWhiteSpace(updatedRole.Name))
-                    return Result.Fail("Role ID and Name cannot be empty.", HttpStatusCode.BadRequest);
-
-                var existingRole = await _roleManager.FindByIdAsync(updatedRole.Id);
-                if (existingRole == null)
-                {
-                    _logger.LogWarning("Role with ID '{RoleId}' not found.", updatedRole.Id);
-                    return Result.Fail($"Role with ID '{updatedRole.Id}' not found.", HttpStatusCode.NotFound);
-                }
-                var currentUser = _currentUserService.GetUserEmail();
-                var modifiedBy = _userManager.FindByEmailAsync(currentUser!).Result?.Id ?? string.Empty;
-
-                existingRole.Name = updatedRole.Name;
-
-                if (existingRole is ApplicationRole appRole)
-                {
-                    appRole.ModifiedBy = modifiedBy;
-                    appRole.ModifiedDate = DateTime.Now;
-                }
-
-                var result = await _roleManager.UpdateAsync(existingRole);
-                if (!result.Succeeded)
-                {
-                    _logger.LogError("Failed to update role with ID '{RoleId}'. Errors: {Errors}",
-                                     updatedRole.Id, string.Join(", ", result.Errors.Select(e => e.Description)));
-                    return Result.Fail("Failed to update the role.", HttpStatusCode.InternalServerError);
-                }
-
-                _logger.LogInformation("Role with ID '{RoleId}' updated successfully by '{ModifiedBy}'.", updatedRole.Id, modifiedBy);
-                return await Result.SuccessAsync($"Role '{updatedRole.Name}' updated successfully.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while updating the role with ID '{RoleId}'.", updatedRole.Id);
-                return Result.Fail("An internal error occurred while updating the role.", HttpStatusCode.InternalServerError);
             }
         }
         public async Task<Result> AssignUserRoleAsync(AssignUser assignUser)
@@ -174,6 +199,53 @@ namespace VolunteerMgt.Server.Services
                 return Result.Fail("An internal error occurred while assigning roles.", HttpStatusCode.InternalServerError);
             }
         }
+        public async Task<Result> RemoveUserRoleAsync(AssignUser assignUser)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(assignUser.UserId) || assignUser.RoleIds == null || !assignUser.RoleIds.Any())
+                    return Result.Fail("User ID and Role IDs cannot be empty.", HttpStatusCode.BadRequest);
 
+                var user = await _userManager.FindByIdAsync(assignUser.UserId);
+                if (user == null)
+                    return Result.Fail($"User with ID '{assignUser.UserId}' not found.", HttpStatusCode.NotFound);
+
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                var rolesToRemove = new List<string>();
+
+                foreach (var roleId in assignUser.RoleIds)
+                {
+                    var role = await _roleManager.FindByIdAsync(roleId);
+                    if (role != null && currentRoles.Contains(role.Name))
+                    {
+                        rolesToRemove.Add(role.Name);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Role with ID '{RoleId}' not found or not assigned to the user.", roleId);
+                    }
+                }
+
+                if (!rolesToRemove.Any())
+                    return Result.Fail("No valid roles found to remove.", HttpStatusCode.BadRequest);
+
+                var result = await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+                if (!result.Succeeded)
+                {
+                    _logger.LogError("Failed to remove roles from user '{UserId}'. Errors: {Errors}",
+                                     assignUser.UserId, string.Join(", ", result.Errors.Select(e => e.Description)));
+                    return Result.Fail("Failed to remove roles from the user.", HttpStatusCode.InternalServerError);
+                }
+
+                _logger.LogInformation("Successfully removed roles from user '{UserId}'. Removed roles: {Roles}",
+                                       assignUser.UserId, string.Join(", ", rolesToRemove));
+                return await Result.SuccessAsync($"Roles removed successfully from user {assignUser.UserId}.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while removing roles from user '{UserId}'.", assignUser.UserId);
+                return Result.Fail("An internal error occurred while removing roles.", HttpStatusCode.InternalServerError);
+            }
+        }
     }
 }

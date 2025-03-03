@@ -10,7 +10,7 @@ using VolunteerMgt.Server.Persistence;
 
 namespace VolunteerMgt.Server.Persistence.Migrations
 {
-    [DbContext(typeof(DatabaseContext))]
+    [DbContext(typeof(VolunteerDataContext))]
     partial class DatabaseContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

@@ -12,8 +12,8 @@ namespace VolunteerMgt.Server.Abstraction.Service
     public interface IVolunteerService : IScopedService
     {
         Task<Result<List<ApplicationUser>>> GetVolunteersAsync();
-        Task<Result<VolunteerWithId>> GetVolunteerByIdAsync(string Id);
-        Task<Result<ApplicationUser>> UpdateVolunteerAsync(EditVolunteerModel model);
+        Task<Result<VolunteerWithId>> GetVolunteerByIdAsync(Guid Id);
+        Task<Result<EditVolunteerModel>> UpdateVolunteerAsync(EditVolunteerModel model);
         Task<Result> ForgotPasswordAsync(ForgotPasswordModel model);
         Task<Result> ResetPasswordAsync(string email, string token);
         Task<Result> ResetPasswordPostAsync(ResetPasswordModel model);

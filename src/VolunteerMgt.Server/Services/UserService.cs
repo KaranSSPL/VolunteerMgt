@@ -16,13 +16,13 @@ namespace VolunteerMgt.Server.Services
         ILogger<UserService> _logger
         ) : IUserService
     {
-        public async Task<Result> AddUserAsync(RegisterModel model)
+        public async Task<Result<RegisterModel>> AddUserAsync(RegisterModel model)
         {
             try
             {
                 if (await _userManager.FindByEmailAsync(model.Email) != null)
                 {
-                    return Result.Fail("Email is already registered.", HttpStatusCode.BadRequest);
+                    return Result<RegisterModel>.Fail("Email is already registered.", HttpStatusCode.BadRequest);
                 }
                 var currentUser = _currentUserService.GetUserEmail();
                 var user = new ApplicationUser
@@ -38,25 +38,25 @@ namespace VolunteerMgt.Server.Services
                 if (!result.Succeeded)
                 {
                     var errorMessage = result.Errors.Select(e => e.Description).ToList();
-                    return Result.Fail(errorMessage, HttpStatusCode.BadRequest);
+                    return Result<RegisterModel>.Fail(errorMessage, HttpStatusCode.BadRequest);
                 }
                 var roleExists = await _roleManager.RoleExistsAsync(model.Role);
 
                 if (!roleExists)
                 {
                     _logger.LogWarning("Role '{Role}' does not exist.", model.Role);
-                    return Result.Fail($"Role '{model.Role}' does not exist.", HttpStatusCode.BadRequest);
+                    return Result<RegisterModel>.Fail($"Role '{model.Role}' does not exist.", HttpStatusCode.BadRequest);
                 }
 
                 await _userManager.AddToRoleAsync(user, model.Role);
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
-                return await Result.SuccessAsync("Successfully Created User");
+                return await Result<RegisterModel>.SuccessAsync(model, "Successfully Created User");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unexpected error occurred while creating user {Email}.", model.Email);
-                return Result.Fail("An internal error occurred while creating the user.", HttpStatusCode.InternalServerError);
+                return Result<RegisterModel>.Fail("An internal error occurred while creating the user.", HttpStatusCode.InternalServerError);
             }
         }
         public async Task<Result> DeleteUserAsync(string id)

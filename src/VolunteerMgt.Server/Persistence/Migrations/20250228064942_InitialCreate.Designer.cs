@@ -11,7 +11,7 @@ using VolunteerMgt.Server.Persistence;
 
 namespace VolunteerMgt.Server.Persistence.Migrations
 {
-    [DbContext(typeof(DatabaseContext))]
+    [DbContext(typeof(VolunteerDataContext))]
     [Migration("20250228064942_InitialCreate")]
     partial class InitialCreate
     {

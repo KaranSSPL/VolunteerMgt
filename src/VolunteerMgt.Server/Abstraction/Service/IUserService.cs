@@ -6,7 +6,7 @@ namespace VolunteerMgt.Server.Abstraction.Service
 {
     public interface IUserService : IScopedService
     {
-        Task<Result> AddUserAsync(RegisterModel model);
+        Task<Result<RegisterModel>> AddUserAsync(RegisterModel model);
         Task<Result> DeleteUserAsync(string Id);
     }
 }
