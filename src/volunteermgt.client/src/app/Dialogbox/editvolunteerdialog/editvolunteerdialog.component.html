@@ -1,0 +1,32 @@
+<div class="modal-container">
+  <button class="close-btn" (click)="closeDialog()">×</button>
+
+  <h2>Edit Volunteer <span>{{volunteerData?.volunteerDetails?.volunteerName}}</span></h2>
+
+
+
+  <h3>Assigned Services</h3>
+
+  <div class="table-container">
+    <table *ngIf="volunteerData?.assignedServices?.length > 0">
+      <thead>
+        <tr>
+          <th>Service Name</th>
+          <th>Time Slot</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let service of volunteerData.assignedServices; let i = index">
+          <td>{{ service?.serviceName }}</td>
+          <td>{{ service?.timeSlot }}</td>
+          <td>
+            <button class="delete-btn" (click)="openDeleteDialog(service.volunteerId, service.serviceId, i)">❌</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    
+    <p *ngIf="!volunteerData?.assignedServices?.length">No assigned services found.</p>
+  </div>
+</div>

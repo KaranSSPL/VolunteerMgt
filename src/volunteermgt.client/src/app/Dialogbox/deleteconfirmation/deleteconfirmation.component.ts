@@ -10,7 +10,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 export class DeleteconfirmationComponent {
   constructor(
     public dialogRef: MatDialogRef<DeleteconfirmationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: { message: string; volunteerId?: number; serviceId?: number }
   ) { }
 
   confirmDelete(): void {

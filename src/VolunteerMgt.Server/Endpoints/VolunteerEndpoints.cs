@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using VolunteerMgt.Server.Abstraction.Service.Volunteer;
 using VolunteerMgt.Server.Models.Volunteers;
 
@@ -41,6 +39,7 @@ public static class VolunteerEndpoints
         var result = await volunteerService.GetAllVolunteersAsync();
         return Results.Ok(result);
     }
+
     private static async Task<IResult> GetVolunteerByIdAsync(
     [FromServices] IVolunteerService volunteerService,
     [FromRoute] int id)

@@ -2,17 +2,21 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { VolunteertableComponent } from './components/Volunteer/volunteertable/volunteertable.component';
+import { CreateVolunteerComponent } from './components/Volunteer/volunteerCRUD/create-volunteer/create-volunteer.component';
 import { AuthGuard } from './services/auth.gurad';
-import { VolunteertableComponent } from './components/volunteertable/volunteertable.component';
-import { CreateVolunteerComponent } from './components/volunteerCRUD/create-volunteer/create-volunteer.component';
-import { EditVolunteerComponent } from './components/volunteerCRUD/edit-volunteer/edit-volunteer.component';
+import { LoginGuard } from './services/login.guard';
+import { VolunteerservicetableComponent } from './components/Volunteer/volunteerservicetable/volunteerservicetable.component';
+import { ServicetableComponent } from './components/Volunteer/servicetable/servicetable.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent, canActivate: [AuthGuard] },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'volunteer', component: VolunteertableComponent },
-  { path: 'createVolunteer', component: CreateVolunteerComponent },
+  { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
+  { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
+  { path: 'volunteer', component: VolunteertableComponent, canActivate: [AuthGuard] },
+  { path: 'createVolunteer', component: CreateVolunteerComponent, canActivate: [AuthGuard] },
+  { path: 'volunteerService', component: VolunteerservicetableComponent, canActivate: [AuthGuard] },
+  { path: 'service', component: ServicetableComponent, canActivate: [AuthGuard] },
 ];
 
 @NgModule({

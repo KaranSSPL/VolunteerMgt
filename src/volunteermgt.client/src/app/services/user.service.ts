@@ -21,4 +21,7 @@ export class UserService {
     this.router.navigate(['/login']);
   }
 
+  isLoggedIn(): boolean {
+    return !!sessionStorage.getItem('authToken');
+  }
 }

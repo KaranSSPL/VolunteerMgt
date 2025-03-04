@@ -9,16 +9,20 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { SidebarComponent } from './components/sidebar/sidebar.component';
 import { RegisterComponent } from './components/register/register.component';
 import { HeaderComponent } from './components/header/header.component';
-import { VolunteertableComponent } from './components/volunteertable/volunteertable.component';
-import { CreateVolunteerComponent } from './components/volunteerCRUD/create-volunteer/create-volunteer.component';
-import { EditVolunteerComponent } from './components/volunteerCRUD/edit-volunteer/edit-volunteer.component';
+import { VolunteertableComponent } from './components/Volunteer/volunteertable/volunteertable.component';
+import { CreateVolunteerComponent } from './components/Volunteer/volunteerCRUD/create-volunteer/create-volunteer.component';
+import { EditVolunteerComponent } from './components/Volunteer/volunteerCRUD/edit-volunteer/edit-volunteer.component';
 import { CommonModule } from '@angular/common';
-import { DeleteconfirmationComponent } from './components/deleteconfirmation/deleteconfirmation.component';
+import { DeleteconfirmationComponent } from './Dialogbox/deleteconfirmation/deleteconfirmation.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { VolunteerservicetableComponent } from './components/Volunteer/volunteerservicetable/volunteerservicetable.component';
+import { ServicetableComponent } from './components/Volunteer/servicetable/servicetable.component';
+import { AssignServiceDialogComponent } from './Dialogbox/assign-service-dialog/assign-service-dialog.component';
+import { EditvolunteerdialogComponent } from './Dialogbox/editvolunteerdialog/editvolunteerdialog.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +35,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     VolunteertableComponent,
     CreateVolunteerComponent,
     EditVolunteerComponent,
-    DeleteconfirmationComponent
+    DeleteconfirmationComponent,
+    VolunteerservicetableComponent,
+    ServicetableComponent,
+    AssignServiceDialogComponent,
+    EditvolunteerdialogComponent
   ],
   imports: [
     BrowserModule,

@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { VolunteerService } from '../../services/volunteer.service';
-import { Volunteer } from '../../Models/volunteer.model';
+import { VolunteerService } from '../../../services/volunteer.service';
+import { Volunteer } from '../../../Models/volunteer.model';
 import { Router } from '@angular/router';
-import { DeleteconfirmationComponent } from '../deleteconfirmation/deleteconfirmation.component';
+import { DeleteconfirmationComponent } from '../../../Dialogbox/deleteconfirmation/deleteconfirmation.component';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
@@ -40,8 +40,11 @@ export class VolunteertableComponent implements OnInit {
   }
 
   deleteVolunteer(id: number): void {
+    const message = `Are you sure you want to delete this Volunteer?`;
+
     const dialogRef = this.dialog.open(DeleteconfirmationComponent, {
       width: '300px',
+      data: { message }
     });
 
     dialogRef.afterClosed().subscribe((result) => {

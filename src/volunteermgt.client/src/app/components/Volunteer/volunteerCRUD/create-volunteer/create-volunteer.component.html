@@ -1,7 +1,7 @@
 <div class="form-container">
   <h2>Create Volunteer</h2>
 
-  <form [formGroup]="volunteerForm" (ngSubmit)="submitForm()">
+  <form [formGroup]="volunteerForm">
     <div class="form-group">
       <label>Name:</label>
       <input type="text" formControlName="name" placeholder="Enter Name" />
@@ -48,7 +48,7 @@
       </div>
     </div>
     <button type="button" class="add-btn" (click)="addAvailability()">+ Add Availability</button>
-    <button type="submit" class="submit-btn" >Add Volunteer</button>
+    <button type="submit" class="submit-btn" (click)="submitForm()">Add Volunteer</button>
     <button type="button" class="cancel-btn" (click)="cancel()">Cancel</button>
 
   </form>

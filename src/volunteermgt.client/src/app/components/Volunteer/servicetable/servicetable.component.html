@@ -1,0 +1,51 @@
+
+<div class="container">
+  <div class="header-container">
+    <button class="add-btn" (click)="openModal()">Add Service</button>
+    <h2 class="text-center">Volunteer Services</h2>
+  </div>
+
+  <div *ngIf="isLoading" class="text-center">
+    <p>Loading...</p>
+  </div>
+
+  <div class="table-container">
+    <table *ngIf="!isLoading" class="table table-bordered">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Service Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let service of services">
+          <td>{{ service.id }}</td>
+          <td>{{ service.serviceName }}</td>
+          <td>
+            <button class="btn-edit" (click)="openModal(service)">Edit</button>
+            <button class="btn-delete" (click)="deleteService(service.id)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!isLoading && services.length === 0" class="text-center">
+      <p>No services available.</p>
+    </div>
+  </div>
+</div>
+
+<div class="modal" [style.display]="showModal ? 'flex' : 'none'">
+  <div class="modal-content">
+    <span class="close-btn" (click)="closeModal()">&times;</span>
+    <h3>{{ editMode ? 'Edit Service' : 'Add New Service' }}</h3>
+
+    <form [formGroup]="serviceForm" (ngSubmit)="editMode ? updateService() : addService()">
+      <input type="text" formControlName="serviceName" placeholder="Enter Service Name">
+      <button type="submit" [disabled]="serviceForm.invalid">
+        {{ editMode ? 'Update Service' : 'Add Service' }}
+      </button>
+    </form>
+  </div>
+</div>

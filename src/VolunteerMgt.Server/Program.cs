@@ -213,8 +213,8 @@ try
     // Add all endpoints here.
     app.MapAuthenticationEndpoints();
     app.MapVolunteerEndpoints();
-
-    app.MapGet("/weatherforecast", () => "Hello world");
+    app.MapServiceEndpoints();
+    app.MapVolunteerServiceEndpoints();
 
     app.MapFallbackToFile("/index.html");
 

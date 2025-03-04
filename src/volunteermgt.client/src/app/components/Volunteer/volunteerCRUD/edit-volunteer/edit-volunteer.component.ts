@@ -1,7 +1,7 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
-import { Volunteer } from '../../../Models/volunteer.model';
-import { VolunteerService } from '../../../services/volunteer.service';
+import { Volunteer } from '../../../../Models/volunteer.model';
+import { VolunteerService } from '../../../../services/volunteer.service';
 
 @Component({
   selector: 'app-edit-volunteer',
@@ -14,7 +14,7 @@ export class EditVolunteerComponent implements OnInit {
   @Output() cancelEdit = new EventEmitter<void>();
 
   volunteerForm!: FormGroup;
-  allDays: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  allDays: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Saturday', 'Sunday'];
   suggestedDays: string[][] = [];
 
   constructor(
@@ -44,7 +44,6 @@ export class EditVolunteerComponent implements OnInit {
       timeSlot: [avail?.timeSlot || '']
     });
   }
-
   get availabilities(): FormArray {
     return this.volunteerForm.get('availabilities') as FormArray;
   }
@@ -74,6 +73,7 @@ export class EditVolunteerComponent implements OnInit {
   cancel(): void {
     this.cancelEdit.emit(); 
   }
+
   filterDays(index: number) {
     const inputDay = this.availabilities.at(index).get('day')?.value.toLowerCase();
 

@@ -160,7 +160,6 @@ namespace VolunteerMgt.Server.Services.Volunteer
             }
         }
 
-
         public async Task<ResponseModel<bool>> DeleteVolunteerAsync(int id)
         {
             try
@@ -201,5 +200,4 @@ namespace VolunteerMgt.Server.Services.Volunteer
             }
         }
     }
-
 }

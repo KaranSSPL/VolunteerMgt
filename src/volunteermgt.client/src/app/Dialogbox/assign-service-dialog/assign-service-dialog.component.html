@@ -1,0 +1,57 @@
+<h2>Assign Service</h2>
+
+<form [formGroup]="assignForm">
+  <!-- Volunteers Dropdown -->
+  <div class="dropdown-container">
+    <label>Volunteers</label>
+    <a routerLink="/createVolunteer" (click)="closeDialog()">Create Volunteer</a>
+
+    <div class="custom-dropdown">
+      <div class="dropdown-header" (click)="toggleDropdown('volunteer')">
+        Select Volunteers ({{ selectedVolunteers.length }})
+      </div>
+      <div class="dropdown-list" *ngIf="isVolunteerDropdownOpen">
+        <div *ngFor="let volunteer of volunteers"
+             (click)="selectVolunteer(volunteer)"
+             [ngClass]="{'selected': isVolunteerSelected(volunteer.id)}"
+             class="dropdown-item">
+          {{ volunteer.name }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Selected Volunteers as Tags -->
+  <div class="selected-items">
+    <span *ngFor="let volunteer of selectedVolunteers" class="tag">
+      {{ volunteer.name }} <span class="remove-tag" (click)="removeVolunteer(volunteer.id)">×</span>
+    </span>
+  </div>
+
+  <!-- Services Dropdown -->
+  <div class="dropdown-container">
+    <label>Services</label>
+    <a routerLink="/service" (click)="closeDialog()">Create Service</a>
+
+    <div class="custom-dropdown">
+      <div class="dropdown-header" (click)="toggleDropdown('service')">
+        {{ selectedService ? selectedService.serviceName : 'Select Service' }}
+      </div>
+      <div class="dropdown-list" *ngIf="isServiceDropdownOpen">
+        <div *ngFor="let service of services" (click)="selectService(service)" class="dropdown-item">
+          {{ service.serviceName }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Time Slot -->
+  <label for="timeSlot">Time Slot</label>
+  <input id="timeSlot" type="text" formControlName="timeSlot" placeholder="Enter time slot">
+
+  <label for="date">Date</label>
+  <input id="date" type="date" formControlName="date">
+
+  <!-- Submit Button -->
+  <button type="submit" (click)="assignService()">Assign</button>
+</form>

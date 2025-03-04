@@ -11,5 +11,6 @@ namespace VolunteerMgt.Server.Abstraction.Service.Volunteer
         Task<ResponseModel<VolunteerModel>> UpdateVolunteerAsync(int id, VolunteerModel request);
         Task<ResponseModel<bool>> DeleteVolunteerAsync(int id);
         Task<ResponseModel<VolunteerModel>> GetVolunteerByIdAsync(int id);
+
     }
 }
