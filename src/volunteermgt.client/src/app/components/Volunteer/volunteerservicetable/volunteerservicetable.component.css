@@ -6,16 +6,19 @@
 }
 
 .assign-btn {
-  background-color: #007bff;
-  color: white;
-  border: none;
+  background-color: white;
+  color: black;
+  border: 1px solid;
+  font-weight: 600;
   padding: 10px 15px;
   cursor: pointer;
   margin-bottom: 20px;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0,0.4);
 }
 
   .assign-btn:hover {
-    background-color: #0056b3;
+    background-color: #218838;
+    color: white;
   }
 
 table {
