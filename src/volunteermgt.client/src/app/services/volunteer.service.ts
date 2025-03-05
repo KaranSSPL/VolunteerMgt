@@ -71,5 +71,4 @@ export class VolunteerService {
   deleteVolunteerandService(volunteerId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/volunteer-service/volunteer/${volunteerId}`);
   }
-
 }

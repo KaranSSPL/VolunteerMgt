@@ -31,7 +31,6 @@
             <label>Day:</label>
             <input type="text" formControlName="day" placeholder="Type day..." (input)="filterDays(i)" (blur)="hideSuggestions(i)" />
 
-            <!-- Suggested Days Will Appear Below Input -->
             <div *ngIf="suggestedDays[i]?.length" class="suggestion-box">
               <p *ngFor="let day of suggestedDays[i]" (click)="selectDay(i, day)">{{ day }}</p>
             </div>

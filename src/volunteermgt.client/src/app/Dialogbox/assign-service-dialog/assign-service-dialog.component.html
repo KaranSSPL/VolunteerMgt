@@ -1,7 +1,6 @@
 <h2>Assign Service</h2>
 
 <form [formGroup]="assignForm">
-  <!-- Volunteers Dropdown -->
   <div class="dropdown-container">
     <label>Volunteers</label>
     <a routerLink="/createVolunteer" (click)="closeDialog()">Create Volunteer</a>
@@ -21,14 +20,12 @@
     </div>
   </div>
 
-  <!-- Selected Volunteers as Tags -->
   <div class="selected-items">
     <span *ngFor="let volunteer of selectedVolunteers" class="tag">
       {{ volunteer.name }} <span class="remove-tag" (click)="removeVolunteer(volunteer.id)">×</span>
     </span>
   </div>
 
-  <!-- Services Dropdown -->
   <div class="dropdown-container">
     <label>Services</label>
     <a routerLink="/service" (click)="closeDialog()">Create Service</a>
@@ -45,13 +42,11 @@
     </div>
   </div>
 
-  <!-- Time Slot -->
   <label for="timeSlot">Time Slot</label>
   <input id="timeSlot" type="text" formControlName="timeSlot" placeholder="Enter time slot">
 
   <label for="date">Date</label>
   <input id="date" type="date" formControlName="date">
 
-  <!-- Submit Button -->
   <button type="submit" (click)="assignService()">Assign</button>
 </form>

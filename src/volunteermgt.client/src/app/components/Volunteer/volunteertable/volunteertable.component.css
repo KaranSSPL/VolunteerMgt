@@ -18,10 +18,12 @@
   border-radius: 5px;
   cursor: pointer;
   transition: 0.3s;
+  font-weight: 600;
 }
 
 .create-btn:hover {
-  background: #f4f4f4;
+  background-color: #218838;
+  color: white;
 }
 
 table {
@@ -54,31 +56,33 @@ ul {
   margin: 0;
 }
 
-/* Action Buttons */
-.action-btn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
+.btn-edit:hover {
+  background-color: #e0a800;
+}
+
+.btn-edit {
+  background-color: white;
+  color: black;
+  border: 1px solid;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+  font-weight: 600;
+  padding: 5px 10px;
   cursor: pointer;
-  font-size: 14px;
-  margin: 0 5px;
-  transition: 0.3s;
+  border-radius: 4px;
 }
 
-.edit-btn {
-  background: #4caf50;
-  color: white;
+.btn-delete:hover {
+  background-color: #c82333;
 }
 
-.edit-btn:hover {
-  background: #45a049;
-}
-
-.delete-btn {
-  background: #f44336;
-  color: white;
-}
-
-.delete-btn:hover {
-  background: #d32f2f;
+.btn-delete {
+  background-color: white;
+  color: black;
+  border: 1px solid;
+  font-weight: 600;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+  padding: 5px 10px;
+  cursor: pointer;
+  margin: 10px;
+  border-radius: 4px;
 }
