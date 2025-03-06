@@ -1,4 +1,4 @@
-﻿namespace VolunteerMgt.Server.Models.ResetPassword
+﻿namespace VolunteerMgt.Server.Models.PasswordModel
 {
     public class ResetPasswordModel
     {

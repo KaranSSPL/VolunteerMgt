@@ -1,8 +1,6 @@
-﻿using VolunteerMgt.Server.Entities;
-
-namespace VolunteerMgt.Server.Models.Volunteer
+﻿namespace VolunteerMgt.Server.Models.Volunteer
 {
-    public class VolunteerWithId : VolunteerModel
+    public class VolunteerWithId : Entities.Volunteer
     {
         public string Id { get; set; } = string.Empty;
     }

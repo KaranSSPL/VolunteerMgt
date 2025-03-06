@@ -8,11 +8,11 @@ import { catchError } from 'rxjs/operators';
 })
 export class UserService {
 
-  private endpoint = '/api/volunteer/get-volunteers';
-  private roleEndpoint = '/api/role'; 
+  private endpoint = '/api/volunteers';
+  private roleEndpoint = '/api/roles'; 
   constructor(private http: HttpClient) { }
 
-  getUsers(): Observable<any> {
+  getVolunteers(): Observable<any> {
     return this.http.get<any>(this.endpoint).pipe(
       catchError(error => {
         console.error('Error fetching users:', error);
@@ -31,7 +31,7 @@ export class UserService {
   }
 
   getRoles(): Observable<any> {
-    return this.http.get<any>(`${this.roleEndpoint}/get-roles`).pipe(
+    return this.http.get<any>(`${this.roleEndpoint}`).pipe(
       catchError(error => {
         console.error('Error fetching roles:', error);
         return throwError(() => new Error('Failed to fetch roles.'));
@@ -39,9 +39,9 @@ export class UserService {
     );
   }
 
-  assignRole(userId: string, roleIds: string[]): Observable<any> {
-    const data = { userId, roleIds };
-    return this.http.post<any>(`${this.roleEndpoint}/assign-user-roles`,data).pipe(
+  assignRole(userId: string, roleId: string): Observable<any> {
+    const data = { userId, roleId };
+    return this.http.patch<any>(`${this.endpoint}/assign-role`,data).pipe(
       catchError(error => {
         console.error('Error fetching users:', error);
         return throwError(() => new Error('Failed to fetch users.'));

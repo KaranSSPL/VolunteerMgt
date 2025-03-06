@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VolunteerMgt.Server.Entities
 {
-    public class VolunteerModel
+    public class Volunteer
     {
         [Required]
         [SwaggerSchema("Email address")]

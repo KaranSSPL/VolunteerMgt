@@ -1,4 +1,4 @@
-﻿namespace VolunteerMgt.Server.Models.ChangePassword
+﻿namespace VolunteerMgt.Server.Models.PasswordModel
 {
     public class ChangePasswordModel
     {

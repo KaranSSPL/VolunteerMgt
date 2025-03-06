@@ -1,10 +1,9 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
-using VolunteerMgt.Server.Entities;
 
-namespace VolunteerMgt.Server.Models.Edit
+namespace VolunteerMgt.Server.Models.Volunteer
 {
-    public class EditVolunteerModel : VolunteerModel
+    public class EditVolunteerModel : Entities.Volunteer
     {
         [Required]
         [SwaggerSchema("Volunteer Id")]

@@ -1,10 +1,9 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
-using VolunteerMgt.Server.Entities;
 
-namespace VolunteerMgt.Server.Models.Register
+namespace VolunteerMgt.Server.Models.Volunteer
 {
-    public class RegisterModel : VolunteerModel
+    public class RegisterVolunteerModel : Entities.Volunteer
     {
         [Required]
         [SwaggerSchema("Password")]

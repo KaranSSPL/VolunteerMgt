@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VolunteerMgt.Server.Abstraction.Service;
-using VolunteerMgt.Server.Models.Role;
+using VolunteerMgt.Server.Models;
 using VolunteerMgt.Server.Models.Wrapper;
 
 namespace VolunteerMgt.Server.Endpoints
@@ -9,36 +9,38 @@ namespace VolunteerMgt.Server.Endpoints
     {
         public static void MapRoleEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/role")
+            var group = app.MapGroup("/api/roles")
                 .WithOpenApi()
                 .RequireAuthorization();
 
-            group.MapGet("/get-roles", GetRoleAsync)
-                .WithName("getRole");
+            group.MapGet("/", GetRolesAsync)
+                .WithName("getRoles");
 
+            group.MapGet("/{id}", GetRolebyIdAsync)
+                .WithName("getRoleById");
 
-            group.MapPost("/add-role", AddRoleAsync)
+            group.MapPost("/", AddRoleAsync)
                 .WithName("addRole");
 
-            group.MapGet("/get-user-roles/{id}", GetUserRolesAsync)
-                .WithName("getUserRoles");
-
-            group.MapPut("/update-role", UpdateRoleAsync)
+            group.MapPut("/", UpdateRoleAsync)
                 .WithName("updateRole");
 
-            group.MapDelete("/delete-role", DeleteRoleAsync)
+            group.MapDelete("/{id}", DeleteRoleAsync)
                 .WithName("deleteRole");
 
-            group.MapPost("/assign-user-roles", AssignUserRoleAsync)
-                .WithName("assignUserRoles");
+            group.MapPatch("/assign-permission", AssignPermissionAsync)
+                .WithName("assignPermission");
 
-            group.MapPost("/remove-user-roles", RemoveUserRoleAsync)
-                .WithName("removeUserRoles");
-
+            group.MapPatch("/remove-permission", RemovePermissionAsync)
+                .WithName("removePermission");
         }
-        private static async Task<Result<List<Role>>> GetRoleAsync([FromServices] IRoleService roleService)
+        private static async Task<Result<List<Role>>> GetRolesAsync([FromServices] IRoleService roleService)
         {
-            return await roleService.GetRoleAsync();
+            return await roleService.GetRolesAsync();
+        }
+        private static async Task<Result<Role>> GetRolebyIdAsync([FromServices] IRoleService roleService, Guid roleId)
+        {
+            return await roleService.GetRolesbyIdAsync(roleId);
         }
         private static async Task<Result> AddRoleAsync([FromServices] IRoleService roleService, [FromBody] string role)
         {
@@ -48,21 +50,17 @@ namespace VolunteerMgt.Server.Endpoints
         {
             return await roleService.UpdateRoleAsync(role);
         }
-        private static async Task<Result> GetUserRolesAsync([FromServices] IRoleService roleService, Guid userId)
+        private static async Task<Result> DeleteRoleAsync([FromServices] IRoleService roleService, Guid id)
         {
-            return await roleService.GetUserRolesAsync(userId);
+            return await roleService.DeleteRoleAsync(id);
         }
-        private static async Task<Result> AssignUserRoleAsync([FromServices] IRoleService roleService, [FromBody] AssignUser role)
+        private static async Task<Result> AssignPermissionAsync([FromServices] IRoleService roleService, [FromBody] PermissionRolesDto permissionRoles)
         {
-            return await roleService.AssignUserRoleAsync(role);
+            return await roleService.AssignPermissionAsync(permissionRoles);
         }
-        private static async Task<Result> RemoveUserRoleAsync([FromServices] IRoleService roleService, [FromBody] AssignUser role)
+        private static async Task<Result> RemovePermissionAsync([FromServices] IRoleService roleService, [FromBody] PermissionRolesDto permissionRoles)
         {
-            return await roleService.RemoveUserRoleAsync(role);
-        }
-        private static async Task<Result> DeleteRoleAsync([FromServices] IRoleService roleService, Guid Id)
-        {
-            return await roleService.DeleteRoleAsync(Id);
+            return await roleService.RemovePermissionAsync(permissionRoles);
         }
     }
 }

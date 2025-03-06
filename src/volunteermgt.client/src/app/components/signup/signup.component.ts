@@ -36,7 +36,7 @@ export class SignupComponent {
 
     this.loading = true;
 
-    this.http.post('/api/user/register-user', this.volunteer).subscribe({
+    this.http.post('/api/volunteers', this.volunteer).subscribe({
       next: (response : any) => {
         if (response.statusCode == 400) {
           console.log(response.errors);

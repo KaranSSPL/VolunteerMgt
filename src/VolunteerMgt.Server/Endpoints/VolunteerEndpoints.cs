@@ -1,9 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VolunteerMgt.Server.Abstraction.Service;
-using VolunteerMgt.Server.Models.ChangePassword;
-using VolunteerMgt.Server.Models.Edit;
-using VolunteerMgt.Server.Models.ForgotPassword;
-using VolunteerMgt.Server.Models.ResetPassword;
+using VolunteerMgt.Server.Models;
+using VolunteerMgt.Server.Models.PasswordModel;
 using VolunteerMgt.Server.Models.Volunteer;
 using VolunteerMgt.Server.Models.Wrapper;
 
@@ -13,30 +11,34 @@ namespace VolunteerMgt.Server.Endpoints
     {
         public static void MapVolunteerEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/volunteer")
+            var group = app.MapGroup("/api/volunteers")
                 .WithOpenApi()
                 .RequireAuthorization();
 
-            group.MapGet("/get-volunteers", GetVolunteersAsync)
-                .WithName("getAllVolunteers");
+            group.MapGet("/", GetVolunteersAsync)
+                .WithName("getVolunteers");
 
-            group.MapGet("/get-volunteers/{id}", GetVolunteerbyIdAsync)
+            group.MapGet("/{id}", GetVolunteerbyIdAsync)
                 .WithName("getVolunteerById");
 
-            group.MapPut("/update-volunteer", UpdateVolunteerAsync)
+            group.MapGet("/{id}/roles", GetVolunteerRolesAsync)
+                .WithName("getVolunteerRoles");
+
+            group.MapPost("/", AddVolunteerAsync)
+                .WithName("AddVolunteer")
+                .AllowAnonymous();
+
+            group.MapPut("/", UpdateVolunteerAsync)
                 .WithName("updateVolunteer");
 
-            group.MapPost("/forgot-password", ForgotPasswordAsync)
-                .WithName("forgotPassword")
-                .AllowAnonymous();
+            group.MapDelete("/{id}", DeleteVolunteerAsync)
+                .WithName("deleteVolunteer");
 
-            group.MapGet("/reset-password", ResetPasswordAsync)
-                .WithName("resetPassword")
-                .AllowAnonymous();
+            group.MapPatch("/assign-role", AssignRoleAsync)
+                .WithName("assignVolunteerRoles");
 
-            group.MapPost("/reset-password", ResetPasswordPostAsync)
-                .WithName("resetPasswordPost")
-                .AllowAnonymous();
+            group.MapPatch("/remove-role", RemoveRoleAsync)
+                .WithName("removeVolunteerRoles");
 
             group.MapPut("/change-password", ChangePasswordAsync)
                 .WithName("changePassword");
@@ -45,31 +47,38 @@ namespace VolunteerMgt.Server.Endpoints
         {
             return await volunteerService.GetVolunteersAsync();
         }
-        private static async Task<Result<VolunteerWithId>> GetVolunteerbyIdAsync([FromServices] IVolunteerService volunteerService, Guid Id)
+        private static async Task<Result<VolunteerWithId>> GetVolunteerbyIdAsync([FromServices] IVolunteerService volunteerService, Guid id)
         {
-            return await volunteerService.GetVolunteerByIdAsync(Id);
+            return await volunteerService.GetVolunteerByIdAsync(id);
         }
         private static async Task<Result<EditVolunteerModel>> UpdateVolunteerAsync([FromServices] IVolunteerService volunteerService, [FromBody] EditVolunteerModel model)
         {
             return await volunteerService.UpdateVolunteerAsync(model);
-        }
-        private static async Task<Result> ForgotPasswordAsync([FromServices] IVolunteerService volunteerService, [FromBody] ForgotPasswordModel model)
-        {
-            return await volunteerService.ForgotPasswordAsync(model);
-        }
-        private static async Task<Result> ResetPasswordAsync([FromServices] IVolunteerService volunteerService, [FromQuery] string email, [FromQuery] string token)
-        {
-            return await volunteerService.ResetPasswordAsync(email, token);
-        }
-        private static async Task<Result> ResetPasswordPostAsync([FromServices] IVolunteerService volunteerService, [FromBody] ResetPasswordModel model)
-        {
-            return await volunteerService.ResetPasswordPostAsync(model);
         }
 
         private static async Task<Result> ChangePasswordAsync([FromServices] IVolunteerService volunteerService, [FromBody] ChangePasswordModel model)
         {
             return await volunteerService.ChangePasswordAsync(model);
         }
-
+        private static async Task<Result<RegisterVolunteerModel>> AddVolunteerAsync([FromServices] IVolunteerService volunteerService, [FromBody] RegisterVolunteerModel model)
+        {
+            return await volunteerService.AddVolunteerAsync(model);
+        }
+        private static async Task<Result> GetVolunteerRolesAsync([FromServices] IVolunteerService volunteerService, Guid id)
+        {
+            return await volunteerService.GetVolunteerRolesAsync(id);
+        }
+        private static async Task<Result> AssignRoleAsync([FromServices] IVolunteerService volunteerService, [FromBody] UserRoleMapping userRole)
+        {
+            return await volunteerService.AssignRoleAsync(userRole);
+        }
+        private static async Task<Result> RemoveRoleAsync([FromServices] IVolunteerService volunteerService, [FromBody] UserRoleMapping userRole)
+        {
+            return await volunteerService.RemoveRoleAsync(userRole);
+        }
+        private static async Task<Result> DeleteVolunteerAsync([FromServices] IVolunteerService volunteerService, string id)
+        {
+            return await volunteerService.DeleteVolunteerAsync(id);
+        }
     }
 }

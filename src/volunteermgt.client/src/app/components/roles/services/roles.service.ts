@@ -6,28 +6,28 @@ import { Observable } from 'rxjs';
   providedIn: 'root' 
 })
 export class RoleService {
-  private readonly roleUrl = '/api/role';
-  private readonly permissionUrl = '/api/permission';
+  private readonly roleUrl = '/api/roles';
+  private readonly permissionUrl = '/api/permissions';
 
   constructor(private http: HttpClient) { }
 
   // Fetch all roles
   getRoles(): Observable<any> {
-    return this.http.get(`${this.roleUrl}/get-roles`);
+    return this.http.get(`${this.roleUrl}`);
   }
 
   // Fetch all permissions
   getPermissions(): Observable<any> {
-    return this.http.get(`${this.permissionUrl}/get-permissions`);
+    return this.http.get(`${this.permissionUrl}`);
   }
 
   // Fetch permissions for a specific role
   getPermissionRoles(roleId: string): Observable<any> {
-    return this.http.get(`${this.roleUrl}/get-permission-roles/${roleId}`);
+    return this.http.get(`${this.roleUrl}/${roleId}`);
   }
 
   // Assign a permission to a role
   assignPermissionToRole(roleId: string, permissionId: string): Observable<any> {
-    return this.http.post(`${this.permissionUrl}/add-permission-roles`, { roleId, permissionId });
+    return this.http.post(`${this.roleUrl}/assign-permission`, { roleId, permissionId });
   }
 }

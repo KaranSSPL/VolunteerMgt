@@ -1,6 +1,6 @@
-﻿namespace VolunteerMgt.Server.Models.PermissionRoles
+﻿namespace VolunteerMgt.Server.Models
 {
-    public class PermissionRolesModel
+    public class PermissionRolesDto
     {
         public Guid PermissionId { get; set; }
         public Guid RoleId { get; set; }

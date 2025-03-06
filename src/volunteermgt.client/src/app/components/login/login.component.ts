@@ -23,7 +23,7 @@ export class LoginComponent {
       response => {
         if (response.payload) {
           sessionStorage.setItem('authToken', response.payload.token);
-          Swal.fire("Successfully Login");
+          Swal.fire({ position: "top-end", icon: "success", title: "Successfully Login", showConfirmButton: false, timer: 1500 });
           this.router.navigate(['/home']); // Redirect after login
         } else {
           Swal.fire("Login Failed!", "Invalid credentials. Please try again.", "error");

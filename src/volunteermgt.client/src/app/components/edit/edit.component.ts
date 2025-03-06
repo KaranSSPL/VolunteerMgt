@@ -33,7 +33,7 @@ export class EditComponent implements OnInit {
 
   getUserDetails(id:string) {
     this.loading = true;
-    const url = `/api/volunteer/get-volunteers/${id}`;  
+    const url = `/api/volunteers/${id}`;  
 
     this.http.get(url).subscribe({
       next: (data: any) => {
@@ -56,7 +56,7 @@ export class EditComponent implements OnInit {
   onUpdate() {
     this.loading = true;
 
-    this.http.put('/api/volunteer/update-volunteer', this.volunteer).subscribe({
+    this.http.put('/api/volunteers/', this.volunteer).subscribe({
       next: (response: any) => {
         Swal.fire("Success!", "Profile updated successfully.", "success");
         this.loading = false;

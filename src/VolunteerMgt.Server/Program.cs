@@ -56,7 +56,7 @@ try
         .AddSignInManager()
         .AddDefaultTokenProviders();
     //Token Expiration time 
-    builder.Services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromMinutes(10));
+    builder.Services.Configure<DataProtectionTokenProviderOptions>(options => options.TokenLifespan = TimeSpan.FromMinutes(60));
 
     builder.Services.Configure<JwtConfiguration>(builder.Configuration.GetSection(nameof(JwtConfiguration)));
     builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection(nameof(EmailSettings)));
@@ -196,7 +196,6 @@ try
 
     // Add all endpoints here.
     app.MapAuthEndpoints();
-    app.MapUserEndpoints();
     app.MapVolunteerEndpoints();
     app.MapRoleEndpoints();
     app.MapPermissionEndpoints();

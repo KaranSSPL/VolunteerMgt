@@ -1,7 +1,7 @@
 ﻿using Swashbuckle.AspNetCore.Annotations;
 using System.ComponentModel.DataAnnotations;
 
-namespace VolunteerMgt.Server.Models.ForgotPassword
+namespace VolunteerMgt.Server.Models.PasswordModel
 {
     public class ForgotPasswordModel
     {

@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 using VolunteerMgt.Server.Abstraction.Service;
 using VolunteerMgt.Server.Abstraction.Service.Identity;
 using VolunteerMgt.Server.Entities.Identity;
-using VolunteerMgt.Server.Models.Role;
+using VolunteerMgt.Server.Models;
 using VolunteerMgt.Server.Models.Wrapper;
 using VolunteerMgt.Server.Persistence;
 
@@ -17,7 +18,7 @@ namespace VolunteerMgt.Server.Services
         VolunteerDataContext _dbContext
         ) : IRoleService
     {
-        public async Task<Result<List<Role>>> GetRoleAsync()
+        public async Task<Result<List<Role>>> GetRolesAsync()
         {
             try
             {
@@ -85,31 +86,6 @@ namespace VolunteerMgt.Server.Services
                 return Result.Fail("An internal error occurred while creating the Role.", HttpStatusCode.InternalServerError);
             }
         }
-        public async Task<Result<AssignUser>> GetUserRolesAsync(Guid userId)
-        {
-            try
-            {
-                if (userId == Guid.Empty)
-                    return Result<AssignUser>.Fail("User ID cannot be empty.", HttpStatusCode.BadRequest);
-
-                var user = await _userManager.FindByIdAsync(userId.ToString());
-                if (user == null)
-                    return Result<AssignUser>.Fail($"User with ID '{userId}' not found.", HttpStatusCode.NotFound);
-
-                var roles = await _userManager.GetRolesAsync(user);
-                var assignUser = new AssignUser()
-                {
-                    UserId = userId.ToString(),
-                    RoleIds = roles.ToList()
-                };
-                return await Result<AssignUser>.SuccessAsync(assignUser, HttpStatusCode.OK);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while fetching roles for user ID '{UserId}'.", userId);
-                return Result<AssignUser>.Fail("An internal error occurred while fetching roles.", HttpStatusCode.InternalServerError);
-            }
-        }
         public async Task<Result<Role>> UpdateRoleAsync(Role updatedRole)
         {
             try
@@ -151,6 +127,37 @@ namespace VolunteerMgt.Server.Services
                 return Result<Role>.Fail("An internal error occurred while updating the role.", HttpStatusCode.InternalServerError);
             }
         }
+        public async Task<Result<Role>> GetRolesbyIdAsync(Guid roleId)
+        {
+            try
+            {
+                if (roleId == Guid.Empty)
+                    return Result<Role>.Fail("Role ID cannot be empty.", HttpStatusCode.BadRequest);
+
+                var role = await _roleManager.FindByIdAsync(roleId.ToString());
+                if (role == null)
+                    return Result<Role>.Fail($"Role '{roleId}' not found.", HttpStatusCode.NotFound);
+
+                var permissionRoles = await _dbContext.PermissionRoles.Where(x => x.RoleId == roleId).Select(pr => pr.PermissionId).ToListAsync();
+
+                if (!permissionRoles.Any())
+                    return Result<Role>.Fail($"No permissions found for role ID '{roleId}'.", HttpStatusCode.NotFound);
+
+                var permissions = await _dbContext.Permissions.Where(p => permissionRoles.Contains(p.Id)).ToListAsync();
+
+                return await Result<Role>.SuccessAsync(new Role
+                {
+                    Id = role.Id,
+                    Name = role.Name ?? string.Empty,
+                    Permissions = permissions
+                }, HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching permissions for role ID '{RoleId}'.", roleId);
+                return Result<Role>.Fail("An internal error occurred while fetching permissions.", HttpStatusCode.InternalServerError);
+            }
+        }
         public async Task<Result> DeleteRoleAsync(Guid roleId)
         {
             try
@@ -182,100 +189,78 @@ namespace VolunteerMgt.Server.Services
                 return Result.Fail("An internal error occurred while deleting the role.", HttpStatusCode.InternalServerError);
             }
         }
-        public async Task<Result> AssignUserRoleAsync(AssignUser assignUser)
+
+        public async Task<Result> AssignPermissionAsync(PermissionRolesDto permissionRoles)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(assignUser.UserId) || assignUser.RoleIds == null || !assignUser.RoleIds.Any())
-                    return Result.Fail("User ID and Role IDs cannot be empty.", HttpStatusCode.BadRequest);
+                if (permissionRoles == null || permissionRoles.PermissionId == Guid.Empty || permissionRoles.RoleId == Guid.Empty)
+                    return Result.Fail("Invalid Permission ID or Role ID.", HttpStatusCode.BadRequest);
 
-                var user = await _userManager.FindByIdAsync(assignUser.UserId);
-                if (user == null)
-                    return Result.Fail($"User with ID '{assignUser.UserId}' not found.", HttpStatusCode.NotFound);
+                var permissions = await _dbContext.Permissions.AnyAsync(p => p.Id == permissionRoles.PermissionId);
+                if (!permissions)
+                    return Result.Fail($"Permission with ID '{permissionRoles.PermissionId}' not found.", HttpStatusCode.NotFound);
 
-                var roleNames = new List<string>();
+                var roles = await _dbContext.Roles.AnyAsync(r => r.Id == permissionRoles.RoleId.ToString());
+                if (!roles)
+                    return Result.Fail($"Role with ID '{permissionRoles.RoleId}' not found.", HttpStatusCode.NotFound);
 
-                foreach (var roleId in assignUser.RoleIds)
+                var existingPermissionRoles = await _dbContext.PermissionRoles
+                    .AnyAsync(pr => pr.PermissionId == permissionRoles.PermissionId && pr.RoleId == permissionRoles.RoleId);
+
+                if (existingPermissionRoles)
                 {
-                    var role = await _roleManager.FindByIdAsync(roleId);
-                    if (role != null)
-                    {
-                        roleNames.Add(role.Name);
-                    }
-                    else
-                    {
-                        _logger.LogWarning("Role with ID '{RoleId}' not found.", roleId);
-                    }
+                    _logger.LogWarning("Permission '{PermissionId}' is already assigned to Role '{RoleId}'.", permissionRoles.PermissionId, permissionRoles.RoleId);
+                    return Result.Fail("This permission is already assigned to the specified role.", HttpStatusCode.Conflict);
                 }
 
-                if (!roleNames.Any())
-                    return Result.Fail("No valid roles found to assign.", HttpStatusCode.BadRequest);
-
-                var result = await _userManager.AddToRolesAsync(user, roleNames);
-                if (!result.Succeeded)
+                var newPermissionRole = new PermissionRoles
                 {
-                    _logger.LogError("Failed to assign roles to user '{UserId}'. Errors: {Errors}",
-                                     assignUser.UserId, string.Join(", ", result.Errors.Select(e => e.Description)));
-                    return Result.Fail("Failed to assign roles to the user.", HttpStatusCode.InternalServerError);
-                }
+                    Id = Guid.NewGuid(),
+                    PermissionId = permissionRoles.PermissionId,
+                    RoleId = permissionRoles.RoleId
+                };
 
-                _logger.LogInformation("Roles assigned to user '{UserId}' successfully: {Roles}",
-                                       assignUser.UserId, string.Join(", ", roleNames));
-                return await Result.SuccessAsync($"Roles assigned successfully to user {assignUser.UserId}.");
+                await _dbContext.PermissionRoles.AddAsync(newPermissionRole);
+                await _dbContext.SaveChangesAsync();
+
+                _logger.LogInformation("Successfully assigned Permission '{PermissionId}' to Role '{RoleId}'.", newPermissionRole.PermissionId, newPermissionRole.RoleId);
+
+                return await Result.SuccessAsync("Permission successfully assigned to the role.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while assigning roles to user '{UserId}'", assignUser.UserId);
-                return Result.Fail("An internal error occurred while assigning roles.", HttpStatusCode.InternalServerError);
+                _logger.LogError(ex, "An error occurred while assigning Permission '{PermissionId}' to Role '{RoleId}'.",
+                                 permissionRoles?.PermissionId, permissionRoles?.RoleId);
+                return Result.Fail("An internal error occurred while assigning the permission.", HttpStatusCode.InternalServerError);
             }
         }
-        public async Task<Result> RemoveUserRoleAsync(AssignUser assignUser)
+        public async Task<Result> RemovePermissionAsync(PermissionRolesDto permissionRoles)
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(assignUser.UserId) || assignUser.RoleIds == null || !assignUser.RoleIds.Any())
-                    return Result.Fail("User ID and Role IDs cannot be empty.", HttpStatusCode.BadRequest);
+                if (permissionRoles == null || permissionRoles.PermissionId == Guid.Empty || permissionRoles.RoleId == Guid.Empty)
+                    return Result.Fail("Invalid Role ID or permissions list.", HttpStatusCode.BadRequest);
 
-                var user = await _userManager.FindByIdAsync(assignUser.UserId);
-                if (user == null)
-                    return Result.Fail($"User with ID '{assignUser.UserId}' not found.", HttpStatusCode.NotFound);
+                var roleExists = await _dbContext.Roles.AnyAsync(r => r.Id == permissionRoles.RoleId.ToString());
+                if (!roleExists)
+                    return Result.Fail($"Role with ID '{permissionRoles.RoleId.ToString()}' not found.", HttpStatusCode.NotFound);
 
-                var currentRoles = await _userManager.GetRolesAsync(user);
-                var rolesToRemove = new List<string>();
+                var existingPermissionRoles = _dbContext.PermissionRoles.Where(pr => pr.RoleId == permissionRoles.RoleId && pr.PermissionId == permissionRoles.PermissionId);
 
-                foreach (var roleId in assignUser.RoleIds)
-                {
-                    var role = await _roleManager.FindByIdAsync(roleId);
-                    if (role != null && currentRoles.Contains(role.Name))
-                    {
-                        rolesToRemove.Add(role.Name);
-                    }
-                    else
-                    {
-                        _logger.LogWarning("Role with ID '{RoleId}' not found or not assigned to the user.", roleId);
-                    }
-                }
+                _dbContext.PermissionRoles.RemoveRange(existingPermissionRoles);
+                await _dbContext.SaveChangesAsync();
 
-                if (!rolesToRemove.Any())
-                    return Result.Fail("No valid roles found to remove.", HttpStatusCode.BadRequest);
+                _logger.LogInformation("Successfully Removed permissions for Role '{RoleId}'.", permissionRoles.RoleId.ToString());
 
-                var result = await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
-                if (!result.Succeeded)
-                {
-                    _logger.LogError("Failed to remove roles from user '{UserId}'. Errors: {Errors}",
-                                     assignUser.UserId, string.Join(", ", result.Errors.Select(e => e.Description)));
-                    return Result.Fail("Failed to remove roles from the user.", HttpStatusCode.InternalServerError);
-                }
-
-                _logger.LogInformation("Successfully removed roles from user '{UserId}'. Removed roles: {Roles}",
-                                       assignUser.UserId, string.Join(", ", rolesToRemove));
-                return await Result.SuccessAsync($"Roles removed successfully from user {assignUser.UserId}.");
+                return await Result.SuccessAsync("Permissions Removed successfully.");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while removing roles from user '{UserId}'.", assignUser.UserId);
-                return Result.Fail("An internal error occurred while removing roles.", HttpStatusCode.InternalServerError);
+                _logger.LogError(ex, "An error occurred while removing permissions for Role '{RoleId}'.", permissionRoles.RoleId.ToString());
+                return Result.Fail("An internal error occurred while removing role permissions.", HttpStatusCode.InternalServerError);
             }
         }
+
     }
 }

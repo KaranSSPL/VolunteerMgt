@@ -5,10 +5,8 @@ using VolunteerMgt.Server.Abstraction.Mail;
 using VolunteerMgt.Server.Abstraction.Service;
 using VolunteerMgt.Server.Abstraction.Service.Identity;
 using VolunteerMgt.Server.Entities.Identity;
-using VolunteerMgt.Server.Models.ChangePassword;
-using VolunteerMgt.Server.Models.Edit;
-using VolunteerMgt.Server.Models.ForgotPassword;
-using VolunteerMgt.Server.Models.ResetPassword;
+using VolunteerMgt.Server.Models;
+using VolunteerMgt.Server.Models.PasswordModel;
 using VolunteerMgt.Server.Models.Volunteer;
 using VolunteerMgt.Server.Models.Wrapper;
 
@@ -17,8 +15,9 @@ namespace VolunteerMgt.Server.Services
     public class VolunteerService(
         UserManager<ApplicationUser> _userManager,
         ICurrentUserService _currentUserService,
-        IHttpContextAccessor _httpContextAccessor,
         IMailService _mailService,
+        RoleManager<ApplicationRole> _roleManager,
+        SignInManager<ApplicationUser> _signInManager,
         ILogger<VolunteerService> _logger) : IVolunteerService
     {
         public async Task<Result<List<VolunteerWithId>>> GetVolunteersAsync()
@@ -138,109 +137,6 @@ namespace VolunteerMgt.Server.Services
             }
         }
 
-        public async Task<Result> ForgotPasswordAsync(ForgotPasswordModel model)
-        {
-            try
-            {
-                var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user == null)
-                {
-                    return Result.Fail("User with this email does not exist.", HttpStatusCode.NotFound);
-                }
-
-                // Generate reset token
-                var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-
-                var scheme = _httpContextAccessor?.HttpContext?.Request.Scheme;
-                var host = _httpContextAccessor?.HttpContext?.Request.Host;
-
-                var resetLink = $"{scheme}://{host}/api/reset-password?email={user.Email}&token={WebUtility.UrlEncode(token)}";
-
-
-                // Send email
-                var emailBody = $"Click <a href='{resetLink}'>here</a> to reset your password.";
-                await _mailService.SendEmailAsync(user.Email ?? string.Empty, "Password Reset Request", emailBody);
-
-                return Result.Success("Password reset link has been sent to your email.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An unexpected error occurred while while forgeting the users");
-                return Result<List<ApplicationUser>>.Fail("An internal error occurred while forgeting the users.", HttpStatusCode.InternalServerError);
-            }
-        }
-
-        public async Task<Result> ResetPasswordAsync(string email, string token)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(token))
-                {
-                    _logger.LogWarning("Invalid reset attempt: Missing email or token.");
-                    return Result.Fail("Invalid request. Email and token are required.", HttpStatusCode.BadRequest);
-                }
-                var user = await _userManager.FindByEmailAsync(email);
-
-                if (user == null)
-                {
-                    _logger.LogWarning("Password reset attempt failed: User with email {Email} not found.", email);
-                    return Result.Fail("User not found.", HttpStatusCode.NotFound);
-                }
-
-                var isTokenValid = await _userManager.VerifyUserTokenAsync(user, TokenOptions.DefaultProvider,
-                    UserManager<ApplicationUser>.ResetPasswordTokenPurpose, token);
-
-                if (!isTokenValid)
-                    return Result.Fail("Invalid or expired token.", HttpStatusCode.BadRequest);
-
-                _logger.LogInformation("Password reset request valid for user: {Email}", email);
-                return await Result.SuccessAsync("You can reset your password.");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while processing the password reset for {Email}", email);
-                return Result.Fail("An internal error occurred. Please try again later.", HttpStatusCode.InternalServerError);
-            }
-        }
-
-        public async Task<Result> ResetPasswordPostAsync(ResetPasswordModel model)
-        {
-            try
-            {
-                if (string.IsNullOrWhiteSpace(model.Email) || string.IsNullOrWhiteSpace(model.Token))
-                {
-                    _logger.LogWarning("Invalid reset attempt: Missing email or token.");
-                    return Result.Fail("Invalid request. Email and token are required.", HttpStatusCode.BadRequest);
-                }
-                var user = await _userManager.FindByEmailAsync(model.Email);
-
-                if (user == null)
-                {
-                    _logger.LogWarning("Password reset attempt failed: User with email {Email} not found.", model.Email);
-                    return Result.Fail("User not found.", HttpStatusCode.NotFound);
-                }
-
-                var resetResult = await _userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
-                if (!resetResult.Succeeded)
-                {
-                    var errors = string.Join("; ", resetResult.Errors.Select(e => e.Description));
-                    _logger.LogError("Password reset failed for {Email}: {Errors}", model.Email, errors);
-                    return Result.Fail($"Failed to reset password: {errors}", HttpStatusCode.BadRequest);
-                }
-                var emailBody = $"Password reset successfully";
-                await _mailService.SendEmailAsync(user.Email ?? string.Empty, "Password Reset", emailBody);
-
-                _logger.LogInformation("Password successfully reset for {Email}", model.Email);
-                return await Result.SuccessAsync("Password reset successfully.");
-
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while processing the password reset for {Email}", model.Email);
-                return Result.Fail("An internal error occurred. Please try again later.", HttpStatusCode.InternalServerError);
-            }
-        }
-
         public async Task<Result> ChangePasswordAsync(ChangePasswordModel model)
         {
             try
@@ -285,6 +181,200 @@ namespace VolunteerMgt.Server.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while processing the password change for {Email}", model.Email);
+                return Result.Fail("An internal error occurred. Please try again later.", HttpStatusCode.InternalServerError);
+            }
+        }
+        public async Task<Result<RegisterVolunteerModel>> AddVolunteerAsync(RegisterVolunteerModel model)
+        {
+            try
+            {
+                if (await _userManager.FindByEmailAsync(model.Email) != null)
+                {
+                    return Result<RegisterVolunteerModel>.Fail("Email is already registered.", HttpStatusCode.BadRequest);
+                }
+                var currentUser = _currentUserService.GetUserEmail();
+                var user = new ApplicationUser
+                {
+                    UserName = model.Username,
+                    Email = model.Email,
+                    PhoneNumber = model.PhoneNumber,
+                    CreatedDate = DateTime.Now,
+                    CreatedBy = (currentUser != null) ? _userManager.FindByEmailAsync(currentUser).Result?.Id : model.Username
+                };
+
+                var result = await _userManager.CreateAsync(user, model.Password);
+                if (!result.Succeeded)
+                {
+                    var errorMessage = result.Errors.Select(e => e.Description).ToList();
+                    return Result<RegisterVolunteerModel>.Fail(errorMessage, HttpStatusCode.BadRequest);
+                }
+                var roleExists = await _roleManager.RoleExistsAsync(model.Role);
+
+                if (!roleExists)
+                {
+                    _logger.LogWarning("Role '{Role}' does not exist.", model.Role);
+                    return Result<RegisterVolunteerModel>.Fail($"Role '{model.Role}' does not exist.", HttpStatusCode.BadRequest);
+                }
+
+                await _userManager.AddToRoleAsync(user, model.Role);
+                await _signInManager.SignInAsync(user, isPersistent: false);
+
+                return await Result<RegisterVolunteerModel>.SuccessAsync(model, "Successfully Created User");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An unexpected error occurred while creating user {Email}.", model.Email);
+                return Result<RegisterVolunteerModel>.Fail("An internal error occurred while creating the user.", HttpStatusCode.InternalServerError);
+            }
+        }
+
+        public async Task<Result<UserRoleMapping>> GetVolunteerRolesAsync(Guid userId)
+        {
+            try
+            {
+                if (userId == Guid.Empty)
+                    return Result<UserRoleMapping>.Fail("User ID cannot be empty.", HttpStatusCode.BadRequest);
+
+                var user = await _userManager.FindByIdAsync(userId.ToString());
+                if (user == null)
+                    return Result<UserRoleMapping>.Fail($"User with ID '{userId}' not found.", HttpStatusCode.NotFound);
+
+                var roles = await _userManager.GetRolesAsync(user);
+                var assignUser = new UserRoleMapping()
+                {
+                    UserId = userId.ToString(),
+                    RoleId = roles.First()
+                };
+                return await Result<UserRoleMapping>.SuccessAsync(assignUser, HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching roles for user ID '{UserId}'.", userId);
+                return Result<UserRoleMapping>.Fail("An internal error occurred while fetching roles.", HttpStatusCode.InternalServerError);
+            }
+        }
+        public async Task<Result> AssignRoleAsync(UserRoleMapping userRole)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(userRole.UserId) || string.IsNullOrWhiteSpace(userRole.RoleId))
+                    return Result.Fail("User ID and Role IDs cannot be empty.", HttpStatusCode.BadRequest);
+
+                var user = await _userManager.FindByIdAsync(userRole.UserId);
+                if (user == null)
+                    return Result.Fail($"User with ID '{userRole.UserId}' not found.", HttpStatusCode.NotFound);
+
+                var role = await _roleManager.FindByIdAsync(userRole.RoleId);
+
+                if (role == null)
+                    return Result.Fail("Role not found.", HttpStatusCode.BadRequest);
+
+                var currentRoles = await _userManager.GetRolesAsync(user);
+
+                if (currentRoles.Contains(role.Name!))
+                    return Result.Fail($"User '{userRole.UserId}' already has the role '{role.Name}'.", HttpStatusCode.Conflict);
+
+                if (currentRoles.Any())
+                {
+                    var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+                    if (!removeResult.Succeeded)
+                        return Result.Fail("Failed to remove existing roles.", HttpStatusCode.InternalServerError);
+                }
+
+                var result = await _userManager.AddToRolesAsync(user, new List<string> { role.Name! });
+                if (!result.Succeeded)
+                {
+                    _logger.LogError("Failed to assign role to user '{UserId}'. Errors: {Errors}", userRole.UserId,
+                        string.Join(", ", result.Errors.Select(e => e.Description)));
+                    return Result.Fail("Failed to assign role to the user.", HttpStatusCode.InternalServerError);
+                }
+
+                _logger.LogInformation("Role assigned to user '{UserId}' successfully: {Roles}", userRole.UserId, role.Name);
+                return await Result.SuccessAsync($"Role assigned successfully to user {userRole.UserId}.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while assigning role to user '{UserId}'", userRole.UserId);
+                return Result.Fail("An internal error occurred while assigning role.", HttpStatusCode.InternalServerError);
+            }
+        }
+        public async Task<Result> RemoveRoleAsync(UserRoleMapping userRole)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(userRole.UserId) || userRole.RoleId == null || !userRole.RoleId.Any())
+                    return Result.Fail("User ID and Role IDs cannot be empty.", HttpStatusCode.BadRequest);
+
+                var user = await _userManager.FindByIdAsync(userRole.UserId);
+                if (user == null)
+                    return Result.Fail($"User with ID '{userRole.UserId}' not found.", HttpStatusCode.NotFound);
+
+                var currentRoles = await _userManager.GetRolesAsync(user);
+                var rolesToRemove = new List<string>();
+
+                var role = await _roleManager.FindByIdAsync(userRole.RoleId);
+
+                if (role != null && currentRoles.Contains(role.Name))
+                {
+                    rolesToRemove.Add(role.Name);
+                }
+                else
+                {
+                    _logger.LogWarning("Role with ID '{RoleId}' not found or not assigned to the user.", userRole.RoleId);
+                }
+
+                if (!rolesToRemove.Any())
+                    return Result.Fail("No valid role found to remove.", HttpStatusCode.BadRequest);
+
+                var result = await _userManager.RemoveFromRolesAsync(user, rolesToRemove);
+                if (!result.Succeeded)
+                {
+                    _logger.LogError("Failed to remove role from user '{UserId}'. Errors: {Errors}",
+                                     userRole.UserId, string.Join(", ", result.Errors.Select(e => e.Description)));
+                    return Result.Fail("Failed to remove roles from the user.", HttpStatusCode.InternalServerError);
+                }
+
+                _logger.LogInformation("Successfully removed role from user '{UserId}'. Removed roles: {Roles}",
+                                       userRole.UserId, string.Join(", ", rolesToRemove));
+                return await Result.SuccessAsync($"Roles removed successfully from user {userRole.UserId}.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while removing role from user '{UserId}'.", userRole.UserId);
+                return Result.Fail("An internal error occurred while removing roles.", HttpStatusCode.InternalServerError);
+            }
+        }
+        public async Task<Result> DeleteVolunteerAsync(string id)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(id))
+                {
+                    _logger.LogWarning("Delete user attempt failed: User ID is required.");
+                    return Result.Fail("Invalid request. User ID is required.", HttpStatusCode.BadRequest);
+                }
+
+                var user = await _userManager.FindByIdAsync(id);
+                if (user == null)
+                {
+                    _logger.LogWarning("Delete user attempt failed: User with ID {UserId} not found.", id);
+                    return Result.Fail("User not found.", HttpStatusCode.NotFound);
+                }
+
+                var deleteResult = await _userManager.DeleteAsync(user);
+                if (!deleteResult.Succeeded)
+                {
+                    var errors = string.Join("; ", deleteResult.Errors.Select(e => e.Description));
+                    _logger.LogError("Failed to delete user {UserId}: {Errors}", id, errors);
+                    return Result.Fail($"Failed to delete user: {errors}", HttpStatusCode.BadRequest);
+                }
+
+                _logger.LogInformation("User with ID {UserId} successfully deleted.", id);
+                return await Result.SuccessAsync("User deleted successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while deleting user {UserId}", id);
                 return Result.Fail("An internal error occurred. Please try again later.", HttpStatusCode.InternalServerError);
             }
         }

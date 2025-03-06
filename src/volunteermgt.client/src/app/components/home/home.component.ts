@@ -14,11 +14,11 @@ export class HomeComponent implements OnInit {
 
   constructor(private userService: UserService) { }
   ngOnInit() {
-    this.loadUsers();
+    this.loadVolunteers();
   }
 
-  loadUsers() {
-    this.userService.getUsers().subscribe({
+  loadVolunteers() {
+    this.userService.getVolunteers().subscribe({
       next: (response) => {
         this.users = response.payload;
       },
@@ -59,7 +59,7 @@ export class HomeComponent implements OnInit {
           }
         }).then((result) => {
           if (result.isConfirmed) {
-            this.assignRole(userId, [result.value]);
+            this.assignRole(userId, result.value);
           }
         });
       },
@@ -70,16 +70,19 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  assignRole(userId: string, roleIds: string[]) {
-    this.userService.assignRole(userId, roleIds).subscribe({
+  assignRole(userId: string, roleId: string) {
+    this.userService.assignRole(userId, roleId).subscribe({
       next: (response) => {
-        console.log(response);
-        if (response.statusCode == 400) {
+        if (response.statusCode === 400) {
           Swal.fire("Login Failed!", "Invalid credentials. Please try again.", "error");
-        } if (response.statusCode == 500) {
+        }
+        else if (response.statusCode === 409) {
+          Swal.fire("Assign Failed!", "Already assign", "error");
+        }
+        else if (response.statusCode === 500) {
           Swal.fire("Failed!", "Failed to assign roles to the user.", "error");
         } else {
-          this.loadUsers();
+          this.loadVolunteers();
           Swal.fire('Success!', `Role assigned successfully.`, 'success');
         }
       },
