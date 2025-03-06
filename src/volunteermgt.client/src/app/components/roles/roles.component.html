@@ -1,0 +1,36 @@
+<div class="container mt-4">
+  <div class="heading p-3 bg-light border">
+    <p class="h4">Roles Management!</p>
+  </div>
+  <div class="mt-2 float-left position-relative">
+    <p class="btn btn-secondary">Add Role</p>
+  </div>
+  <!-- Loading Spinner -->
+  <div *ngIf="loading" class="preloader">
+    <div class="spinner-border text-primary" role="status">
+      <span class="sr-only">Loading...</span>
+    </div>
+  </div>
+
+  <!-- Roles Table -->
+  <table class="table table-bordered border mt-3">
+    <thead>
+      <tr>
+        <th>Role Name</th>
+        <th>Permissions</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let role of roles">
+        <td>{{ role.name }}</td>
+        <td>{{ getPermissionNames(role) }}</td>
+        <td>
+          <button class="btn btn-success" (click)="assignPermission(role.id)">
+            Assign Permission
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

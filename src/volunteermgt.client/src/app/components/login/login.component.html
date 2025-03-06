@@ -1,0 +1,31 @@
+  <!-- Preloader (Spinner) -->
+<div *ngIf="loading" class="preloader">
+  <div class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
+<body>
+  <div class="wrapper">
+    <div class="title"><span>Login Form</span></div>
+    <form (ngSubmit)="onSubmit()" #loginForm="ngForm">
+      <div class="row">
+        <label for="email">Email</label>
+        <input type="text" id="email" [(ngModel)]="email" name="email" class="form-control" placeholder="Enter your email" #emailRef="ngModel" required>
+        <div class="error-text" *ngIf="emailRef.invalid && emailRef.touched"> Email is required! </div>
+      </div>
+      <div class="row">
+        <label for="password">Password</label>
+        <input type="password" id="password" [(ngModel)]="password" name="password" class="form-control" placeholder="Enter your password" #passwordRef="ngModel" required>
+        <div class="error-text" *ngIf="passwordRef.invalid && passwordRef.touched"> Password is required! </div>
+      </div>
+
+      <div class="row button">
+        <button type="submit"  [disabled]="loading || loginForm.invalid">
+          {{ loading ? 'Logging in...' : 'Login' }}
+        </button>
+      </div>
+      <div class="signup-link">Not a member? <a routerLink="/signup">Signup now</a></div>
+    </form>
+  </div>
+</body>

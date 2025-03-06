@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable,timeout  } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +11,6 @@ export class AuthService {
 
   login(email: string, password: string): Observable<any> {
     const body = { email, password };
-    return this.http.post<any>(this.apiUrl, body);
+    return this.http.post<any>(this.apiUrl, body).pipe(timeout(10000));
   }
 }

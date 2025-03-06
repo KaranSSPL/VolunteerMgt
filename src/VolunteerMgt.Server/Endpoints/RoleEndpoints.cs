@@ -13,6 +13,10 @@ namespace VolunteerMgt.Server.Endpoints
                 .WithOpenApi()
                 .RequireAuthorization();
 
+            group.MapGet("/get-roles", GetRoleAsync)
+                .WithName("getRole");
+
+
             group.MapPost("/add-role", AddRoleAsync)
                 .WithName("addRole");
 
@@ -31,6 +35,10 @@ namespace VolunteerMgt.Server.Endpoints
             group.MapPost("/remove-user-roles", RemoveUserRoleAsync)
                 .WithName("removeUserRoles");
 
+        }
+        private static async Task<Result<List<Role>>> GetRoleAsync([FromServices] IRoleService roleService)
+        {
+            return await roleService.GetRoleAsync();
         }
         private static async Task<Result> AddRoleAsync([FromServices] IRoleService roleService, [FromBody] string role)
         {

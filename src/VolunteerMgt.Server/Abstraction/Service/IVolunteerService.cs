@@ -1,5 +1,4 @@
 ﻿using VolunteerMgt.Server.Abstraction.Service.Common;
-using VolunteerMgt.Server.Entities.Identity;
 using VolunteerMgt.Server.Models.ChangePassword;
 using VolunteerMgt.Server.Models.Edit;
 using VolunteerMgt.Server.Models.ForgotPassword;
@@ -11,7 +10,7 @@ namespace VolunteerMgt.Server.Abstraction.Service
 {
     public interface IVolunteerService : IScopedService
     {
-        Task<Result<List<ApplicationUser>>> GetVolunteersAsync();
+        Task<Result<List<VolunteerWithId>>> GetVolunteersAsync();
         Task<Result<VolunteerWithId>> GetVolunteerByIdAsync(Guid Id);
         Task<Result<EditVolunteerModel>> UpdateVolunteerAsync(EditVolunteerModel model);
         Task<Result> ForgotPasswordAsync(ForgotPasswordModel model);

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VolunteerMgt.Server.Abstraction.Service;
-using VolunteerMgt.Server.Entities.Identity;
 using VolunteerMgt.Server.Models.ChangePassword;
 using VolunteerMgt.Server.Models.Edit;
 using VolunteerMgt.Server.Models.ForgotPassword;
@@ -18,10 +17,10 @@ namespace VolunteerMgt.Server.Endpoints
                 .WithOpenApi()
                 .RequireAuthorization();
 
-            group.MapGet("/get-Volunteers", GetVolunteersAsync)
+            group.MapGet("/get-volunteers", GetVolunteersAsync)
                 .WithName("getAllVolunteers");
 
-            group.MapGet("/get-Volunteers/{id}", GetVolunteerbyIdAsync)
+            group.MapGet("/get-volunteers/{id}", GetVolunteerbyIdAsync)
                 .WithName("getVolunteerById");
 
             group.MapPut("/update-volunteer", UpdateVolunteerAsync)
@@ -42,7 +41,7 @@ namespace VolunteerMgt.Server.Endpoints
             group.MapPut("/change-password", ChangePasswordAsync)
                 .WithName("changePassword");
         }
-        private static async Task<Result<List<ApplicationUser>>> GetVolunteersAsync([FromServices] IVolunteerService volunteerService)
+        private static async Task<Result<List<VolunteerWithId>>> GetVolunteersAsync([FromServices] IVolunteerService volunteerService)
         {
             return await volunteerService.GetVolunteersAsync();
         }

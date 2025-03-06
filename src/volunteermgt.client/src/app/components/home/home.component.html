@@ -1,25 +1,28 @@
 <div class="container mt-4">
   <div class="heading p-3 bg-light border">
     <p class="h4">Hello Volunteer!</p>
-  </div>
+  </div>    
   <table class="table table-striped border mt-3">
     <thead>
       <tr>
         <th scope="col">#</th>
-        <th scope="col">First</th>
-        <th scope="col">Last</th>
-        <th scope="col">Handle</th>
+        <th scope="col">Username</th>
+        <th scope="col">Email</th>
+        <th scope="col">Phone</th>
+        <th scope="col">Role</th>
+        <th class="text-center">Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let user of users; let i = index">
         <th scope="row">{{ i + 1 }}</th>
-        <td>{{ user.userName }}</td>
+        <td>{{ user.username }}</td>
         <td>{{ user.email }}</td>
         <td>{{ user.phoneNumber }}</td>
-        <td>
-          <button class="btn btn-primary">Edit</button> |
-          <button class="btn btn-success">Details</button> |
+        <td>{{ user.role }}</td>
+        <td class="text-center">
+          <button class="btn btn-primary me-2" [routerLink]="['/edit', user.id]">Edit</button>
+          <button class="btn btn-success me-2" (click)="openRolePopup(user.id)">Assign Role</button>
           <button class="btn btn-danger">Delete</button>
         </td>
       </tr>

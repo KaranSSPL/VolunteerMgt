@@ -21,7 +21,7 @@ namespace VolunteerMgt.Server.Services
         IMailService _mailService,
         ILogger<VolunteerService> _logger) : IVolunteerService
     {
-        public async Task<Result<List<ApplicationUser>>> GetVolunteersAsync()
+        public async Task<Result<List<VolunteerWithId>>> GetVolunteersAsync()
         {
             try
             {
@@ -29,14 +29,28 @@ namespace VolunteerMgt.Server.Services
 
                 if (!users.Any())
                 {
-                    return Result<List<ApplicationUser>>.Fail("No users found.", HttpStatusCode.NotFound);
+                    return Result<List<VolunteerWithId>>.Fail("No users found.", HttpStatusCode.NotFound);
                 }
-                return await Result<List<ApplicationUser>>.SuccessAsync(users, HttpStatusCode.OK);
+                var volunteers = new List<VolunteerWithId>();
+
+                foreach (var x in users)
+                {
+                    var roles = await _userManager.GetRolesAsync(x); // Ensure single-threaded access
+                    volunteers.Add(new VolunteerWithId()
+                    {
+                        Id = x.Id,
+                        Email = x.Email,
+                        Username = x.UserName,
+                        PhoneNumber = x.PhoneNumber,
+                        Role = string.Join(", ", roles)
+                    });
+                }
+                return await Result<List<VolunteerWithId>>.SuccessAsync(volunteers.ToList(), HttpStatusCode.OK);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unexpected error occurred while fetching the users.");
-                return Result<List<ApplicationUser>>.Fail("An internal error occurred while fetching the users.", HttpStatusCode.InternalServerError);
+                return Result<List<VolunteerWithId>>.Fail("An internal error occurred while fetching the users.", HttpStatusCode.InternalServerError);
             }
         }
         public async Task<Result<VolunteerWithId>> GetVolunteerByIdAsync(Guid Id)
@@ -105,7 +119,6 @@ namespace VolunteerMgt.Server.Services
                     return Result<EditVolunteerModel>.Fail(errorMessage, HttpStatusCode.BadRequest);
                 }
 
-                // Handle role update (if role changed)
                 if (!string.IsNullOrEmpty(model.Role))
                 {
                     var currentRoles = await _userManager.GetRolesAsync(user);

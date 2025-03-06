@@ -5,6 +5,7 @@ using VolunteerMgt.Server.Abstraction.Service.Identity;
 using VolunteerMgt.Server.Entities.Identity;
 using VolunteerMgt.Server.Models.Role;
 using VolunteerMgt.Server.Models.Wrapper;
+using VolunteerMgt.Server.Persistence;
 
 namespace VolunteerMgt.Server.Services
 {
@@ -12,9 +13,38 @@ namespace VolunteerMgt.Server.Services
         UserManager<ApplicationUser> _userManager,
         RoleManager<ApplicationRole> _roleManager,
         ILogger<RoleService> _logger,
-        ICurrentUserService _currentUserService
+        ICurrentUserService _currentUserService,
+        VolunteerDataContext _dbContext
         ) : IRoleService
     {
+        public async Task<Result<List<Role>>> GetRoleAsync()
+        {
+            try
+            {
+                var roles = await Task.Run(() => _roleManager.Roles.Select(r => new Role { Id = r.Id, Name = r.Name }).ToList());
+
+                var permissionRoles = _dbContext.PermissionRoles.Where(x => roles.Select(r => r.Id).ToList().Contains(x.RoleId.ToString())).ToList();
+
+                roles.ForEach(role =>
+                {
+                    var assignedPermissionIds = permissionRoles.Where(pr => pr.RoleId.ToString() == role.Id).Select(pr => pr.PermissionId).ToList();
+
+                    role.Permissions = _dbContext.Permissions.Where(p => assignedPermissionIds.Contains(p.Id)).ToList();
+                });
+
+                if (roles == null || !roles.Any())
+                {
+                    return Result<List<Role>>.Fail("No roles found.", HttpStatusCode.NotFound);
+                }
+
+                return Result<List<Role>>.Success(roles, "Roles retrieved successfully.");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving all roles.");
+                return Result<List<Role>>.Fail("An internal error occurred.", HttpStatusCode.InternalServerError);
+            }
+        }
         public async Task<Result> AddRoleAsync(string role)
         {
             try

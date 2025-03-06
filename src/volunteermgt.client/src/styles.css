@@ -1,1 +1,134 @@
-/* You can add global styles to this file, and also import other style files */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ===== Fix for Navbar ===== */
+nav.navbar {
+  background: #12876f !important; /* Darker green for better visibility */
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 5px;
+}
+
+.navbar a.navbar-brand {
+  font-size: 22px;
+  font-weight: 700;
+  color: white !important; /* Make it visible */
+  text-decoration: none;
+}
+
+.navbar .nav-item {
+  font-size: 18px;
+  font-weight: 500;
+  color: white !important;
+  margin-right: 15px;
+  text-decoration: none;
+}
+
+  .navbar .nav-item:hover {
+    color: #ddd !important;
+  }
+
+/* ===== Fix for Table ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 5px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+th {
+  background: #12876f !important; /* Darker green for contrast */
+  color: white !important;
+  font-weight: 600;
+}
+
+td {
+  font-size: 16px;
+  color: #333;
+}
+
+/* Fix for buttons */
+.btn {
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+  border: none;
+}
+
+  .btn-primary:hover {
+    background: #0056b3;
+  }
+
+.btn-success {
+  background: #28a745;
+  color: white;
+  border: none;
+}
+
+  .btn-success:hover {
+    background: #1e7e34;
+  }
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+  border: none;
+}
+
+  .btn-danger:hover {
+    background: #a71d2a;
+  }
+
+/* Fix alignment issue for button groups */
+.button-group {
+  display: flex;
+  gap: 5px;
+}
+
+/* Responsive Fix */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    text-align: center;
+  }
+
+    .navbar .navbar-nav {
+      flex-direction: column;
+      margin-top: 10px;
+    }
+
+  table {
+    font-size: 14px;
+  }
+
+  th, td {
+    padding: 8px;
+  }
+
+  .button-group {
+    flex-direction: column;
+    align-items: center;
+  }
+}

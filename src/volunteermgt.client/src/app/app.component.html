@@ -1,15 +1,51 @@
-<nav class="p-2 navbar navbar-expand-lg navbar-light bg-light">
-  <a class="navbar-brand" href="#">Navbar</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-    <div class="navbar-nav">
-      <a class="nav-item nav-link active" href="#">Home <span class="sr-only">(current)</span></a>
-      <a class="nav-item nav-link" href="#">Features</a>
-      <a class="nav-item nav-link" href="#">Pricing</a>
-      <a class="nav-item nav-link disabled" href="#">Disabled</a>
+<div *ngIf="showNavbar">
+  <nav class="p-2 navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">VolunteerMgt</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+      <div class="navbar-nav">
+        <a class="nav-item nav-link active" routerLink="/home">Home <span class="sr-only">(current)</span></a>
+        <a class="nav-item nav-link"  routerLink="/roles" >Role</a>
+        <a class="nav-item nav-link" href="#">Pricing</a>
+        <a class="nav-item nav-link disabled" href="#">Disabled</a>
+      </div>
+    </div>
+    <div class="ml-auto">
+      <button class="btn btn-danger" (click)="openModal()">
+        <i class="fa fa-sign-out"></i>
+      </button>
+    </div>
+
+  </nav>
+</div>
+
+<!--logout page popup-->
+<div class="modal fade show d-block" *ngIf="isModalOpen" tabindex="-1">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Confirm Logout</h5>
+        <button type="button" class="btn-close" (click)="closeModal()" aria-label="Close"></button>
+
+      </div>
+      <div class="modal-body">
+        Are you sure you want to log out?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="closeModal()">Cancel</button>
+        <button type="button" class="btn btn-danger" (click)="logout()">Logout</button>
+      </div>
     </div>
   </div>
-</nav>
+</div>
+
+<!--preloader-->
+<div *ngIf="isLoading" class="preloader">
+  <div class="spinner-border text-primary" role="status">
+    <span class="sr-only">Loading...</span>
+  </div>
+</div>
+
 <router-outlet></router-outlet>

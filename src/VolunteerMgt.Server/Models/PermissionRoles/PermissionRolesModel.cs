@@ -1,4 +1,4 @@
-﻿namespace VolunteerMgt.Server.Models.Permission
+﻿namespace VolunteerMgt.Server.Models.PermissionRoles
 {
     public class PermissionRolesModel
     {

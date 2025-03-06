@@ -2,7 +2,7 @@
 using System.Net;
 using VolunteerMgt.Server.Abstraction.Service;
 using VolunteerMgt.Server.Entities.Identity;
-using VolunteerMgt.Server.Models.Permission;
+using VolunteerMgt.Server.Models.PermissionRoles;
 using VolunteerMgt.Server.Models.Wrapper;
 using VolunteerMgt.Server.Persistence;
 
@@ -13,6 +13,28 @@ namespace VolunteerMgt.Server.Services
         ILogger<PermissionService> _logger
         ) : IPermissionService
     {
+        public async Task<Result<List<Permission>>> GetPermissionAsync()
+        {
+            try
+            {
+                var permissions = await _dbContext.Permissions.ToListAsync();
+
+                if (!permissions.Any())
+                {
+                    _logger.LogWarning("No permissions found in the database.");
+                    return Result<List<Permission>>.Fail("No permissions found.", HttpStatusCode.NotFound);
+                }
+
+                _logger.LogInformation("Successfully retrieved {Count} permissions.", permissions.Count);
+                return Result<List<Permission>>.Success(permissions);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while retrieving permissions.");
+                return Result<List<Permission>>.Fail("An internal error occurred while fetching permissions.", HttpStatusCode.InternalServerError);
+            }
+        }
+
         public async Task<Result> AddPermissionAsync(Permission permission)
         {
             try
@@ -48,7 +70,29 @@ namespace VolunteerMgt.Server.Services
                 return Result.Fail("An internal error occurred while adding the permission.", HttpStatusCode.InternalServerError);
             }
         }
+        public async Task<Result<List<Permission>>> GetPermissionRolesAsync(Guid roleId)
+        {
+            try
+            {
+                if (roleId == Guid.Empty)
+                    return Result<List<Permission>>.Fail("Role ID cannot be empty.", HttpStatusCode.BadRequest);
 
+
+                var permissionRoles = await _dbContext.PermissionRoles.Where(x => x.RoleId == roleId).Select(pr => pr.PermissionId).ToListAsync();
+
+                if (!permissionRoles.Any())
+                    return Result<List<Permission>>.Fail($"No permissions found for role ID '{roleId}'.", HttpStatusCode.NotFound);
+
+                var permissions = await _dbContext.Permissions.Where(p => permissionRoles.Contains(p.Id)).ToListAsync();
+
+                return await Result<List<Permission>>.SuccessAsync(permissions, HttpStatusCode.OK);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while fetching permissions for role ID '{RoleId}'.", roleId);
+                return Result<List<Permission>>.Fail("An internal error occurred while fetching permissions.", HttpStatusCode.InternalServerError);
+            }
+        }
         public async Task<Result<Permission>> UpdatePermissionAsync(Permission permission)
         {
             try

@@ -31,7 +31,7 @@ namespace VolunteerMgt.Server.Services
                     Email = model.Email,
                     PhoneNumber = model.PhoneNumber,
                     CreatedDate = DateTime.Now,
-                    CreatedBy = _userManager.FindByEmailAsync(currentUser!).Result?.Id ?? model.Username
+                    CreatedBy = (currentUser != null) ? _userManager.FindByEmailAsync(currentUser).Result?.Id : model.Username
                 };
 
                 var result = await _userManager.CreateAsync(user, model.Password);

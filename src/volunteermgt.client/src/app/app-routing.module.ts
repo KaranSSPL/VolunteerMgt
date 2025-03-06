@@ -1,12 +1,21 @@
 import { RouterModule, Routes } from '@angular/router';
 import { NgModule } from '@angular/core';
-import { LoginComponent } from './login/login.component';
-import { HomeComponent } from './home/home.component';
+import { LoginComponent } from './components/login/login.component';
+import { HomeComponent } from './components/home/home.component';
+import { AuthGuard } from '../guards/auth/auth.guard';
+import { LoginGuard } from '../guards/login/login.guard';
+import { SignupComponent } from './components/signup/signup.component';
+import { EditComponent } from './components/edit/edit.component'
+import {RolesComponent }  from './components/roles/roles.component'
 
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'home', component: HomeComponent },
-  { path: "", redirectTo: "/login", pathMatch: "full" }
+  { path: 'login', component: LoginComponent, canActivate: [LoginGuard] }, 
+  { path: 'signup', component: SignupComponent }, 
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'edit/:id', component: EditComponent, canActivate: [AuthGuard] },
+  { path: 'roles', component: RolesComponent, canActivate: [AuthGuard] },
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '**', redirectTo: '/login' } 
 ];
 
 @NgModule({

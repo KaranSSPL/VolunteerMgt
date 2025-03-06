@@ -14,7 +14,8 @@ namespace VolunteerMgt.Server.Endpoints
                 .RequireAuthorization();
 
             group.MapPost("/register-user", AddUserAsync)
-                .WithName("registerUser");
+                .WithName("registerUser")
+                .AllowAnonymous();
 
             group.MapDelete("/delete-user", DeleteUserAsync)
                 .WithName("deleteUser");
