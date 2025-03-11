@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { VolunteerService } from '../../../services/volunteer.service';
-import { AssignServiceDialogComponent } from '../../../Dialogbox/assign-service-dialog/assign-service-dialog.component';
 import { EditvolunteerdialogComponent } from '../../../Dialogbox/editvolunteerdialog/editvolunteerdialog.component';
 import { DeleteconfirmationComponent } from '../../../Dialogbox/deleteconfirmation/deleteconfirmation.component';
 
@@ -28,14 +27,7 @@ export class VolunteerservicetableComponent {
             const { id, volunteerId, volunteerName, serviceName, timeSlot, createdDate } = curr;
 
             if (!acc[volunteerId]) {
-              acc[volunteerId] = {
-                id,
-                volunteerId,
-                volunteerName,
-                services: [],
-                timeSlots: [],
-                createdDate 
-              };
+              acc[volunteerId] = {id,volunteerId,volunteerName,services: [],timeSlots: [],createdDate};
             }
 
             if (serviceName && !acc[volunteerId].services.includes(serviceName)) {
@@ -52,20 +44,6 @@ export class VolunteerservicetableComponent {
         this.volunteerServiceMappings = groupedData;
       },
       error: (err) => console.error('Error fetching volunteer service mappings:', err)
-    });
-  }
-
-
-
-  openAssignServiceDialog(): void {
-    const dialogRef = this.dialog.open(AssignServiceDialogComponent, {
-      width: '400px'
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.fetchVolunteerServiceMappings();
-      }
     });
   }
 

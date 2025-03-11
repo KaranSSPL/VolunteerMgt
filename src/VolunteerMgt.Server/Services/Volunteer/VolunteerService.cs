@@ -26,6 +26,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                     MobileNo = request.MobileNo,
                     Address = request.Address,
                     Occupation = request.Occupation,
+                    Image = request.Image,
                     Availabilities = request.Availabilities.Select(a => new AvailabilityModel
                     {
                         Day = a.Day,
@@ -126,6 +127,8 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 if (!string.IsNullOrEmpty(request.MobileNo)) volunteer.MobileNo = request.MobileNo;
                 if (!string.IsNullOrEmpty(request.Address)) volunteer.Address = request.Address;
                 if (!string.IsNullOrEmpty(request.Occupation)) volunteer.Occupation = request.Occupation;
+                if (!string.IsNullOrEmpty(request.Image)) volunteer.Image = request.Image;
+
 
                 if (request.Availabilities != null && request.Availabilities.Any())
                 {

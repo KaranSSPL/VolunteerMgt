@@ -1,25 +1,30 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { Volunteer } from '../../../../Models/volunteer.model';
 import { VolunteerService } from '../../../../services/volunteer.service';
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
+
 
 @Component({
   selector: 'app-edit-volunteer',
   standalone: false,
   templateUrl: './edit-volunteer.component.html',
   styleUrls: ['./edit-volunteer.component.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class EditVolunteerComponent implements OnInit {
   @Input() volunteer: Volunteer | null = null; 
   @Output() cancelEdit = new EventEmitter<void>();
-
+  photoPreview: string | ArrayBuffer | null = null;
+  uploadedPhoto: File | null = null;
   volunteerForm!: FormGroup;
   allDays: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday','Saturday', 'Sunday'];
   suggestedDays: string[][] = [];
 
   constructor(
     private fb: FormBuilder,
-    private volunteerService: VolunteerService
+    private volunteerService: VolunteerService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit(): void {
@@ -34,6 +39,7 @@ export class EditVolunteerComponent implements OnInit {
       mobileNo: [this.volunteer?.mobileNo || ''],
       address: [this.volunteer?.address || ''],
       occupation: [this.volunteer?.occupation || ''],
+      image: [this.volunteer?.image || ''],
       availabilities: this.fb.array(this.volunteer?.availabilities?.map(avail => this.createAvailabilityGroup(avail)) || [])
     });
   }
@@ -49,6 +55,8 @@ export class EditVolunteerComponent implements OnInit {
   }
 
   addAvailability(): void {
+    console.log('Image', this.volunteer?.image);
+
     this.availabilities.push(this.createAvailabilityGroup());
   }
 
@@ -63,7 +71,7 @@ export class EditVolunteerComponent implements OnInit {
 
     this.volunteerService.updateVolunteer(this.volunteer.id, updatedVolunteer).subscribe(
       () => {
-        alert('Volunteer updated successfully!');
+        this.showSnackbar('Volunteer updated successfully!', "success");
         this.cancelEdit.emit();
       },
       (error) => console.error('Error updating volunteer:', error)
@@ -95,5 +103,21 @@ export class EditVolunteerComponent implements OnInit {
     setTimeout(() => {
       this.suggestedDays[index] = [];
     }, 200);
+  }
+
+  showSnackbar(message: string, type: "success" | "error") {
+    const snackbarRef: MatSnackBarRef<any> = this.snackBar.open(message, "close", {
+      duration: 3000
+      ,
+      verticalPosition: "top",
+      horizontalPosition: "center",
+    });
+
+    snackbarRef.afterOpened().subscribe(() => {
+      const snackbarElement = document.querySelector('.mat-mdc-snack-bar-container');
+      if (snackbarElement) {
+        snackbarElement.classList.add(type === "success" ? "snackbar-success" : "snackbar-error");
+      }
+    });
   }
 }

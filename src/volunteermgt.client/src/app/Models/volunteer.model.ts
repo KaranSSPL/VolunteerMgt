@@ -4,5 +4,7 @@ export interface Volunteer {
   mobileNo: string;
   address: string;
   occupation: string;
+  image: string;
+  code: string;
   availabilities: { day: string; timeSlot: string }[];
 }

@@ -4,6 +4,7 @@ using VolunteerMgt.Server.Models.VolunteerService;
 using VolunteerMgt.Server.Models;
 using VolunteerMgt.Server.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace VolunteerMgt.Server.Services.AssignService
 {
@@ -16,26 +17,33 @@ namespace VolunteerMgt.Server.Services.AssignService
             _context = context;
         }
 
-        public async Task<bool> AssignServiceToVolunteer(List<AssignRequest> requests)
+        public async Task<bool> AssignServiceToVolunteer(AssignRequest request)
         {
-            foreach (var request in requests)
+            var volunteer = await _context.Volunteer.FindAsync(request.VolunteerId);
+            var service = await _context.Service.FindAsync(request.ServiceId);
+
+            if (volunteer == null || service == null)
             {
-                var volunteer = await _context.Volunteer.FindAsync(request.VolunteerId);
-                var service = await _context.Service.FindAsync(request.ServiceId);
-                if (volunteer != null && service != null)
-                {
-                    _context.VolunteerServiceMapping.Add(new VolunteerServiceMapping
-                    {
-                        VolunteerId = request.VolunteerId,
-                        VolunteerName = volunteer.Name,
-                        ServiceId = request.ServiceId,
-                        ServiceName = service.ServiceName,
-                        TimeSlot = request.TimeSlot,
-                        CreatedDate = request.createdDate
-                    });
-                }
+                throw new ArgumentException("Invalid Volunteer ID or Service ID.");
             }
+
+            if (!DateTime.TryParseExact(request.TimeSlot, "h:mm tt", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime timeSlotValue))
+            {
+                throw new ArgumentException("Invalid TimeSlot format. Expected hh:mm AM/PM.");
+            }
+
+            var mapping = new VolunteerServiceMapping
+            {
+                VolunteerId = request.VolunteerId,
+                VolunteerName = volunteer.Name,
+                ServiceId = request.ServiceId,
+                ServiceName = service.ServiceName,
+                TimeSlot = request.TimeSlot
+            };
+
+            _context.VolunteerServiceMapping.Add(mapping);
             await _context.SaveChangesAsync();
+
             return true;
         }
 
@@ -86,6 +94,31 @@ namespace VolunteerMgt.Server.Services.AssignService
             return true;
         }
 
+        public async Task<List<ServiceVolunteerCountDto>> GetServiceVolunteerCountsAsync()
+        {
+            var result = await _context.VolunteerServiceMapping
+                .GroupBy(vsm => new { vsm.ServiceId, vsm.ServiceName })
+                .Select(group => new
+                {
+                    ServiceId = group.Key.ServiceId,
+                    ServiceName = group.Key.ServiceName,
+                    VolunteerCount = group.Count(),
+                    RequiredVolunteer = _context.Service
+                        .Where(s => s.Id == group.Key.ServiceId)
+                        .Select(s => s.RequiredVolunteer)
+                        .FirstOrDefault() ?? "0"
+                })
+                .ToListAsync();
+
+            return result.Select(res => new ServiceVolunteerCountDto
+            {
+                ServiceId = res.ServiceId,
+                ServiceName = res.ServiceName,
+                VolunteerCount = res.VolunteerCount,
+                RequiredVolunteer = res.RequiredVolunteer,
+                PendingVolunteer = Math.Max((int.TryParse(res.RequiredVolunteer, out int reqVol) ? reqVol : 0) - res.VolunteerCount, 0)
+            }).ToList();
+        }
     }
 }
 

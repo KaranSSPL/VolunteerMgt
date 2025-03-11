@@ -29,8 +29,6 @@ namespace VolunteerMgt.Server.Models
         [Required]
         public string TimeSlot { get; set; }
 
-        [DataType(DataType.Date)]
-        public DateTime CreatedDate { get; set; }
 
         [ForeignKey("ServiceId")]
         public ServiceModel Service { get; set; }

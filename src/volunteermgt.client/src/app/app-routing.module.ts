@@ -8,10 +8,12 @@ import { AuthGuard } from './services/auth.gurad';
 import { LoginGuard } from './services/login.guard';
 import { VolunteerservicetableComponent } from './components/Volunteer/volunteerservicetable/volunteerservicetable.component';
 import { ServicetableComponent } from './components/Volunteer/servicetable/servicetable.component';
+import { AssignserviceComponent } from './components/assignservice/assignservice.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
+  { path: 'assignService', component: AssignserviceComponent, canActivate: [AuthGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'volunteer', component: VolunteertableComponent, canActivate: [AuthGuard] },
   { path: 'createVolunteer', component: CreateVolunteerComponent, canActivate: [AuthGuard] },

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { VolunteerService } from '../../../services/volunteer.service';
 import { Volunteer } from '../../../Models/volunteer.model';
 import { Router } from '@angular/router';
@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
   standalone: false,
   templateUrl: './volunteertable.component.html',
   styleUrls: ['./volunteertable.component.css'],
+  encapsulation: ViewEncapsulation.None,
 })
 export class VolunteertableComponent implements OnInit {
   volunteers: Volunteer[] = [];

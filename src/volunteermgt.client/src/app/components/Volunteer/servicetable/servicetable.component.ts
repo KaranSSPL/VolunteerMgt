@@ -68,7 +68,8 @@ export class ServicetableComponent {
 
     const newService: Service = {
       id: 0,
-      serviceName: this.serviceForm.value.serviceName
+      serviceName: this.serviceForm.value.serviceName,
+      requiredVolunteer: this.serviceForm.value.requiredVolunteer
     };
 
     this.volunteerService.addService(newService).subscribe({
@@ -86,7 +87,8 @@ export class ServicetableComponent {
 
     const updatedService: Service = {
       id: this.selectedServiceId,
-      serviceName: this.serviceForm.value.serviceName
+      serviceName: this.serviceForm.value.serviceName,
+      requiredVolunteer: this.serviceForm.value.requiredVolunteer
     };
 
     this.volunteerService.updateService(this.selectedServiceId, updatedService).subscribe({

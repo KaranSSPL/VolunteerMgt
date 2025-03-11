@@ -21,8 +21,9 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { VolunteerservicetableComponent } from './components/Volunteer/volunteerservicetable/volunteerservicetable.component';
 import { ServicetableComponent } from './components/Volunteer/servicetable/servicetable.component';
-import { AssignServiceDialogComponent } from './Dialogbox/assign-service-dialog/assign-service-dialog.component';
 import { EditvolunteerdialogComponent } from './Dialogbox/editvolunteerdialog/editvolunteerdialog.component';
+import { AssignserviceComponent } from './components/assignservice/assignservice.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -38,8 +39,8 @@ import { EditvolunteerdialogComponent } from './Dialogbox/editvolunteerdialog/ed
     DeleteconfirmationComponent,
     VolunteerservicetableComponent,
     ServicetableComponent,
-    AssignServiceDialogComponent,
-    EditvolunteerdialogComponent
+    EditvolunteerdialogComponent,
+    AssignserviceComponent
   ],
   imports: [
     BrowserModule,
@@ -52,7 +53,8 @@ import { EditvolunteerdialogComponent } from './Dialogbox/editvolunteerdialog/ed
     MatFormFieldModule,
     MatInputModule,
     MatAutocompleteModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    MatSnackBarModule
   ],
   providers: [],
   bootstrap: [AppComponent]

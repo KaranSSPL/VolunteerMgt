@@ -12,6 +12,7 @@
         <th>Address</th>
         <th>Occupation</th>
         <th>Availability</th>
+        <th>Code</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -29,6 +30,7 @@
             </li>
           </ul>
         </td>
+        <td>{{ volunteer .code }}</td>
         <td>
           <button class="btn-edit" (click)="editVolunteer(volunteer)">Edit</button>
           <button class="btn-delete" (click)="deleteVolunteer(volunteer.id)">Delete</button>

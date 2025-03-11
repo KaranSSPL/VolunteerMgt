@@ -27,13 +27,15 @@ namespace VolunteerMgt.Server.Endpoints
                 .WithName("remove-volunteer-service");
 
             group.MapDelete("/volunteer/{volunteerId}", DeleteVolunteerWithServicesAsync)
-    .WithName("delete-volunteer-with-services");
+                .WithName("delete-volunteer-with-services");
 
+            group.MapGet("/service-volunteer-counts", GetServiceVolunteerCountsAsync)
+                .WithName("get-service-volunteer-counts");
         }
 
         private static async Task<IResult> AssignServiceAsync(
             [FromServices] IAssignService assignService,
-            [FromBody] List<AssignRequest> requests)
+            [FromBody] AssignRequest requests)
         {
             var result = await assignService.AssignServiceToVolunteer(requests);
             return result ? Results.Ok("Services assigned successfully.") : Results.BadRequest("Failed to assign services.");
@@ -81,13 +83,19 @@ namespace VolunteerMgt.Server.Endpoints
         }
 
         private static async Task<IResult> DeleteVolunteerWithServicesAsync(
-    [FromServices] IAssignService assignService,
-    int volunteerId)
+            [FromServices] IAssignService assignService,
+            int volunteerId)
         {
             var result = await assignService.DeleteVolunteerWithServices(volunteerId);
             return result ? Results.Ok("Volunteer and all assigned services deleted successfully.")
                           : Results.NotFound("Volunteer not found.");
         }
 
+        private static async Task<IResult> GetServiceVolunteerCountsAsync(
+            [FromServices] IAssignService assignService)
+        {
+            var counts = await assignService.GetServiceVolunteerCountsAsync();
+            return counts.Any() ? Results.Ok(counts) : Results.NotFound("No data found.");
+        }
     }
 }

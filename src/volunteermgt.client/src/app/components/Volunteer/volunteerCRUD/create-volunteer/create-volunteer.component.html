@@ -22,33 +22,40 @@
       <input type="text" formControlName="occupation" placeholder="Enter Occupation" />
     </div>
 
+    <div class="photo-upload">
+      <div class="photo-wrapper">
+        <input type="file" accept="image/*" (change)="onFileSelect($event)" />
+        <button type="button" class="camera-btn" (click)="capturePhoto()"><i class="bi bi-camera"></i></button>
+
+        <div *ngIf="photoPreview" class="photo-preview">
+          <img [src]="photoPreview" alt="Volunteer Photo" />
+          <span class="remove-photo" (click)="removePhoto()">✖</span>
+        </div>
+      </div>
+    </div>
+
     <div class="availability-block">
       <h3>Availability</h3>
       <div formArrayName="availabilities">
         <div *ngFor="let avail of availabilities.controls; let i = index" [formGroupName]="i" class="availability-group">
-
           <div class="day-slot">
             <label>Day:</label>
             <input type="text" formControlName="day" placeholder="Type day..." (input)="filterDays(i)" (blur)="hideSuggestions(i)" />
-
             <div *ngIf="suggestedDays[i]?.length" class="suggestion-box">
               <p *ngFor="let day of suggestedDays[i]" (click)="selectDay(i, day)">{{ day }}</p>
             </div>
           </div>
-
           <div class="time-slot">
             <label>Time Slot:</label>
             <input type="text" formControlName="timeSlot" placeholder="Time Slot (e.g., 10 AM - 2 PM)" />
           </div>
-
-
           <button type="button" class="remove-btn" (click)="removeAvailability(i)">Remove</button>
         </div>
       </div>
     </div>
+
     <button type="button" class="add-btn" (click)="addAvailability()">+ Add Availability</button>
     <button type="submit" class="submit-btn" (click)="submitForm()">Add Volunteer</button>
     <button type="button" class="cancel-btn" (click)="cancel()">Cancel</button>
-
   </form>
 </div>

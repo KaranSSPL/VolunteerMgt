@@ -13,6 +13,8 @@ namespace VolunteerMgt.Server.Models.Volunteers
         public string MobileNo { get; set; } = string.Empty;
         public string Address { get; set; } = string.Empty;
         public string Occupation { get; set; } = string.Empty;
+        public string Image { get; set; } = string.Empty;
+        public string code { get; set; } = string.Empty;
         public virtual List<AvailabilityModel> Availabilities { get; set; } = [];
     }
 }

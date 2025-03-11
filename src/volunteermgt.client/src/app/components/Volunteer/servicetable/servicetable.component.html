@@ -15,6 +15,7 @@
         <tr>
           <th>ID</th>
           <th>Service Name</th>
+          <th>Required Volunteer</th>
           <th>Actions</th>
         </tr>
       </thead>
@@ -22,6 +23,7 @@
         <tr *ngFor="let service of services">
           <td>{{ service.id }}</td>
           <td>{{ service.serviceName }}</td>
+          <td>{{ service.requiredVolunteer }}</td>
           <td>
             <button class="btn-edit" (click)="openModal(service)">Edit</button>
             <button class="btn-delete" (click)="deleteService(service.id)">Delete</button>

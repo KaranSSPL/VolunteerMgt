@@ -35,7 +35,7 @@ export class LoginComponent implements OnInit {
       next: (response) => {
         if (response.body.statusCode === 200) {
           sessionStorage.setItem('authToken', response.body.payload.token);
-          this.router.navigate(['/dashboard']);
+          this.router.navigate(['/assignService']);
         } else {
           this.errorMessage = 'Login failed. Please try again.';
         }

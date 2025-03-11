@@ -86,3 +86,21 @@ ul {
   margin: 10px;
   border-radius: 4px;
 }
+
+.snackbar-success .mdc-snackbar__surface {
+  background-color: #109710 !important;
+  color: white !important;
+}
+
+.snackbar-error .mdc-snackbar__surface {
+  background-color: red !important;
+  color: white !important;
+}
+
+.snackbar-error .mat-mdc-snack-bar-action {
+  color: white !important;
+}
+
+.snackbar-success .mat-mdc-snack-bar-action {
+  color: white !important;
+}

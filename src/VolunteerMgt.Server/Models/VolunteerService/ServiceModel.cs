@@ -14,6 +14,9 @@ namespace VolunteerMgt.Server.Models.VolunteerService
         [Required]
         public string ServiceName { get; set; } = string.Empty;
 
+        [Required]
+        public string RequiredVolunteer { get; set; } = string.Empty;
+
         [JsonIgnore]
         public virtual List<VolunteerServiceMapping> VolunteerMappings { get; set; } = [];
     }

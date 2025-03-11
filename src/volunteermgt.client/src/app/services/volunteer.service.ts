@@ -8,6 +8,7 @@ import { Service} from '../Models/voluteerService.model';
   providedIn: 'root',
 })
 export class VolunteerService {
+  [x: string]: any;
   private apiUrl = 'https://localhost:7048/api';
 
   constructor(private http: HttpClient) { }
@@ -61,7 +62,7 @@ export class VolunteerService {
   }
 
   getServiceVolunteerById(volunteerId: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/volunteer-service/volunteer-service-mappings/${volunteerId}`);
+    return this.http.get<any>(`${this.apiUrl}/volunteer-service/volunteer/${ volunteerId }/services`);
   }
 
   deleteVolunteerService(volunteerId: number, serviceId: number): Observable<any> {
@@ -70,5 +71,9 @@ export class VolunteerService {
 
   deleteVolunteerandService(volunteerId: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/volunteer-service/volunteer/${volunteerId}`);
+  }
+
+  getServiceVolunteerCounts(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/volunteer-service/service-volunteer-counts`);
   }
 }
