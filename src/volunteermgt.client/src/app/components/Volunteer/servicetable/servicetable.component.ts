@@ -22,7 +22,8 @@ export class ServicetableComponent {
 
   constructor(private volunteerService: VolunteerService, private fb: FormBuilder, private dialog: MatDialog) {
     this.serviceForm = this.fb.group({
-      serviceName: ['', Validators.required]
+      serviceName: ['', Validators.required],
+      requiredVolunteer: ['', Validators.required],
     });
   }
 
@@ -48,7 +49,7 @@ export class ServicetableComponent {
     if (service) {
       this.editMode = true;
       this.selectedServiceId = service.id;
-      this.serviceForm.patchValue({ serviceName: service.serviceName });
+      this.serviceForm.patchValue({ serviceName: service.serviceName, requiredVolunteer: service.requiredVolunteer });
     } else {
       this.editMode = false;
       this.selectedServiceId = null;
@@ -65,13 +66,11 @@ export class ServicetableComponent {
 
   addService(): void {
     if (this.serviceForm.invalid) return;
-
     const newService: Service = {
       id: 0,
       serviceName: this.serviceForm.value.serviceName,
       requiredVolunteer: this.serviceForm.value.requiredVolunteer
     };
-
     this.volunteerService.addService(newService).subscribe({
       next: (service) => {
         this.services.push(service);
@@ -84,13 +83,11 @@ export class ServicetableComponent {
 
   updateService(): void {
     if (this.serviceForm.invalid || this.selectedServiceId === null) return;
-
     const updatedService: Service = {
       id: this.selectedServiceId,
       serviceName: this.serviceForm.value.serviceName,
       requiredVolunteer: this.serviceForm.value.requiredVolunteer
     };
-
     this.volunteerService.updateService(this.selectedServiceId, updatedService).subscribe({
       next: () => {
         const index = this.services.findIndex(s => s.id === this.selectedServiceId);
@@ -104,14 +101,11 @@ export class ServicetableComponent {
   }
 
   deleteService(serviceId: number): void {
-
     const message = `Are you sure you want to delete this service?`;
-
     const dialogRef = this.dialog.open(DeleteconfirmationComponent, {
       width: '350px',
       data: { id: serviceId, message }
     });
-
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
         this.volunteerService.deleteService(serviceId).subscribe({

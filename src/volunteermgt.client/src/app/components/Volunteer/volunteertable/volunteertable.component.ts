@@ -26,7 +26,10 @@ export class VolunteertableComponent implements OnInit {
 
   loadVolunteers(): void {
     this.volunteerService.getVolunteers().subscribe((data) => {
-      this.volunteers = data;
+      this.volunteers = data.map(volunteer => ({
+        ...volunteer,
+        imagePath: volunteer.imagePath ? `https://localhost:7048/${volunteer.imagePath}` : ''
+      }));
     });
   }
 
@@ -56,5 +59,4 @@ export class VolunteertableComponent implements OnInit {
       }
     });
   }
-
 }

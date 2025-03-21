@@ -5,6 +5,7 @@ export interface Volunteer {
   address: string;
   occupation: string;
   image: string;
+  imagePath: string;
   code: string;
   availabilities: { day: string; timeSlot: string }[];
 }

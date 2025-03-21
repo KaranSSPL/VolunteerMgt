@@ -27,8 +27,10 @@ namespace VolunteerMgt.Server.Models
         public string ServiceName { get; set; }
 
         [Required]
-        public string TimeSlot { get; set; }
+        public DateTime TimeSlot { get; set; }
 
+        [Required]
+        public string ExitTime { get; set; }
 
         [ForeignKey("ServiceId")]
         public ServiceModel Service { get; set; }

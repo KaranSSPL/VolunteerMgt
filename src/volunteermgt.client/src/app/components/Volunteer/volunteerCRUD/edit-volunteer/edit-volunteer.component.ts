@@ -40,6 +40,7 @@ export class EditVolunteerComponent implements OnInit {
       address: [this.volunteer?.address || ''],
       occupation: [this.volunteer?.occupation || ''],
       image: [this.volunteer?.image || ''],
+      code: [this.volunteer?.code || ''],
       availabilities: this.fb.array(this.volunteer?.availabilities?.map(avail => this.createAvailabilityGroup(avail)) || [])
     });
   }
@@ -55,7 +56,6 @@ export class EditVolunteerComponent implements OnInit {
   }
 
   addAvailability(): void {
-    console.log('Image', this.volunteer?.image);
 
     this.availabilities.push(this.createAvailabilityGroup());
   }
@@ -64,22 +64,34 @@ export class EditVolunteerComponent implements OnInit {
     this.availabilities.removeAt(index);
   }
 
-  updateVolunteer(): void {
-    if (!this.volunteer || !this.volunteerForm.valid) return;
+ updateVolunteer(): void {
+  if (!this.volunteer || !this.volunteerForm.valid) return;
 
-    const updatedVolunteer = { ...this.volunteer, ...this.volunteerForm.value };
+  const formData = new FormData();
+  formData.append("name", this.volunteerForm.value.name);
+  formData.append("mobileNo", this.volunteerForm.value.mobileNo);
+  formData.append("address", this.volunteerForm.value.address);
+   formData.append("occupation", this.volunteerForm.value.occupation);
+   formData.append("code", this.volunteerForm.value.code);
 
-    this.volunteerService.updateVolunteer(this.volunteer.id, updatedVolunteer).subscribe(
-      () => {
-        this.showSnackbar('Volunteer updated successfully!', "success");
-        this.cancelEdit.emit();
-      },
-      (error) => console.error('Error updating volunteer:', error)
-    );
+  if (this.uploadedPhoto) {
+    formData.append("image", this.uploadedPhoto);
   }
+  formData.append("availabilities", JSON.stringify(this.volunteerForm.value.availabilities));
+
+  this.volunteerService.updateVolunteer(this.volunteer.id, formData).subscribe(
+    () => {
+      this.showSnackbar("Volunteer updated successfully!", "success");
+      this.cancelEdit.emit();
+      window.location.reload();
+    },
+    (error) => console.error("Error updating volunteer:", error)
+  );
+}
+
 
   cancel(): void {
-    this.cancelEdit.emit(); 
+    this.cancelEdit.emit();  
   }
 
   filterDays(index: number) {
@@ -99,6 +111,19 @@ export class EditVolunteerComponent implements OnInit {
     this.suggestedDays[index] = [];
   }
 
+  onFileSelected(event: Event): void {
+    const fileInput = event.target as HTMLInputElement;
+    if (fileInput.files && fileInput.files.length > 0) {
+      this.uploadedPhoto = fileInput.files[0];
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.photoPreview = reader.result;
+      };
+      reader.readAsDataURL(this.uploadedPhoto);
+    }
+  }
+
   hideSuggestions(index: number) {
     setTimeout(() => {
       this.suggestedDays[index] = [];
@@ -107,8 +132,7 @@ export class EditVolunteerComponent implements OnInit {
 
   showSnackbar(message: string, type: "success" | "error") {
     const snackbarRef: MatSnackBarRef<any> = this.snackBar.open(message, "close", {
-      duration: 3000
-      ,
+      duration: 3000,
       verticalPosition: "top",
       horizontalPosition: "center",
     });

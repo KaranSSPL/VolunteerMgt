@@ -14,12 +14,11 @@ import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 })
 export class CreateVolunteerComponent {
   volunteerForm: FormGroup;
-
   allDays: string[] = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
   photoPreview: string | ArrayBuffer | null = null;
   uploadedPhoto: File | null = null;
   suggestedDays: string[][] = [];
+  selectedDayIndex: number[] = [];
 
   constructor(private fb: FormBuilder, private router: Router, private volunteerService: VolunteerService, private snackBar: MatSnackBar) {
     this.volunteerForm = this.fb.group({
@@ -27,6 +26,8 @@ export class CreateVolunteerComponent {
       mobileNo: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       address: ['', Validators.required],
       occupation: ['', Validators.required],
+      image: ['', Validators.required],
+      code: ['', Validators.required],
       availabilities: this.fb.array([this.createAvailability()]),
     });
   }
@@ -35,14 +36,11 @@ export class CreateVolunteerComponent {
     const fileInput = event.target as HTMLInputElement;
     if (fileInput.files && fileInput.files[0]) {
       this.uploadedPhoto = fileInput.files[0];
-
       const reader = new FileReader();
       reader.onload = (e) => {
         this.photoPreview = e.target?.result as string | ArrayBuffer;
       };
       reader.readAsDataURL(this.uploadedPhoto);
-
-      console.log('Uploaded File:', this.uploadedPhoto);
     }
   }
 
@@ -72,7 +70,6 @@ export class CreateVolunteerComponent {
   removePhoto(): void {
     this.photoPreview = null;
     this.uploadedPhoto = null;
-
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = ''; 
@@ -103,19 +100,35 @@ export class CreateVolunteerComponent {
 
   filterDays(index: number) {
     const inputDay = this.availabilities.at(index).get('day')?.value.toLowerCase();
-
     if (inputDay) {
       this.suggestedDays[index] = this.allDays.filter(day =>
         day.toLowerCase().startsWith(inputDay)
       );
+      this.selectedDayIndex[index] = -1;
     } else {
       this.suggestedDays[index] = [];
     }
   }
 
+  handleKeydown(event: KeyboardEvent, index: number) {
+    if (this.suggestedDays[index]?.length) {
+      if (event.key === 'ArrowDown') {
+        event.preventDefault();
+        this.selectedDayIndex[index] = (this.selectedDayIndex[index] + 1) % this.suggestedDays[index].length;
+      } else if (event.key === 'ArrowUp') {
+        event.preventDefault();
+        this.selectedDayIndex[index] = (this.selectedDayIndex[index] - 1 + this.suggestedDays[index].length) % this.suggestedDays[index].length;
+      } else if (event.key === 'Enter' && this.selectedDayIndex[index] !== -1) {
+        event.preventDefault();
+        this.selectDay(index, this.suggestedDays[index][this.selectedDayIndex[index]]);
+      }
+    }
+  }
+
   selectDay(index: number, day: string) {
     this.availabilities.at(index).get('day')?.setValue(day);
-    this.suggestedDays[index] = []; 
+    this.suggestedDays[index] = [];
+    this.selectedDayIndex[index] = -1;
   }
 
   hideSuggestions(index: number) {
@@ -126,15 +139,20 @@ export class CreateVolunteerComponent {
 
   submitForm() {
     if (this.volunteerForm.valid) {
-      const volunteerData = this.volunteerForm.value;
+      const volunteerData = new FormData();
+      volunteerData.append('name', this.volunteerForm.value.name);
+      volunteerData.append('mobileNo', this.volunteerForm.value.mobileNo);
+      volunteerData.append('address', this.volunteerForm.value.address);
+      volunteerData.append('occupation', this.volunteerForm.value.occupation);
+      volunteerData.append('code', this.volunteerForm.value.code);
+      volunteerData.append('availabilities', JSON.stringify(this.volunteerForm.value.availabilities));
+
       if (this.uploadedPhoto) {
-        const fileName = this.uploadedPhoto.name; 
-        volunteerData.image = fileName;
+        volunteerData.append('image', this.uploadedPhoto);
       }
       this.volunteerService.addVolunteer(volunteerData).subscribe({
         next: (response) => {
-          console.log('Success:', response);
-          this.showSnackbar('Volunteer Created Successfully!',"success");
+          this.showSnackbar('Volunteer Created Successfully!', 'success');
           this.volunteerForm.reset();
           this.availabilities.clear();
           this.availabilities.push(this.createAvailability());
@@ -143,11 +161,11 @@ export class CreateVolunteerComponent {
         },
         error: (err) => {
           console.error('Error:', err);
-          this.showSnackbar('Something went wrong! Please try again.','error');
+          this.showSnackbar('Something went wrong! Please try again.', 'error');
         },
       });
     } else {
-      this.showSnackbar('Please fill all required fields correctly.','error');
+      this.showSnackbar('Please fill all required fields correctly.', 'error');
     }
   }
 
@@ -161,7 +179,6 @@ export class CreateVolunteerComponent {
       verticalPosition: "top",
       horizontalPosition: "center",
     });
-
     snackbarRef.afterOpened().subscribe(() => {
       const snackbarElement = document.querySelector('.mat-mdc-snack-bar-container');
       if (snackbarElement) {

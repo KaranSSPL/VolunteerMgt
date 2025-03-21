@@ -27,7 +27,7 @@ export class EditvolunteerdialogComponent {
   }
 
   fetchVolunteerDetails(): void {
-    this.volunteerService.getServiceVolunteerById(this.data.id).subscribe({
+    this.volunteerService.getVolunteerServiceById(this.data.id).subscribe({
       next: (response) => {
         this.volunteerData = response;
       },
@@ -40,6 +40,7 @@ export class EditvolunteerdialogComponent {
   closeDialog(): void {
     this.dialogRef.close();
     this.resetDropdown();
+    window.location.reload();
   }
 
   resetDropdown(): void {

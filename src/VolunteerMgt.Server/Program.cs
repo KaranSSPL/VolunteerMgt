@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -47,6 +49,8 @@ try
 #endif
     });
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+    builder.Services.AddAntiforgery(options => options.SuppressXFrameOptionsHeader = true);
+
 
     // Add Identity
     builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
@@ -114,7 +118,6 @@ try
     {
         options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
     });
-
 
     // Add application service
     builder.Services.AddServices();
@@ -215,6 +218,7 @@ try
     app.MapVolunteerEndpoints();
     app.MapServiceEndpoints();
     app.MapVolunteerServiceEndpoints();
+    app.MapCouponsEndpoints();
 
     app.MapFallbackToFile("/index.html");
 

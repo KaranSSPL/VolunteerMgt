@@ -34,18 +34,19 @@ label {
   width: 100%;
   padding: 12px;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 25px 26px 25px;
   font-size: 16px;
   transition: all 0.3s ease-in-out;
 }
+
 .time-slot {
   width: 45%;
   padding: 10px;
   border: 1px solid #ddd;
-  border-radius: 8px;
+  border-radius: 25px 26px 25px;
   font-size: 16px;
   box-shadow: 0px 2px 5px rgba(0, 180, 80, 0.2);
-  transition: all 0.3sease-in-out;
+  transition: all 0.3s ease-in-out;
 }
 
 .volunteer-search-box {
@@ -128,9 +129,10 @@ label {
     text-align: justify;
     color: #555;
   }
+
   .table-container {
   margin-top: 20px;
-  max-width: 900px;
+  max-width: 80%;
   margin-left: 16%;
   margin-right: auto;
   overflow-x: auto;
@@ -167,6 +169,7 @@ td:last-child {
   font-weight: bold;
   color: #d9534f;
 }
+
 .time-slot-container {
   display: flex;
   align-items: center;
@@ -178,11 +181,32 @@ td:last-child {
   background-color: #007bff;
   color: white;
   border: none;
+  font-weight:600;
   border-radius: 8px;
   font-size: 16px;
   cursor: pointer;
   transition: background 0.3s;
 }
+.add-coupon {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  font-weight: 600;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+  text-align: center;
+}
+
+  .add-coupon p {
+    width: 105px;
+    margin: 9px;
+  }
+
+  .add-coupon:hover {
+    background-color: #0056b3;
+  }
 
   .assign-btn:hover {
     background-color: #0056b3;
@@ -205,3 +229,109 @@ td:last-child {
 .snackbar-success .mat-mdc-snack-bar-action {
   color: white !important;
 }
+
+.summary-container {
+  text-align: center;
+  display: flex;
+  margin-bottom: 20px;
+  font-family: Arial, sans-serif;
+  background-color: white;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
+  width: 400px;
+  margin: 0 auto;
+}
+
+  .summary-container h3 {
+    color: #007bff;
+    font-size: 22px;
+    margin: 0;
+  }
+
+  .date-wrapper h4{
+      margin:4px;
+  }
+
+  .summary-container h2 {
+    font-size: 24px;
+    color: #333;
+    margin: 35px 0;
+  }
+
+  .date-wrapper hr {
+    width: 80%;
+    border: 1px solid #ddd;
+  }
+
+  .summary-container h1 {
+    font-size: 28px;
+    color: #28a745;
+    font-weight: bold;
+    margin: 10px 0 0;
+  }
+
+.hr {
+  width: 0% !important;
+  border: 1px solid #ddd;
+  margin: 0 18px;
+}
+.coupens {
+    flex: 1;
+}
+
+.coupens hr {
+  border: 1px solid #ddd;
+  width: 100%;
+}
+
+.coupens ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+  .coupens ul li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+  }
+
+    .coupens ul li span {
+      flex: 0 0 65%;
+      font-weight: 700;
+    }
+
+    .coupens ul li strong {
+      flex: 1;
+      text-align: right;
+    }
+
+.volunteer-suggestions li.active,
+.service-suggestions li.active {
+  background: #c2f1f3;
+  color: white;
+}
+
+.plus-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 18px;
+  width: 20px;
+  height: 20px;
+  display: inline-grid;
+  place-content: center;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+  .plus-btn:hover {
+    background-color: #0056b3;
+  }

@@ -8,7 +8,8 @@ import { AuthGuard } from './services/auth.gurad';
 import { LoginGuard } from './services/login.guard';
 import { VolunteerservicetableComponent } from './components/Volunteer/volunteerservicetable/volunteerservicetable.component';
 import { ServicetableComponent } from './components/Volunteer/servicetable/servicetable.component';
-import { AssignserviceComponent } from './components/assignservice/assignservice.component';
+import { AssignserviceComponent } from './components/Volunteer/assignservice/assignservice.component';
+import { CouponComponent } from './components/Volunteer/coupon/coupon.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -19,6 +20,8 @@ const routes: Routes = [
   { path: 'createVolunteer', component: CreateVolunteerComponent, canActivate: [AuthGuard] },
   { path: 'volunteerService', component: VolunteerservicetableComponent, canActivate: [AuthGuard] },
   { path: 'service', component: ServicetableComponent, canActivate: [AuthGuard] },
+  { path: 'coupons', component: CouponComponent, canActivate: [AuthGuard] },
+
 ];
 
 @NgModule({

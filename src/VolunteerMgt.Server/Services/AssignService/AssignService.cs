@@ -27,23 +27,30 @@ namespace VolunteerMgt.Server.Services.AssignService
                 throw new ArgumentException("Invalid Volunteer ID or Service ID.");
             }
 
-            if (!DateTime.TryParseExact(request.TimeSlot, "h:mm tt", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime timeSlotValue))
+
+            var existingMapping = await _context.VolunteerServiceMapping
+                .FirstOrDefaultAsync(vs => vs.VolunteerId == request.VolunteerId && vs.ServiceId == request.ServiceId);
+
+            if (existingMapping != null)
             {
-                throw new ArgumentException("Invalid TimeSlot format. Expected hh:mm AM/PM.");
+                existingMapping.ExitTime = request.ExitTime;
+            }
+            else
+            {
+                var mapping = new VolunteerServiceMapping
+                {
+                    VolunteerId = request.VolunteerId,
+                    VolunteerName = volunteer.Name,
+                    ServiceId = request.ServiceId,
+                    ServiceName = service.ServiceName,
+                    TimeSlot = request.TimeSlot,
+                    ExitTime = request.ExitTime
+                };
+
+                _context.VolunteerServiceMapping.Add(mapping);
             }
 
-            var mapping = new VolunteerServiceMapping
-            {
-                VolunteerId = request.VolunteerId,
-                VolunteerName = volunteer.Name,
-                ServiceId = request.ServiceId,
-                ServiceName = service.ServiceName,
-                TimeSlot = request.TimeSlot
-            };
-
-            _context.VolunteerServiceMapping.Add(mapping);
             await _context.SaveChangesAsync();
-
             return true;
         }
 
@@ -97,6 +104,7 @@ namespace VolunteerMgt.Server.Services.AssignService
         public async Task<List<ServiceVolunteerCountDto>> GetServiceVolunteerCountsAsync()
         {
             var result = await _context.VolunteerServiceMapping
+                .Where(vsm => string.IsNullOrEmpty(vsm.ExitTime)) 
                 .GroupBy(vsm => new { vsm.ServiceId, vsm.ServiceName })
                 .Select(group => new
                 {
@@ -119,6 +127,7 @@ namespace VolunteerMgt.Server.Services.AssignService
                 PendingVolunteer = Math.Max((int.TryParse(res.RequiredVolunteer, out int reqVol) ? reqVol : 0) - res.VolunteerCount, 0)
             }).ToList();
         }
+
     }
 }
 

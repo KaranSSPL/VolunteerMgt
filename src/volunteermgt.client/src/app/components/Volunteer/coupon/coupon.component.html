@@ -1,0 +1,20 @@
+<h2>Coupon List</h2>
+
+<div class="table-container">
+<table border="1">
+  <thead>
+    <tr>
+      <th>Service Name</th>
+      <th>Additional Coupon</th>
+      <th>Created Date</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let coupon of coupons">
+      <td>{{ coupon.serviceName }}</td>
+      <td>{{ coupon.additionalCouponValue }}</td>
+      <td>{{ coupon.createdDate | date:'dd-MM-yyyy' }}</td>
+    </tr>
+  </tbody>
+</table>
+  </div>

@@ -8,7 +8,6 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist\volunteermgt.client\browser\</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="src\app\Models\" />
     <Folder Include="src\app\components\Volunteer\volunteerCRUD\" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,40 @@
+<h2 mat-dialog-title>Enter Additional Coupons</h2>
+
+<div mat-dialog-content>
+  <label for="couponInput" class="coupon-input">Coupon Value:</label>
+  <mat-form-field appearance="outline">
+    <input id="couponInput" matInput type="number" [(ngModel)]="couponValue" min="0">
+  </mat-form-field>
+</div>
+
+<div class="service-container">
+  <label>Service:</label>
+  <input type="text"
+         placeholder="Search by service name..."
+         [(ngModel)]="serviceQuery"
+         (input)="searchServices()"
+         (keydown)="handleKeydown($event, 'service')"
+         class="service-search-box" />
+
+  <ul *ngIf="serviceSuggestions.length > 0" class="service-suggestions">
+    <li *ngFor="let suggestion of serviceSuggestions; let i = index"
+        [class.active]="i === selectedServiceIndex"
+        (click)="selectService(suggestion)">
+      <div class="suggestion-item">
+        <span class="value">{{ suggestion.serviceName }}</span>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<div>
+  <label>Date & Time:</label>
+  <mat-form-field appearance="outline">
+    <input matInput type="date" [(ngModel)]="createdDate">
+  </mat-form-field>
+</div>
+
+<div mat-dialog-actions>
+  <button mat-button (click)="closeDialog()">Cancel</button>
+  <button mat-button color="primary" (click)="saveCoupons()">Save</button>
+</div>

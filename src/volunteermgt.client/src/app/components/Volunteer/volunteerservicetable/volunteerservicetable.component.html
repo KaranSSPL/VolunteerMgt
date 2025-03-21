@@ -1,51 +1,43 @@
-<div class="container">
   <h2>Volunteer Service Mappings</h2>
-  <div class="table-container">
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Volunteer Name</th>
-        <th>Services</th>
-        <th>Time Slots</th>
-        <th>Created Date</th>
-        <th>Actions</th>
-
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let mapping of volunteerServiceMappings">
-        <td>{{ mapping.id }}</td>
-        <td>{{ mapping.volunteerName }}</td>
-        <td style="position: relative;">
-          <ul>
-            <li *ngFor="let service of mapping.services">
-              {{ service }}
-            </li>
-          </ul>
-          <button class="btn-edit" (click)="openEditDialog(mapping.id)"
-                  style="position: absolute; top: 0; right: 0; background: none; border: none; cursor: pointer; padding: 5px;">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 20h9"></path>
-              <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4Z"></path>
-            </svg>
-          </button>
-        </td>
-        <td>
-          <ul>
-            <li *ngFor="let timeSlot of mapping.timeSlots">{{ timeSlot }}</li>
-          </ul>
-        </td>
-        <td>
-          {{ mapping.createdDate | date: 'dd-MM-yyyy' }}
-        </td>
-        <td>
-          <button class="btn-delete" (click)="openDeleteDialog(mapping.volunteerId)">
-            ❌ Delete
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="container">
+    <div class="time-wrapper">
+      <h3>Default Exit Time </h3>
+      <div class="time">
+        <input class="time-input" type="time" [(ngModel)]="defaultTime" (change)="onDefaultTimeChange($event)" />
+      </div>
     </div>
-</div>
+    <div class="search-container">
+      <i class="material-icons search-icon">search</i>
+      <input type="text" [(ngModel)]="searchQuery" (input)="filterTable()"
+             placeholder="Search..." class="search-input" />
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Volunteer Name</th>
+            <th>Service Name</th>
+            <th>Created Date</th>
+            <th>In Time</th>
+            <th>Exit Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let mapping of filteredMappings">
+            <td>{{ mapping.volunteerName }}</td>
+            <td>{{ mapping.serviceName }}</td>
+            <td>{{ mapping.timeSlot | date:'dd-mm-yyyy' }}</td>
+            <td>{{ mapping.timeSlot | date:'shortTime' }}</td>
+            <td>{{ mapping.exitTime }}</td>
+            <td>
+              <button class="btn-edit" (click)="exitVolunteer(mapping.volunteerId)">Exit</button>
+              <button class="btn-delete" (click)="openDeleteDialog(mapping.volunteerId)">
+                ❌ Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>

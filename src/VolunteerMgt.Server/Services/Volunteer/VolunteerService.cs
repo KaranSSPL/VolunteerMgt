@@ -4,39 +4,49 @@ using VolunteerMgt.Server.Models.Volunteers;
 using VolunteerMgt.Server.Persistence;
 using System.Net;
 using VolunteerMgt.Server.Models;
+using Microsoft.AspNetCore.Hosting;
+using VolunteerMgt.Server.DataModals;
+using Newtonsoft.Json;
 
 namespace VolunteerMgt.Server.Services.Volunteer
 {
     public class VolunteerService : IVolunteerService
     {
         private readonly DatabaseContext _dbContext;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public VolunteerService(DatabaseContext dbContext)
+
+        public VolunteerService(DatabaseContext dbContext, IWebHostEnvironment webHostEnvironment)
         {
             _dbContext = dbContext;
+            _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<ResponseModel<VolunteerModel>> AddVolunteerAsync(VolunteerModel request)
+        public async Task<ResponseModel<VolunteerModel>> AddVolunteerAsync(AddVolunteerDto request)
         {
             try
             {
+                string imagePath = await SaveImageAsync(request.Image);
                 var volunteer = new VolunteerModel
                 {
                     Name = request.Name,
                     MobileNo = request.MobileNo,
                     Address = request.Address,
                     Occupation = request.Occupation,
-                    Image = request.Image,
-                    Availabilities = request.Availabilities.Select(a => new AvailabilityModel
+                    code = request.code,
+                    ImagePath = imagePath
+                };
+                var availabilities = JsonConvert.DeserializeObject<List<AvailabilityDataModel>>(request.Availabilities);
+                if (availabilities != null && availabilities.Any())
+                {
+                    volunteer.Availabilities = availabilities.Select(a => new AvailabilityModel
                     {
                         Day = a.Day,
-                        TimeSlot = a.TimeSlot
-                    }).ToList()
-                };
-
+                        TimeSlot = a.TimeSlot,
+                    }).ToList();
+                }
                 _dbContext.Volunteer.Add(volunteer);
                 await _dbContext.SaveChangesAsync();
-
                 return new ResponseModel<VolunteerModel>
                 {
                     Success = true,
@@ -55,6 +65,26 @@ namespace VolunteerMgt.Server.Services.Volunteer
                     Data = null
                 };
             }
+        }
+
+        private async Task<string> SaveImageAsync(IFormFile imageFile)
+        {
+            if (imageFile == null || imageFile.Length == 0)
+            {
+                return null;
+            }
+            string uniqueFileName = $"{Path.GetFileNameWithoutExtension(imageFile.FileName)}_{DateTime.Now:yyyyMMddHHmmss}{Path.GetExtension(imageFile.FileName)}";
+            string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images");
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+            string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await imageFile.CopyToAsync(fileStream);
+            }
+            return $"/images/{uniqueFileName}";
         }
 
         public async Task<List<VolunteerModel>> GetAllVolunteersAsync()
@@ -103,11 +133,10 @@ namespace VolunteerMgt.Server.Services.Volunteer
             }
         }
 
-        public async Task<ResponseModel<VolunteerModel>> UpdateVolunteerAsync(int id, VolunteerModel request)
+        public async Task<ResponseModel<VolunteerModel>> UpdateVolunteerAsync(int id, AddVolunteerDto request)
         {
             try
             {
-                // Check if ID exists
                 var volunteer = await _dbContext.Volunteer
                     .Include(v => v.Availabilities)
                     .FirstOrDefaultAsync(v => v.Id == id);
@@ -127,13 +156,22 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 if (!string.IsNullOrEmpty(request.MobileNo)) volunteer.MobileNo = request.MobileNo;
                 if (!string.IsNullOrEmpty(request.Address)) volunteer.Address = request.Address;
                 if (!string.IsNullOrEmpty(request.Occupation)) volunteer.Occupation = request.Occupation;
-                if (!string.IsNullOrEmpty(request.Image)) volunteer.Image = request.Image;
+                if (!string.IsNullOrEmpty(request.code)) volunteer.code = request.code;
 
+                if (request.Image != null && request.Image.Length > 0)
+                {
+                    volunteer.ImagePath = await SaveImageAsync(request.Image); 
+                }
+                else if (!string.IsNullOrEmpty(request.ImagePath))
+                {
+                    volunteer.ImagePath = request.ImagePath; 
+                }
 
-                if (request.Availabilities != null && request.Availabilities.Any())
+                var availabilities = JsonConvert.DeserializeObject<List<AvailabilityDataModel>>(request.Availabilities);
+                if (availabilities != null && availabilities.Any())
                 {
                     _dbContext.Availability.RemoveRange(volunteer.Availabilities);
-                    volunteer.Availabilities = request.Availabilities.Select(a => new AvailabilityModel
+                    volunteer.Availabilities = availabilities.Select(a => new AvailabilityModel
                     {
                         Day = a.Day,
                         TimeSlot = a.TimeSlot

@@ -12,7 +12,7 @@ import { HeaderComponent } from './components/header/header.component';
 import { VolunteertableComponent } from './components/Volunteer/volunteertable/volunteertable.component';
 import { CreateVolunteerComponent } from './components/Volunteer/volunteerCRUD/create-volunteer/create-volunteer.component';
 import { EditVolunteerComponent } from './components/Volunteer/volunteerCRUD/edit-volunteer/edit-volunteer.component';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { DeleteconfirmationComponent } from './Dialogbox/deleteconfirmation/deleteconfirmation.component';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,8 +22,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { VolunteerservicetableComponent } from './components/Volunteer/volunteerservicetable/volunteerservicetable.component';
 import { ServicetableComponent } from './components/Volunteer/servicetable/servicetable.component';
 import { EditvolunteerdialogComponent } from './Dialogbox/editvolunteerdialog/editvolunteerdialog.component';
-import { AssignserviceComponent } from './components/assignservice/assignservice.component';
+import { AssignserviceComponent } from './components/Volunteer/assignservice/assignservice.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { AddcoupondialogComponent } from './Dialogbox/addcoupondialog/addcoupondialog.component';
+import { CoupondialogComponent } from './Dialogbox/coupondialog/coupondialog.component';
+import { CouponComponent } from './components/Volunteer/coupon/coupon.component';
 
 @NgModule({
   declarations: [
@@ -40,7 +43,10 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     VolunteerservicetableComponent,
     ServicetableComponent,
     EditvolunteerdialogComponent,
-    AssignserviceComponent
+    AssignserviceComponent,
+    AddcoupondialogComponent,
+    CoupondialogComponent,
+    CouponComponent,
   ],
   imports: [
     BrowserModule,
@@ -56,7 +62,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     BrowserAnimationsModule,
     MatSnackBarModule
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

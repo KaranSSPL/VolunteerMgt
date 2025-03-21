@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VolunteerMgt.Server.Abstraction.Service.Volunteer;
+using VolunteerMgt.Server.DataModals;
 using VolunteerMgt.Server.Models.Volunteers;
 
 public static class VolunteerEndpoints
@@ -8,26 +9,29 @@ public static class VolunteerEndpoints
     {
         var group = app.MapGroup("/api/volunteers")
             .WithOpenApi();
-        
+
         group.MapPost("/add", AddVolunteersAsync)
-            .WithName("AddVolunteers");
+             .WithName("AddVolunteers")
+             .DisableAntiforgery();
 
         group.MapGet("/all", GetAllVolunteersAsync)
             .WithName("GetAllVolunteers");
 
         group.MapGet("/{id}", GetVolunteerByIdAsync)
-    .WithName("GetVolunteerById");
+            .WithName("GetVolunteerById");
 
         group.MapPut("/update/{id}", UpdateVolunteerAsync)
-            .WithName("UpdateVolunteer");
+            .WithName("UpdateVolunteer")
+            .DisableAntiforgery();
 
         group.MapDelete("/delete/{id}", DeleteVolunteerAsync)
             .WithName("DeleteVolunteer");
     }
 
+    [IgnoreAntiforgeryToken]
     private static async Task<IResult> AddVolunteersAsync(
         [FromServices] IVolunteerService volunteerService,
-        [FromBody] VolunteerModel volunteer)
+        [FromForm] AddVolunteerDto volunteer)
     {
         var result = await volunteerService.AddVolunteerAsync(volunteer);
         return Results.Ok(result);
@@ -47,11 +51,12 @@ public static class VolunteerEndpoints
         var result = await volunteerService.GetVolunteerByIdAsync(id);
         return result.Success ? Results.Ok(result) : Results.NotFound(result);
     }
-
+    
+    [IgnoreAntiforgeryToken]
     private static async Task<IResult> UpdateVolunteerAsync(
         [FromServices] IVolunteerService volunteerService,
         [FromRoute] int id,
-        [FromBody] VolunteerModel volunteer)
+        [FromForm] AddVolunteerDto volunteer)
     {
         var result = await volunteerService.UpdateVolunteerAsync(id, volunteer);
         return Results.Ok(result);

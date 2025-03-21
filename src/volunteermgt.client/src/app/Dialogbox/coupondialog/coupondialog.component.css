@@ -1,0 +1,167 @@
+.mat-dialog-container {
+  padding: 25px;
+  border-radius: 12px !important;
+  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+  background-color: #fff;
+  width: 350px;
+}
+
+h2.mat-dialog-title {
+  font-size: 22px;
+  font-weight: bold;
+  color: #007bff;
+  text-align: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #f0f0f0;
+}
+.service-suggestions li.active {
+  background: #c2f1f3;
+  color: white;
+}
+
+.mat-form-field {
+  width: 100%;
+  margin-top: 15px;
+}
+
+.mat-input-element {
+  font-size: 16px;
+  padding: 12px;
+}
+
+.mat-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+button.mat-button {
+  color: #555;
+  font-weight: bold;
+  padding: 8px 15px;
+  border-radius: 8px;
+  transition: all 0.3s ease-in-out;
+}
+
+  button.mat-button:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+  }
+
+  button.mat-button[color="primary"] {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+    padding: 8px 15px;
+    border-radius: 8px;
+    transition: background 0.3s ease-in-out;
+  }
+
+    button.mat-button[color="primary"]:hover {
+      background-color: #0056b3;
+    }
+
+.service-container {
+  display: flex;
+  width: 71%;
+  top: 0px;
+  position: relative;
+  flex-wrap: nowrap;
+  flex-direction: row;
+  margin-top: -8px;
+  margin-bottom: 11px;
+}
+
+.service-search-box {
+  width: 80%;
+  padding: 12px;
+  margin: 11px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 16px;
+  box-shadow: 0px 2px 5px rgba(0, 180, 80, 0.4);
+  transition: all 0.3s ease-in-out;
+}
+
+  .service-search-box:focus {
+    border-color: #007bff;
+    box-shadow: 0px 4px 8px rgba(0, 123, 255, 0.4);
+    outline: none;
+  }
+
+.service-suggestions {
+  list-style-type: none;
+  padding: 10px 0;
+  margin: 83px 0 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  max-height: 185px;
+  border-radius: 9px;
+  position: fixed;
+  width: 28%;
+  z-index: 10;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+  .service-suggestions li {
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  .service-suggestions li:hover {
+    background-color: #f0f0f0;
+  }
+
+.suggestion-item .value {
+  font-size: 15px;
+  color: #333;
+}
+
+button {
+  background: no-repeat;
+  border: 1px solid #60adff;
+  box-shadow: 0px 4px 8px rgba(0, 123, 255, 0.4);
+  padding: 9px;
+  font-size: 15px;
+  margin: 6px;
+  font-weight: 800;
+}
+
+label {
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 21px;
+  color: #444;
+  text-align: center;
+  margin-bottom: 5px;
+  margin-left: 16px;
+  margin-right:10px;
+}
+
+::ng-deep .mat-mdc-dialog-content  {
+  margin-top: 13px;
+  display: flex;
+  justify-content: flex-start;
+  margin-left: -3%;
+}
+::ng-deep .mat-mdc-dialog-content > :first-child {
+  margin: 10px;
+  text-align: center;
+  margin-top: 21px;
+  height: 20px;
+}
+
+
+
+  ::ng-deep.mat-mdc-text-field-wrapper {
+    width: 100%;
+    box-shadow: 0px 4px 8px rgba(0, 123, 255, 0.4);
+    z-index: 0;
+    border: 1px solid #53c9ff;
+  }
+
+::ng-deep.mdc-text-field--outlined:not(.mdc-text-field--disabled) .mat-mdc-notch-piece {
+  border: none;
+}

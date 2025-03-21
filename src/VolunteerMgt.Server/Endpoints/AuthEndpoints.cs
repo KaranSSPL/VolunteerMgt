@@ -3,7 +3,6 @@ using VolunteerMgt.Server.Abstraction.Service.Identity;
 using VolunteerMgt.Server.Models.Auth;
 using VolunteerMgt.Server.Models.Wrapper;
 using VolunteerMgt.Server.Models.User;
-using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace VolunteerMgt.Server.Endpoints;
 

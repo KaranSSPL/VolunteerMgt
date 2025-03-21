@@ -90,10 +90,10 @@ tbody tr:hover {
 span {
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.4);
   border-radius: 38px 19px;
-  border: 1px solid black;
+  border: 1px solid #007bff;
   padding: 8px;
   color: white;
-  background: black;
+  background: #007bff;
 }
 
 h3 {

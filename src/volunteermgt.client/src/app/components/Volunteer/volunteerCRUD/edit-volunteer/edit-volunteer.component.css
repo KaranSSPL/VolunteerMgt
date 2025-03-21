@@ -15,6 +15,15 @@ h2 {
   margin-bottom: 20px;
 }
 
+.volunteer-image-preview {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-top: 10px;
+  display: block;
+}
+
 .form-group {
   display: flex;
   align-items: center;
@@ -79,6 +88,7 @@ h3 {
   background: #dc3545;
   color: white;
   border: none;
+  font-weight:700;
   padding: 8px 12px;
   border-radius: 5px;
   cursor: pointer;

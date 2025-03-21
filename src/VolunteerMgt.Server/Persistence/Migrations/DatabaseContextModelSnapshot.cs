@@ -261,6 +261,53 @@ namespace VolunteerMgt.Server.Persistence.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
+            modelBuilder.Entity("VolunteerMgt.Server.Models.Coupons.AdditionalCoupon", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AdditionalCouponValue")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CouponId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ServiceName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CouponId");
+
+                    b.ToTable("AdditionalCoupons");
+                });
+
+            modelBuilder.Entity("VolunteerMgt.Server.Models.Coupons.Coupons", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CouponValue")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Coupons");
+                });
+
             modelBuilder.Entity("VolunteerMgt.Server.Models.User.UserModel", b =>
                 {
                     b.Property<int>("Id")
@@ -331,6 +378,10 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("ExitTime")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
@@ -338,9 +389,8 @@ namespace VolunteerMgt.Server.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TimeSlot")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("TimeSlot")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("VolunteerId")
                         .HasColumnType("int");
@@ -396,7 +446,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image")
+                    b.Property<string>("ImagePath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -472,6 +522,17 @@ namespace VolunteerMgt.Server.Persistence.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("VolunteerMgt.Server.Models.Coupons.AdditionalCoupon", b =>
+                {
+                    b.HasOne("VolunteerMgt.Server.Models.Coupons.Coupons", "Coupon")
+                        .WithMany("AdditionalCoupons")
+                        .HasForeignKey("CouponId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Coupon");
+                });
+
             modelBuilder.Entity("VolunteerMgt.Server.Models.VolunteerServiceMapping", b =>
                 {
                     b.HasOne("VolunteerMgt.Server.Models.VolunteerService.ServiceModel", "Service")
@@ -500,6 +561,11 @@ namespace VolunteerMgt.Server.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Volunteer");
+                });
+
+            modelBuilder.Entity("VolunteerMgt.Server.Models.Coupons.Coupons", b =>
+                {
+                    b.Navigation("AdditionalCoupons");
                 });
 
             modelBuilder.Entity("VolunteerMgt.Server.Models.VolunteerService.ServiceModel", b =>

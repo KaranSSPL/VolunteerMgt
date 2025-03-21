@@ -4,6 +4,7 @@
     {
         public int VolunteerId { get; set; }
         public int ServiceId { get; set; }
-        public string TimeSlot { get; set; } = string.Empty;
+        public DateTime TimeSlot { get; set; }
+        public string ExitTime { get; set; } = string.Empty;
     }
 }

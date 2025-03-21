@@ -6,10 +6,12 @@
            placeholder="Search Volunteer..."
            [(ngModel)]="searchQuery"
            (input)="searchVolunteers()"
+           (keydown)="handleKeydown($event, 'volunteer')"
            class="volunteer-search-box" />
-
     <ul *ngIf="searchSuggestions.length > 0" class="volunteer-suggestions">
-      <li *ngFor="let suggestion of searchSuggestions" (click)="selectSuggestion(suggestion)">
+      <li *ngFor="let suggestion of searchSuggestions; let i = index"
+          [class.active]="i === selectedVolunteerIndex"
+          (click)="selectSuggestion(suggestion)">
         <div class="suggestion-item">
           <span class="label">Name:</span>
           <span class="value">{{ suggestion.name }}</span>
@@ -19,33 +21,59 @@
       </li>
     </ul>
   </div>
-
   <div class="service-container">
     <label>Service:</label>
     <input type="text"
-           placeholder="Search by service name..."
-           [(ngModel)]="serviceQuery"
-           (input)="searchServices()"
-           class="service-search-box" />
-
+            placeholder="Search by service name..."
+            [(ngModel)]="serviceQuery"
+            (input)="searchServices()"
+            (keydown)="handleKeydown($event, 'service')"
+            class="service-search-box" />
     <ul *ngIf="serviceSuggestions.length > 0" class="service-suggestions">
-      <li *ngFor="let suggestion of serviceSuggestions" (click)="selectService(suggestion)">
+      <li *ngFor="let suggestion of serviceSuggestions; let i = index"
+          [class.active]="i === selectedServiceIndex"
+          (click)="selectService(suggestion)">
         <div class="suggestion-item">
           <span class="value">{{ suggestion.serviceName }}</span>
         </div>
       </li>
     </ul>
   </div>
-
   <div class="time-container">
     <label>Time Slot:</label>
     <div class="time-slot-container">
       <input type="time" [(ngModel)]="timeSlot" class="time-slot" />
       <button (click)="onAssign()" class="assign-btn">Assign</button>
+      <button (click)="onAddCoupons()" class="add-coupon"><p>Add Coupons</p></button>
     </div>
   </div>
 </div>
-
+<div class="summary-container">
+  <div class="date-wrapper">
+    <h3>{{ todayDate | date: 'EEEE' }}</h3>
+    <h4>{{ todayDate | date: 'dd-MM-yyyy' }}</h4>
+    <hr />
+    <h1>{{ getTotal('volunteerCount') }}</h1>
+  </div>
+  <hr class="hr"/>  
+  <div class="coupens">
+    <ul>
+      <li><span>Total Coupens</span>:<strong>{{totalCoupons}}</strong></li>
+      <li><span>Volunteers</span>:<strong>{{getTotal('volunteerCount')}}</strong></li>
+      <li>
+        <span>Additional Coupons</span>:
+        <strong>
+          <button (click)="openCouponDialog()" class="plus-btn">+</button>
+          {{additionalCoupons}}
+        </strong>
+      </li>
+      <hr />
+      <li>
+        <span>Remaining Coupens</span>:
+      <strong>{{ remainingCoupons }}</strong></li>
+    </ul>
+  </div>
+</div>
 <div class="table-container">
   <table>
     <thead>

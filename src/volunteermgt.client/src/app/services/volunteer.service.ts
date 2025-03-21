@@ -21,11 +21,12 @@ export class VolunteerService {
     return this.http.get<Volunteer>(`${this.apiUrl}/volunteers/${id}`);
   }
 
-  addVolunteer(volunteer: Volunteer): Observable<Volunteer> {
-    return this.http.post<Volunteer>(`${this.apiUrl}/volunteers/add`, volunteer);
-  }
+  addVolunteer(volunteerData: FormData): Observable<any> {
+  return this.http.post(`${this.apiUrl}/volunteers/add`, volunteerData);
+}
 
-  updateVolunteer(id: number, volunteer: Volunteer): Observable<Volunteer> {
+
+  updateVolunteer(id: number, volunteer: FormData): Observable<Volunteer> {
     return this.http.put<Volunteer>(`${this.apiUrl}/volunteers/update/${id}`, volunteer);
   }
 
@@ -63,6 +64,10 @@ export class VolunteerService {
 
   getServiceVolunteerById(volunteerId: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/volunteer-service/volunteer/${ volunteerId }/services`);
+  }
+
+  getVolunteerServiceById(Id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/volunteer-service/volunteer-service-mappings/${Id}`);
   }
 
   deleteVolunteerService(volunteerId: number, serviceId: number): Observable<any> {

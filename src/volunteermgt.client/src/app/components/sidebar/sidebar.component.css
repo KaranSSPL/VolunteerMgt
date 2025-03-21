@@ -6,6 +6,7 @@
   position: fixed;
   height: 100%;
   overflow: auto;
+  box-shadow: 0px 4px 8px rgba(0, 123, 255, 0.4);
 }
 
   .sidebar a {
@@ -16,8 +17,8 @@
   }
 
     .sidebar a.active {
-      background-color: #04AA6D;
-      color: white;
+      background-color: white;
+      color: black;
       border-bottom: 1px solid;
     }
 

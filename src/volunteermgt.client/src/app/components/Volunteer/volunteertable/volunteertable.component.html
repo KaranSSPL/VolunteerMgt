@@ -1,24 +1,21 @@
 <h2 style="text-align: center;" *ngIf="!isEditing">Volunteers List</h2>
-
 <div class="table-container" *ngIf="!isEditing">
   <button class="create-btn" routerLink="/createVolunteer">Add Volunteer</button>
-
   <table>
     <thead>
       <tr>
-        <th>ID</th>
         <th>Name</th>
         <th>Mobile No</th>
         <th>Address</th>
         <th>Occupation</th>
         <th>Availability</th>
         <th>Code</th>
+        <th>Image</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let volunteer of volunteers">
-        <td>{{ volunteer.id }}</td>
         <td>{{ volunteer.name }}</td>
         <td>{{ volunteer.mobileNo }}</td>
         <td>{{ volunteer.address }}</td>
@@ -30,7 +27,10 @@
             </li>
           </ul>
         </td>
-        <td>{{ volunteer .code }}</td>
+        <td>{{ volunteer.code }}</td>
+        <td>
+          <img [src]="volunteer.imagePath" alt="Volunteer Image" width="50" height="50" *ngIf="volunteer.imagePath">
+        </td>
         <td>
           <button class="btn-edit" (click)="editVolunteer(volunteer)">Edit</button>
           <button class="btn-delete" (click)="deleteVolunteer(volunteer.id)">Delete</button>
@@ -39,7 +39,6 @@
     </tbody>
   </table>
 </div>
-
 <app-edit-volunteer *ngIf="isEditing"
                     [volunteer]="selectedVolunteer"
                     (cancelEdit)="cancelEdit()">
