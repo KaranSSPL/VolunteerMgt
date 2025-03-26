@@ -1,6 +1,5 @@
 ﻿using VolunteerMgt.Server.Abstraction.Service.Common;
 using VolunteerMgt.Server.Models.Coupons;
-using VolunteerMgt.Server.Persistence.Migrations;
 
 namespace VolunteerMgt.Server.Abstraction.CouponService
 {
