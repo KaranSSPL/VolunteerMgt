@@ -1,7 +1,6 @@
  import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { VolunteerService } from '../../../services/volunteer.service';
-import { EditvolunteerdialogComponent } from '../../../Dialogbox/editvolunteerdialog/editvolunteerdialog.component';
 import { DeleteconfirmationComponent } from '../../../Dialogbox/deleteconfirmation/deleteconfirmation.component';
 
 @Component({
@@ -53,8 +52,8 @@ export class VolunteerservicetableComponent {
   filterTable(): void {
     const query = this.searchQuery.toLowerCase();
     this.filteredMappings = this.volunteerServiceMappings.filter(mapping =>
-      mapping.volunteerName?.toLowerCase().includes(query) || 
-      (mapping.serviceName && mapping.serviceName.toLowerCase().includes(query)) || 
+      mapping.volunteerName?.toLowerCase().includes(query) ||
+      (mapping.serviceName && mapping.serviceName.toLowerCase().includes(query)) ||
       (mapping.timeSlot && new Date(mapping.timeSlot).toLocaleDateString().includes(query))
     );
   }
@@ -62,35 +61,21 @@ export class VolunteerservicetableComponent {
   updateExitTimeForPastSlots(): void {
     const today = new Date().toISOString().split('T')[0];
     this.volunteerServiceMappings.forEach((mapping) => {
-      if (!mapping.timeSlots || !Array.isArray(mapping.timeSlots)) return;  
-      mapping.timeSlots.forEach((timeSlot: string, index: number) => {
-        if (!timeSlot) return; 
-        const slotDate = new Date(timeSlot).toISOString().split('T')[0];
-        if (slotDate !== today && (!mapping.exitTime || !mapping.exitTime[index])) {
-          const requestData = {
-            volunteerId: mapping.volunteerId,
-            serviceId: mapping.serviceId,
-            timeSlot: timeSlot,
-            exitTime: this.convertTo12HourFormat(this.defaultTime)
-          };
-          this.volunteerService.assignService(requestData).subscribe({
-            next: () => {
-              this.deleteService(mapping.volunteerId, mapping.serviceId);
-              console.log(`Exit time set for volunteer ${mapping.volunteerId} at ${this.defaultTime}`)
-            },
-            error: (err) => console.error('Error updating exit time:', err)
-          });
-        }
-      });
-    });
-  }
-
-  deleteService(volunteerId: number, serviceId: number): void {
-    this.volunteerService.deleteVolunteerService(volunteerId, serviceId).subscribe({
-      next: () => {
-      },
-      error: (err) => {
-        console.error('Error deleting service:', err);
+      if (!mapping.timeSlot) return;
+      const slotDate = new Date(mapping.timeSlot).toISOString().split('T')[0];
+      if (slotDate !== today && (!mapping.exitTime || mapping.exitTime === "")) {
+        const requestData = {
+          volunteerId: mapping.volunteerId,
+          serviceId: mapping.serviceId,
+          timeSlot: mapping.timeSlot,
+          exitTime: this.convertTo12HourFormat(this.defaultTime),
+        };
+        this.volunteerService.assignService(requestData).subscribe({
+          next: () => {
+            console.log(`Exit time set for Volunteer ${mapping.volunteerId} at ${this.defaultTime}`);
+          },
+          error: (err) => console.error('Error updating exit time:', err),
+        });
       }
     });
   }
@@ -103,18 +88,6 @@ export class VolunteerservicetableComponent {
     localStorage.setItem('defaultExitTime', this.defaultTime); 
     window.location.reload();
     console.log(`Default exit time updated to: ${this.defaultTime}`);
-  }
-
-  openEditDialog(id: number): void {
-    const dialogRef = this.dialog.open(EditvolunteerdialogComponent, {
-      width: '500px',
-      data: { id } 
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.getVolunteerServiceMappings();
-      }
-    });
   }
 
   openDeleteDialog(volunteerId: number): void {
@@ -154,7 +127,7 @@ export class VolunteerservicetableComponent {
           this.volunteerService.assignService(requestData).subscribe({
             next: () => {
               console.log(`Exit time updated for Volunteer ${volunteerId}, Service ${service.serviceId}`);
-              this.getVolunteerServiceMappings(); 
+              this.getVolunteerServiceMappings();
             },
             error: (err) => console.error('Error updating exit time:', err)
           });

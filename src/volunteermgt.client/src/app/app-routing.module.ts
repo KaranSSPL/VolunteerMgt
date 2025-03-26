@@ -10,10 +10,12 @@ import { VolunteerservicetableComponent } from './components/Volunteer/volunteer
 import { ServicetableComponent } from './components/Volunteer/servicetable/servicetable.component';
 import { AssignserviceComponent } from './components/Volunteer/assignservice/assignservice.component';
 import { CouponComponent } from './components/Volunteer/coupon/coupon.component';
+import { RegisterComponent } from './components/register/register.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
+  { path: 'register', component: RegisterComponent, canActivate: [LoginGuard] },
   { path: 'assignService', component: AssignserviceComponent, canActivate: [AuthGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'volunteer', component: VolunteertableComponent, canActivate: [AuthGuard] },

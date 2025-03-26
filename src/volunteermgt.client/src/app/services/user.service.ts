@@ -8,12 +8,16 @@ import { Observable } from 'rxjs';
 })
 export class UserService {
 
-  private apiUrl = 'https://localhost:7048/api/authentication/login';
+  private apiUrl = 'https://localhost:7048/api/authentication';
 
   constructor(private http: HttpClient, private router: Router) { }
 
   login(credentials: { email: string; password: string; }): Observable<HttpResponse<any>> {
-    return this.http.post<any>(`${this.apiUrl}`, credentials, { observe: 'response' });
+    return this.http.post<any>(`${this.apiUrl}/login`, credentials, { observe: 'response' });
+  }
+
+  register(user: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/register`, user);
   }
 
   logout(): void {

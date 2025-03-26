@@ -45,12 +45,10 @@ export class VolunteertableComponent implements OnInit {
 
   deleteVolunteer(id: number): void {
     const message = `Are you sure you want to delete this Volunteer?`;
-
     const dialogRef = this.dialog.open(DeleteconfirmationComponent, {
       width: '300px',
       data: { message }
     });
-
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.volunteerService.deleteVolunteer(id).subscribe(() => {

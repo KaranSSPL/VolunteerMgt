@@ -21,7 +21,6 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { VolunteerservicetableComponent } from './components/Volunteer/volunteerservicetable/volunteerservicetable.component';
 import { ServicetableComponent } from './components/Volunteer/servicetable/servicetable.component';
-import { EditvolunteerdialogComponent } from './Dialogbox/editvolunteerdialog/editvolunteerdialog.component';
 import { AssignserviceComponent } from './components/Volunteer/assignservice/assignservice.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AddcoupondialogComponent } from './Dialogbox/addcoupondialog/addcoupondialog.component';
@@ -42,7 +41,6 @@ import { CouponComponent } from './components/Volunteer/coupon/coupon.component'
     DeleteconfirmationComponent,
     VolunteerservicetableComponent,
     ServicetableComponent,
-    EditvolunteerdialogComponent,
     AssignserviceComponent,
     AddcoupondialogComponent,
     CoupondialogComponent,
