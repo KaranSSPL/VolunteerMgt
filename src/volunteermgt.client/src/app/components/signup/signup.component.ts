@@ -43,7 +43,7 @@ export class SignupComponent {
           Swal.fire("Signup Failed!", response.errors.join("\n"), "error");
 
         } else {
-        alert('Signup successful!');
+          Swal.fire({ position: "center", icon: "success", title: "Signup successful!", showConfirmButton: false, timer: 2000 });
         this.router.navigate(['/login']);
         }
       },

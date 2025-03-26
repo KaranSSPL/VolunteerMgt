@@ -46,32 +46,48 @@ namespace VolunteerMgt.Server.Services
                 return Result<List<Role>>.Fail("An internal error occurred.", HttpStatusCode.InternalServerError);
             }
         }
-        public async Task<Result> AddRoleAsync(string role)
+        public async Task<Result> AddRoleAsync(Role role)
         {
             try
             {
-                if (string.IsNullOrEmpty(role))
+                if (role == null)
                 {
-                    return Result.Fail("Role Name cannot be empty.", HttpStatusCode.BadRequest);
+                    return Result.Fail("Role cannot be empty.", HttpStatusCode.BadRequest);
                 }
 
-                if (await _roleManager.RoleExistsAsync(role))
+                if (await _roleManager.RoleExistsAsync(role.Name))
                 {
                     _logger.LogWarning("Role '{Role}' already exists.", role);
-                    return Result.Fail($"Role '{role}' already exists.", HttpStatusCode.BadRequest);
+                    return Result.Fail($"Role '{role}' already exists.", HttpStatusCode.Conflict);
                 }
                 var currentUser = _currentUserService.GetUserEmail();
 
                 var CreatedBy = _userManager.FindByEmailAsync(currentUser!).Result?.Id ?? string.Empty;
                 var newRole = new ApplicationRole
                 {
-                    Name = role,
+                    Name = role.Name,
                     CreatedBy = CreatedBy,
                     CreatedDate = DateTime.UtcNow
                 };
 
                 var result = await _roleManager.CreateAsync(newRole);
 
+                if (role.Permissions?.Any() == true)
+                {
+                    var createdRole = await _roleManager.FindByNameAsync(newRole.Name);
+
+                    var Permissios = role.Permissions.Select(x => x.Id).ToList();
+
+                    var permissionRole = Permissios.Select(x => new PermissionRoles
+                    {
+                        Id = Guid.NewGuid(),
+                        RoleId = Guid.Parse(createdRole?.Id!),
+                        PermissionId = x
+                    }).ToList();
+
+                    await _dbContext.PermissionRoles.AddRangeAsync(permissionRole);
+                    await _dbContext.SaveChangesAsync();
+                }
                 if (!result.Succeeded)
                 {
                     _logger.LogError("Failed to create role '{Role}'. Errors: {Errors}",
@@ -179,6 +195,9 @@ namespace VolunteerMgt.Server.Services
                                     roleId, string.Join(", ", result.Errors.Select(e => e.Description)));
                     return Result.Fail("Failed to delete the role.", HttpStatusCode.InternalServerError);
                 }
+                var permissionRole = _dbContext.PermissionRoles.Where(x => x.RoleId == Guid.Parse(role.Id)).ToList();
+                _dbContext.PermissionRoles.RemoveRange(permissionRole);
+                await _dbContext.SaveChangesAsync();
 
                 _logger.LogInformation("Role with ID '{RoleId}' deleted successfully.", roleId);
                 return await Result.SuccessAsync($"Role with ID '{role.Name}' deleted successfully.");

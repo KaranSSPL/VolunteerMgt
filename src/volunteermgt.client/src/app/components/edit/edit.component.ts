@@ -58,7 +58,7 @@ export class EditComponent implements OnInit {
 
     this.http.put('/api/volunteers/', this.volunteer).subscribe({
       next: (response: any) => {
-        Swal.fire("Success!", "Profile updated successfully.", "success");
+        Swal.fire({ position: "center", icon: "info", title: "Profile updated successfully.", showConfirmButton: false, timer: 1500 });
         this.loading = false;
       },
       error: (error) => {

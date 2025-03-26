@@ -12,6 +12,7 @@ import { HomeComponent } from './components/home/home.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { EditComponent } from './components/edit/edit.component';
 import { RolesComponent } from './components/roles/roles.component';
+import { AddRoleComponent } from './components/roles/add-role/add-role.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { RolesComponent } from './components/roles/roles.component';
     SignupComponent,
     HomeComponent,
     EditComponent,
-    RolesComponent
+    RolesComponent,
+    AddRoleComponent
   ],
   imports: [
     BrowserModule,

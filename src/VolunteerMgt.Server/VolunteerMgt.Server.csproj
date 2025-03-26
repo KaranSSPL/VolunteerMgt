@@ -45,8 +45,8 @@
 
   <ItemGroup>
     <Folder Include="Abstraction\Service\Features\" />
-    <Folder Include="Persistence\Migrations\" />
     <Folder Include="wwwroot\" />
+    <Folder Include="Persistence\Migrations\" />
     <Folder Include="Services\Features\" />
   </ItemGroup>
 	

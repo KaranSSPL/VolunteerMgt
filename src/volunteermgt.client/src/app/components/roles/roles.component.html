@@ -1,9 +1,7 @@
+
 <div class="container mt-4">
   <div class="heading p-3 bg-light border">
     <p class="h4">Roles Management!</p>
-  </div>
-  <div class="mt-2 float-left position-relative">
-    <p class="btn btn-secondary">Add Role</p>
   </div>
   <!-- Loading Spinner -->
   <div *ngIf="loading" class="preloader">
@@ -11,6 +9,10 @@
       <span class="sr-only">Loading...</span>
     </div>
   </div>
+  <div class="mt-2">
+    <a routerLink="/add-role" class="btn btn-primary float-start mb-2">Add Role</a>
+  </div>
+
 
   <!-- Roles Table -->
   <table class="table table-bordered border mt-3">
@@ -26,8 +28,14 @@
         <td>{{ role.name }}</td>
         <td>{{ getPermissionNames(role) }}</td>
         <td>
-          <button class="btn btn-success" (click)="assignPermission(role.id)">
+          <button class="btn btn-success me-2" (click)="assignPermission(role.id)">
             Assign Permission
+          </button>
+          <button class="btn btn-warning me-2" (click)="removePermission(role.id)">
+            Remove Permission
+          </button>
+          <button class="btn btn-danger" (click)="deleteRole(role.id)">
+            Delete
           </button>
         </td>
       </tr>

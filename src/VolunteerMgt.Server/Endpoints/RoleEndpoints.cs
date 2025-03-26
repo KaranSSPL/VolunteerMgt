@@ -42,7 +42,7 @@ namespace VolunteerMgt.Server.Endpoints
         {
             return await roleService.GetRolesbyIdAsync(roleId);
         }
-        private static async Task<Result> AddRoleAsync([FromServices] IRoleService roleService, [FromBody] string role)
+        private static async Task<Result> AddRoleAsync([FromServices] IRoleService roleService, [FromBody] Role role)
         {
             return await roleService.AddRoleAsync(role);
         }

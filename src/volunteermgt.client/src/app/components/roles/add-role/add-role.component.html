@@ -1,0 +1,34 @@
+<body>
+  <div class="wrapper">
+    <div class="title"><span>Add Role & Assign Permissions</span></div>
+    <form (ngSubmit)="onSubmit()" #roleForm="ngForm">
+      <!-- Role Name -->
+      <div class="row">
+        <label for="roleName">Role Name</label>
+        <input type="text" id="roleName" [(ngModel)]="roleName" name="roleName" class="form-control" placeholder="Enter Role Name" #roleNameRef="ngModel" required>
+        <div class="error-text" *ngIf="roleNameRef.invalid && roleNameRef.touched"> Role name is required! </div>
+      </div>
+
+      <!-- Permissions Selection -->
+      <div class="row">
+        <label>Assign Permissions</label>
+        <div *ngIf="permissions.length > 0; else loading">
+          <div *ngFor="let permission of permissions" class="permission-item">
+            <input type="checkbox" [(ngModel)]="permission.selected" name="permissions{{permission.id}}" [value]="permission.id">
+            {{ permission.name }}
+          </div>
+        </div>
+        <ng-template #loading>
+          <p>Loading permissions...</p>
+        </ng-template>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="row button">
+        <button type="submit" [disabled]="roleForm.invalid && loading">
+          <!--{{ loading ? 'Saving...' : 'Save Role' }}-->Save
+        </button>
+      </div>
+    </form>
+  </div>
+</body>

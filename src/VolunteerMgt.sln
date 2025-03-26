@@ -5,6 +5,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "volunteermgt.client", "volunteermgt.client\volunteermgt.client.esproj", "{F8A97288-82FE-3203-66B7-B660693F965B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VolunteerMgt.Server", "VolunteerMgt.Server\VolunteerMgt.Server.csproj", "{3CAD5937-9E94-4053-BCB0-FA02FA8BBA24}"
+	ProjectSection(ProjectDependencies) = postProject
+		{F8A97288-82FE-3203-66B7-B660693F965B} = {F8A97288-82FE-3203-66B7-B660693F965B}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
