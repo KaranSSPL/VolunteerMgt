@@ -9,7 +9,6 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class VolunteerService {
-  [x: string]: any;
   private apiUrl = `${environment.apiUrl}/api`;
 
   constructor(private http: HttpClient) { }
