@@ -1,0 +1,52 @@
+:host {
+  display: block;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+}
+
+.mat-dialog-container {
+  padding: 20px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+}
+
+mat-dialog-content {
+  font-size: 16px;
+  color: #555;
+  padding: 10px 0;
+}
+
+mat-dialog-actions {
+  display: flex;
+  justify-content: center;
+  padding-top: 15px;
+}
+
+button {
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+  button:hover {
+    opacity: 0.8;
+  }
+
+  button[mat-button] {
+    background-color: #ccc;
+    color: #333;
+  }
+
+    button[mat-button][color="warn"] {
+      background-color: #ff4d4d;
+      color: white;
+    }

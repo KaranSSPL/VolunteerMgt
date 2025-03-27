@@ -1,6 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using VolunteerMgt.Server.Entities.Identity;
+using VolunteerMgt.Server.Models;
+using VolunteerMgt.Server.Models.Coupons;
+using VolunteerMgt.Server.Models.User;
+using VolunteerMgt.Server.Models.Volunteers;
+using VolunteerMgt.Server.Models.VolunteerService;
 
 namespace VolunteerMgt.Server.Persistence;
 
@@ -8,6 +13,20 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser, ApplicationRol
 {
     public DatabaseContext() { }
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
+
+    public DbSet<UserModel> User { get; set; }
+    
+    public DbSet<AvailabilityModel> Availability { get; set; }
+
+    public DbSet<VolunteerModel> Volunteer { get; set; }
+
+    public DbSet<ServiceModel> Service { get; set; }
+
+    public DbSet<VolunteerServiceMapping> VolunteerServiceMapping { get; set; }
+
+    public DbSet<Coupons> Coupons { get; set; }
+
+    public DbSet<AdditionalCoupon> AdditionalCoupons { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

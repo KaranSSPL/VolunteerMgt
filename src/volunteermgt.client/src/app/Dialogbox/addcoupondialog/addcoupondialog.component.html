@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Add Coupon</h2>
+<div mat-dialog-content>
+  <label>Coupon Value:</label>
+  <input type="number" [(ngModel)]="couponValue" class="coupon-input" placeholder="Enter coupon value..." />
+
+  <label>Current Date:</label>
+  <input type="text" [value]="currentDate" readonly class="date-input" />
+</div>
+<div mat-dialog-actions align="end">
+  <button mat-button (click)="dialogRef.close()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="addCoupon()">Add</button>
+</div>

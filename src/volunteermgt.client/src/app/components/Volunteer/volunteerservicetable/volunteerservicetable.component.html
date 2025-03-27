@@ -1,0 +1,43 @@
+  <h2>Volunteer Service Mappings</h2>
+  <div class="container">
+    <div class="time-wrapper">
+      <h3>Default Exit Time </h3>
+      <div class="time">
+        <input class="time-input" type="time" [(ngModel)]="defaultTime" (change)="onDefaultTimeChange($event)" />
+      </div>
+    </div>
+    <div class="search-container">
+      <i class="material-icons search-icon">search</i>
+      <input type="text" [(ngModel)]="searchQuery" (input)="filterTable()"
+             placeholder="Search..." class="search-input" />
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Volunteer Name</th>
+            <th>Service Name</th>
+            <th>Created Date</th>
+            <th>In Time</th>
+            <th>Exit Time</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let mapping of filteredMappings">
+            <td>{{ mapping.volunteerName }}</td>
+            <td>{{ mapping.serviceName }}</td>
+            <td>{{ mapping.timeSlot | date:'dd-mm-yyyy' }}</td>
+            <td>{{ mapping.timeSlot | date:'shortTime' }}</td>
+            <td>{{ mapping.exitTime }}</td>
+            <td>
+              <button class="btn-edit" (click)="exitVolunteer(mapping.volunteerId)">Exit</button>
+              <button class="btn-delete" (click)="openDeleteDialog(mapping.volunteerId)">
+                ❌ Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>

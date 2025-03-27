@@ -1,77 +1,98 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using System.Text;
 using VolunteerMgt.Server.Abstraction.Service.Identity;
 using VolunteerMgt.Server.Common.Settings;
-using VolunteerMgt.Server.Entities.Identity;
 using VolunteerMgt.Server.Models.Auth;
+using VolunteerMgt.Server.Models.User;
 using VolunteerMgt.Server.Models.Wrapper;
+using VolunteerMgt.Server.Persistence;
 
 namespace VolunteerMgt.Server.Services.Identity;
 
-public class AuthService(
-    ILogger<AuthService> logger,
-    UserManager<ApplicationUser> userManager,
-    IOptions<JwtConfiguration> jwtConfiguration) : IAuthService
+public class AuthService : IAuthService
 {
-    public async Task<Result<TokenResponse>> GetTokenAsync(TokenRequest request)
+    private readonly DatabaseContext _context;
+    private readonly ILogger<AuthService> _logger;
+    private readonly JwtConfiguration _jwtConfig;
+
+    public AuthService(DatabaseContext context, ILogger<AuthService> logger, IOptions<JwtConfiguration> jwtConfig)
     {
-        ApplicationUser? user = await userManager.FindByEmailAsync(request.Email);
-        if (user == null)
-            return await Result<TokenResponse>.FailAsync("Invalid email or password");
+        _context = context;
+        _logger = logger;
+        _jwtConfig = jwtConfig.Value;
+    }
 
-        if (!await userManager.CheckPasswordAsync(user, request.Password))
-            return await Result<TokenResponse>.FailAsync("Invalid email or password");
+    public async Task<Result<TokenResponse>> RegisterAsync(UserModel request)
+    {
+        if (_context.User.Any(u => u.Email == request.Email))
+        {
+            return await Result<TokenResponse>.FailAsync("Email already in use.");
+        }
 
-        // Generate token
-        (JwtSecurityToken token, DateTime expiry) = GetJwtSecurityToken(user);
+        string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
+
+        var user = new UserModel
+        {
+            Firstname = request.Firstname,
+            Lastname = request.Lastname,
+            Username = request.Username,
+            Roles = request.Roles,
+            Email = request.Email,
+            Phone = request.Phone,
+            Password = hashedPassword
+        };
+
+        _context.User.Add(user);
+        await _context.SaveChangesAsync();
+
+        return await Result<TokenResponse>.SuccessAsync(new TokenResponse { Email = user.Email });
+    }
+
+    public async Task<Result<TokenResponse>> LoginAsync(TokenRequest request)
+    {
+        var user = _context.User.FirstOrDefault(u => u.Email == request.Email);
+        if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+        {
+            
+            return await Result<TokenResponse>.FailAsync("Invalid email or password.", HttpStatusCode.Unauthorized);
+        }
+
+        // Generate JWT token
+        (string token, DateTime expiry) = GenerateJwtToken(user);
 
         return await Result<TokenResponse>.SuccessAsync(new TokenResponse
         {
-            Token = new JwtSecurityTokenHandler().WriteToken(token),
+            Token = token,
             Expiry = expiry,
-            Email = user.Email ?? ""
+            Email = user.Email
+            
         });
     }
 
-    private Tuple<JwtSecurityToken, DateTime> GetJwtSecurityToken(ApplicationUser applicationUser)
+    private Tuple<string, DateTime> GenerateJwtToken(UserModel user)
     {
-        // Security stamp set into the claims
-        var securityStampClaimType = new ClaimsIdentityOptions().SecurityStampClaimType;
-        // Get user roles
-        var userRoles = userManager.GetRolesAsync(applicationUser);
-        // User claims
         var authClaims = new List<Claim>
-            {
-                new(ClaimTypes.NameIdentifier, applicationUser.Id),
-                new(ClaimTypes.Name, applicationUser.UserName??string.Empty),
-                new(ClaimTypes.Role, userRoles.Result?.FirstOrDefault()??string.Empty)
-            };
+        {
+            new(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new(ClaimTypes.Name, user.Username),
+            new(ClaimTypes.Role, user.Roles)
+        };
 
-        return GetToken(authClaims);
-    }
+        var tokenExpiry = DateTime.UtcNow.AddMinutes(_jwtConfig.TokenExpiry);
+        var authSignInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtConfig.Secret!));
 
-    private Tuple<JwtSecurityToken, DateTime> GetToken(IEnumerable<Claim> authClaims)
-    {
-        logger.LogInformation("Generating token");
-        // Set token expiry
-        var tokenExpiry = DateTime.UtcNow.AddMinutes(jwtConfiguration.Value.TokenExpiry);
-
-        // Get secret key from the appsettings.json file
-        var authSignInKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtConfiguration.Value.Secret!));
-
-        // Create token
         var token = new JwtSecurityToken(
-            issuer: jwtConfiguration.Value.ValidIssuer,
-            audience: jwtConfiguration.Value.ValidAudience,
+            issuer: _jwtConfig.ValidIssuer,
+            audience: _jwtConfig.ValidAudience,
             expires: tokenExpiry,
             claims: authClaims,
             signingCredentials: new SigningCredentials(authSignInKey, SecurityAlgorithms.HmacSha256)
         );
 
-        return new Tuple<JwtSecurityToken, DateTime>(token, tokenExpiry);
+        return new Tuple<string, DateTime>(new JwtSecurityTokenHandler().WriteToken(token), tokenExpiry);
     }
 }

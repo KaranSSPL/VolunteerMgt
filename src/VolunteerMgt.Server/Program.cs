@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -29,6 +30,10 @@ try
 
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                            throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+    if (connectionString.Contains("|DataDirectory|"))
+    {
+        connectionString = connectionString.Replace("|DataDirectory|", builder.Environment.ContentRootPath);
+    }
     var commandTimeout = (int)TimeSpan.FromMinutes(20).TotalSeconds;
 
     builder.Services.AddDbContext<DatabaseContext>(options =>
@@ -47,6 +52,8 @@ try
 #endif
     });
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+    builder.Services.AddAntiforgery(options => options.SuppressXFrameOptionsHeader = true);
+
 
     // Add Identity
     builder.Services.AddIdentity<ApplicationUser, ApplicationRole>()
@@ -110,6 +117,11 @@ try
     // Add cors
     builder.Services.AddCors();
 
+    builder.Services.AddControllers().AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    });
+
     // Add application service
     builder.Services.AddServices();
 
@@ -167,6 +179,7 @@ try
 
     var app = builder.Build();
 
+
     //add exception handler to the pipeline
     app.UseExceptionHandler();
     //app.UseMiddleware<ExceptionMiddleware>();
@@ -205,6 +218,10 @@ try
 
     // Add all endpoints here.
     app.MapAuthenticationEndpoints();
+    app.MapVolunteerEndpoints();
+    app.MapServiceEndpoints();
+    app.MapVolunteerServiceEndpoints();
+    app.MapCouponsEndpoints();
 
     app.MapFallbackToFile("/index.html");
 
