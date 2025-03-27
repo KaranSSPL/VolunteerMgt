@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 using Microsoft.AspNetCore.Identity;
@@ -31,6 +30,10 @@ try
 
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                            throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+    if (connectionString.Contains("|DataDirectory|"))
+    {
+        connectionString = connectionString.Replace("|DataDirectory|", builder.Environment.ContentRootPath);
+    }
     var commandTimeout = (int)TimeSpan.FromMinutes(20).TotalSeconds;
 
     builder.Services.AddDbContext<DatabaseContext>(options =>

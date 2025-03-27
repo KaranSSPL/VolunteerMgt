@@ -2,13 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Volunteer } from '../Models/volunteer.model';
-import { Service} from '../Models/voluteerService.model';
+import { Service } from '../Models/voluteerService.model';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class VolunteerService {
-  private apiUrl = '/api';
+  [x: string]: any;
+  private apiUrl = `${environment.apiUrl}/api`;
+
   constructor(private http: HttpClient) { }
 
   getVolunteers(): Observable<Volunteer[]> {
