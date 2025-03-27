@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 export class CouponService {
 
   constructor(private http: HttpClient) { }
-  private baseUrl = 'https://localhost:7048/api';
+  private baseUrl = '/api';
 
   addCoupon(coupon: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/coupons/add`, coupon);

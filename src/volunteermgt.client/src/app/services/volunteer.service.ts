@@ -8,9 +8,7 @@ import { Service} from '../Models/voluteerService.model';
   providedIn: 'root',
 })
 export class VolunteerService {
-  [x: string]: any;
-  private apiUrl = 'https://localhost:7048/api';
-
+  private apiUrl = '/api';
   constructor(private http: HttpClient) { }
 
   getVolunteers(): Observable<Volunteer[]> {
@@ -23,8 +21,7 @@ export class VolunteerService {
 
   addVolunteer(volunteerData: FormData): Observable<any> {
   return this.http.post(`${this.apiUrl}/volunteers/add`, volunteerData);
-}
-
+  }
 
   updateVolunteer(id: number, volunteer: FormData): Observable<Volunteer> {
     return this.http.put<Volunteer>(`${this.apiUrl}/volunteers/update/${id}`, volunteer);
@@ -34,7 +31,7 @@ export class VolunteerService {
     return this.http.delete<boolean>(`${this.apiUrl}/volunteers/delete/${id}`);
   }
 
-  // Service
+  //Service
 
   getAllServices(): Observable<Service[]> {
     return this.http.get<Service[]>(`${this.apiUrl}/services/allService`);

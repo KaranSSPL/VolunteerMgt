@@ -48,10 +48,15 @@
   <ItemGroup>
     <Folder Include="Abstraction\Service\Features\" />
     <Folder Include="Data\" />
-    <Folder Include="wwwroot\" />
     <Folder Include="NewFolder\" />
     <Folder Include="Services\Features\" />
   </ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Data\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 	
   <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- Build the Angular app -->
