@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, FormArray } from '@angular/forms';
 import Swal from 'sweetalert2';
-import { RoleService } from '../services/roles.service';
+import { RoleService } from '../../../../services/role/roles.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,54 +11,75 @@ import { Router } from '@angular/router';
   styleUrl: './add-role.component.css'
 })
 export class AddRoleComponent implements OnInit {
-  roleName: string = '';
-  loading: boolean = false;
+  addRole!: FormGroup;
   permissions: any[] = [];
-  constructor(private roleService: RoleService, private router: Router) { }
+  loading: boolean = false;
+  constructor(
+    private roleService: RoleService,
+    private router: Router,
+    private formBuilder: FormBuilder
+  ) { }
 
   ngOnInit() {
+    this.addRole = this.formBuilder.group({
+      roleName: ['', Validators.required],
+      permissions: this.formBuilder.array([])
+    });
+
+    // Fetch permissions
     this.fetchPermissions();
-    setTimeout(() => {
-      this.loading = false;
-    }, 5000);
+  }
+  get permissionsControls() {
+    return this.addRole.get('permissions') as FormArray;
   }
 
   fetchPermissions() {
-    //this.loading = true;
+    this.loading = true;
     this.roleService.getPermissions().subscribe(
       (response) => {
-        if (response.statusCode == 400) {
-          Swal.fire("Fetching  Failed!", response.errors.join("\n"), "error");
-          this.loading = false;
-        } else {
+        if (response?.statusCode == 400) {
+          Swal.fire("Fetching  Failed!", response.errors?.join("\n") || "Unknown error", "error");
+        } else if (response?.payload && Array.isArray(response.payload)) {
           this.permissions = response.payload;
-          this.loading = false;
+
+          this.permissionsControls.clear();
+
+          this.permissions.forEach(() => {
+            this.permissionsControls.push(this.formBuilder.control(false));
+          });
+        } else {
+          console.warn("Unexpected response format:", response);
+          Swal.fire("Error!", "Invalid response received.", "error");
         }
+        this.loading = false;
       },
       (error) => {
-        console.error('Error fetching permissions:', error);
+        Swal.fire("Error!", "Failed to load permissions. Please try again.", "error");
         this.loading = false;
       }
     );
   }
 
   onSubmit() {
-    if (!this.roleName) {
-      Swal.fire("Validation Error!", "Role name is required!", "warning");
+
+    if (this.addRole.invalid) {
+      this.addRole.markAllAsTouched();
       return;
     }
     this.loading = true;
+    const selectedPermissions = this.permissionsControls.value
+      .map((checked: boolean, i: number) => (checked ? { id: this.permissions[i].id } : null))
+      .filter((p: any) => p !== null);
 
-    //if (selectedPermissions.length === 0) {
-    //  Swal.fire("Validation Error!", "At least one permission must be selected!", "warning");
-    //  return;
-    //}
+    if (selectedPermissions.length === 0) {
+      Swal.fire("Validation Error!", "At least one permission must be selected!", "warning");
+      this.loading = false;
+      return;
+    }
 
     const newRole = {
-      name: this.roleName,
-      permissions: this.permissions
-        .filter(p => p.selected)
-        .map(p => ({ id: p.id }))
+      name: this.addRole.value.roleName,
+      permissions: selectedPermissions
     };
 
     this.roleService.createRole(newRole.name, newRole.permissions).subscribe(
@@ -73,17 +95,18 @@ export class AddRoleComponent implements OnInit {
           Swal.fire({
             position: "center",
             icon: "success",
-            title: `Role '${this.roleName}' created successfully!`,
+            title: `Role '${newRole.name}' created successfully!`,
             showConfirmButton: false,
             timer: 2000
           });
+          this.router.navigate(['/roles']);
         }
-        this.loading = true;
-        this.router.navigate(['/roles']);
+        this.loading = false;
       },
       (error) => {
         this.loading = false;
         Swal.fire("Error!", "Failed to create role. Try again!", "error");
+        this.loading = false;
       }
     );
   }

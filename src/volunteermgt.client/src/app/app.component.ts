@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from '../services/auth/auth.service';
+
 
 @Component({
   selector: 'app-root',
@@ -10,15 +12,14 @@ import { Router } from '@angular/router';
 })
 export class AppComponent {
   title = 'volunteermgt.client';
-
   showNavbar: boolean = true;
   isModalOpen: boolean = false;
   isLoading: boolean = false;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
     // Listen to route changes
     this.router.events.subscribe(() => {
-      this.showNavbar = this.router.url !== '/login'; 
+      this.showNavbar = !['/login', '/signup', '/404'].includes(this.router.url);
     });
   }
 
@@ -34,7 +35,7 @@ export class AppComponent {
     this.isLoading = true;
 
     setTimeout(() => {
-      sessionStorage.removeItem('authToken');
+      this.authService.logout();
       this.isModalOpen = false;
       this.router.navigate(['/login']).then(() => {
         this.isLoading = false; 

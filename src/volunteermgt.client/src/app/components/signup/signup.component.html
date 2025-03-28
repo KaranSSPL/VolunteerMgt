@@ -8,45 +8,61 @@
 <body>
   <div class="wrapper">
     <div class="title"><span>Signup Form</span></div>
-    <form (ngSubmit)="onSignup()" #loginForm="ngForm">
+    <form (ngSubmit)="onSignup()" [formGroup]="signUpForm">
       <div class="row">
         <label for="email">Email</label>
-        <input type="email" id="email" [(ngModel)]="volunteer.email" name="email" class="form-control" placeholder="Enter your email" #emailRef="ngModel" required>
-        <div class="error-text" *ngIf="emailRef.invalid && emailRef.touched"> Email is required! </div>
+        <input type="email" formControlName="email" class="form-control" placeholder="Enter your email">
+        <div class="text-danger">
+          <small *ngIf="signUpForm.controls['email'].touched && signUpForm.controls['email'].errors?.['required']"> Email is required </small>
+          <small *ngIf="signUpForm.controls['email'].touched && signUpForm.controls['email'].errors?.['email']"> Invalid email format (e.g., example&#64;domain.com) </small>
+        </div>
       </div>
 
       <div class="row">
         <label for="username">Username</label>
-        <input type="text" id="username" [(ngModel)]="volunteer.username" name="username" class="form-control" placeholder="Enter your username" #usernameRef="ngModel" required>
-        <div class="error-text" *ngIf="usernameRef.invalid && usernameRef.touched"> Username is required! </div>
+        <input type="text" formControlName="username" class="form-control" placeholder="Enter your username">
+        <div class="text-danger">
+          <small *ngIf="signUpForm.controls['username'].touched && signUpForm.controls['username'].errors?.['required']"> Username is required </small>
+        </div>
       </div>
 
       <div class="row">
         <label for="phoneNumber">Phone Number</label>
-        <input type="tel" id="phoneNumber" [(ngModel)]="volunteer.phoneNumber" name="phoneNumber" class="form-control" placeholder="Enter your phone number" #phoneRef="ngModel" required>
-        <div class="error-text" *ngIf="phoneRef.invalid && phoneRef.touched"> Phone is required! </div>
+        <input type="tel" formControlName="phoneNumber" class="form-control" placeholder="Enter your phone number" maxlength="10">
+        <div class="text-danger">
+          <small *ngIf="signUpForm.controls['phoneNumber'].touched && signUpForm.controls['phoneNumber'].errors?.['required']"> Phone number is required </small>
+          <small *ngIf="signUpForm.controls['phoneNumber'].touched && signUpForm.controls['phoneNumber'].errors?.['pattern']">
+            Please enter a valid 10-digit number
+          </small>
+        </div>
       </div>
-
       <div class="row">
         <label for="role">Role</label>
-        <input id="role" [(ngModel)]="volunteer.role" name="role" class="form-control" placeholder="Enter your Role" #roleRef="ngModel" readonly>
+        <input formControlName="role" class="form-control" readonly>
       </div>
 
       <div class="row">
         <label for="password">Password</label>
-        <input type="password" id="password" [(ngModel)]="volunteer.password" name="password" class="form-control" placeholder="Enter your password" #passwordRef="ngModel" required>
-        <div class="error-text" *ngIf="passwordRef.invalid && passwordRef.touched"> Password is required! </div>
+        <input type="password" formControlName="password" class="form-control" placeholder="Enter your password">
+        <div class="text-danger">
+          <small *ngIf="signUpForm.controls['password'].touched && signUpForm.controls['password'].errors?.['required']">
+            Password is required
+          </small>
+          <small *ngIf="signUpForm.controls['password'].touched && signUpForm.controls['password'].errors?.['pattern']">
+            Password must be at least 8 characters and include uppercase (A-Z), lowercase (a-z), number (0-9), and special character (!&#64;#$%^&*). Example: <b>Abc&#64;1234</b>
+          </small>
+        </div>
       </div>
 
       <div class="row">
         <label for="confirmPassword">Confirm Password</label>
-        <input type="password" id="confirmPassword" [(ngModel)]="confirmPassword" name="confirmPassword" class="form-control"
-               placeholder="Confirm your password" required>
-        <small *ngIf="passwordMismatch" class="error-text">Passwords do not match</small>
+        <input type="password" formControlName="confirmPassword" class="form-control" placeholder="Confirm your password">
+        <div class="text-danger">
+          <small *ngIf="signUpForm.controls['confirmPassword'].touched && signUpForm.errors?.['passwordMismatch']">Passwords do not match</small>
+        </div>
       </div>
-
       <div class="row button">
-        <button type="submit" [disabled]="loading">
+        <button type="submit">
           {{ loading ? 'Signing up...' : 'Signup' }}
         </button>
       </div>

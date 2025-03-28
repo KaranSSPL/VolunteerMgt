@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
-import { AuthService } from './services/auth.service';
+import { AuthService } from '../../../services/auth/auth.service';
+
 import { Router } from '@angular/router';
 import Swal from 'sweetalert2';
+import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-login',
@@ -10,19 +12,31 @@ import Swal from 'sweetalert2';
   standalone: false
 })
 export class LoginComponent {
-  email: string = '';
-  password: string = '';
+  loginForm!: FormGroup;
   loading: boolean = false;
 
-  constructor(private authService: AuthService, private router: Router) { }
-
+  constructor(private authService: AuthService, private router: Router, private formBuilder: FormBuilder) {
+    this.init();
+  }
+  init() {
+    this.loginForm = this.formBuilder.group({
+      email: new FormControl('', [Validators.required, Validators.email, Validators.maxLength(256)]),
+      password: new FormControl('', [Validators.required, Validators.minLength(8)]),
+    });
+  }
   onSubmit() {
-    this.loading = true;
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
 
-    this.authService.login(this.email, this.password).subscribe(
+    this.loading = true;
+    const { email, password } = this.loginForm.value;
+
+    this.authService.login(email, password).subscribe(
       response => {
         if (response.payload) {
-          sessionStorage.setItem('authToken', response.payload.token);
+          this.authService.saveToken(response.payload.token);
           Swal.fire({ position: "center", icon: "success", title: "Successfully Login", showConfirmButton: false, timer: 1500 });
           this.router.navigate(['/home']); // Redirect after login
         } else {

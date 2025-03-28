@@ -1,32 +1,35 @@
 <body>
   <div class="wrapper">
     <div class="title"><span>Add Role & Assign Permissions</span></div>
-    <form (ngSubmit)="onSubmit()" #roleForm="ngForm">
+    <form (ngSubmit)="onSubmit()" [formGroup]="addRole">
       <!-- Role Name -->
       <div class="row">
         <label for="roleName">Role Name</label>
-        <input type="text" id="roleName" [(ngModel)]="roleName" name="roleName" class="form-control" placeholder="Enter Role Name" #roleNameRef="ngModel" required>
-        <div class="error-text" *ngIf="roleNameRef.invalid && roleNameRef.touched"> Role name is required! </div>
+        <input type="text" formControlName="roleName" class="form-control" placeholder="Enter Role Name">
+        <div class="error-text" *ngIf="addRole.controls['roleName'].touched && addRole.controls['roleName'].errors?.['required']">Role name is required!</div>
       </div>
 
       <!-- Permissions Selection -->
       <div class="row">
         <label>Assign Permissions</label>
-        <div *ngIf="permissions.length > 0; else loading">
-          <div *ngFor="let permission of permissions" class="permission-item">
-            <input type="checkbox" [(ngModel)]="permission.selected" name="permissions{{permission.id}}" [value]="permission.id">
-            {{ permission.name }}
+        <div *ngIf="!loading; else loadingTemplate" [formGroup]="addRole">
+          <div formArrayName="permissions">
+            <div *ngFor="let control of permissionsControls.controls; let i = index" class="permission-item">
+              <input type="checkbox" [formControlName]="i">
+              {{ permissions[i]?.name }}
+            </div>
           </div>
         </div>
-        <ng-template #loading>
-          <p>Loading permissions...</p>
-        </ng-template>
       </div>
+
+      <ng-template #loadingTemplate>
+        <p>Loading permissions...</p>
+      </ng-template>
 
       <!-- Submit Button -->
       <div class="row button">
-        <button type="submit" [disabled]="roleForm.invalid && loading">
-          <!--{{ loading ? 'Saving...' : 'Save Role' }}-->Save
+        <button type="submit">
+          {{ loading ? 'Saving...' : 'Save Role' }}
         </button>
       </div>
     </form>

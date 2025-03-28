@@ -22,7 +22,6 @@
         <td>{{ user.role }}</td>
         <td class="text-center">
           <button class="btn btn-primary me-2" [routerLink]="['/edit', user.id]">Edit</button>
-          <button class="btn btn-success me-2" (click)="openRolePopup(user.id)">Assign Role</button>
           <button class="btn btn-danger">Delete</button>
         </td>
       </tr>

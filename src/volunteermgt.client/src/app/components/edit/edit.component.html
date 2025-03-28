@@ -8,45 +8,50 @@
 <body>
   <div class="wrapper">
     <div class="title"><span>Edit Profile</span></div>
-    <form (ngSubmit)="onUpdate()" #editForm="ngForm">
-
-      <!-- Email -->
+    <form (ngSubmit)="onUpdate()" [formGroup]="editForm">
       <div class="row">
         <label for="email">Email</label>
-        <input type="email" id="email" [(ngModel)]="volunteer.email" name="email" class="form-control" placeholder="Enter your email" #emailRef="ngModel" required>
-        <div class="error-text" *ngIf="emailRef.invalid && emailRef.touched"> Email is required! </div>
+        <input type="email" formControlName="email" class="form-control" placeholder="Enter your email">
+        <div class="error-text" *ngIf="editForm.controls['email'].touched && editForm.controls['email'].errors?.['required']">Email is required!</div>
+        <div class="error-text" *ngIf="editForm.controls['email'].touched && editForm.controls['email'].errors?.['email']">Invalid email format!</div>
       </div>
 
       <!-- Username -->
       <div class="row">
         <label for="username">Username</label>
-        <input type="text" id="username" [(ngModel)]="volunteer.username" name="username" class="form-control" placeholder="Enter your username" #usernameRef="ngModel" required>
-        <div class="error-text" *ngIf="usernameRef.invalid && usernameRef.touched"> Username is required! </div>
+        <input type="text" formControlName="username" class="form-control" placeholder="Enter your username">
+        <div class="error-text" *ngIf="editForm.controls['username'].touched && editForm.controls['username'].errors?.['required']">Username is required!</div>
+        <div class="error-text" *ngIf="editForm.controls['username'].touched && editForm.controls['username'].errors?.['minlength']">At least 3 characters required!</div>
       </div>
 
       <!-- Phone Number -->
       <div class="row">
         <label for="phoneNumber">Phone Number</label>
-        <input type="tel" id="phoneNumber" [(ngModel)]="volunteer.phoneNumber" name="phoneNumber" class="form-control" placeholder="Enter your phone number" #phoneRef="ngModel" required>
-        <div class="error-text" *ngIf="phoneRef.invalid && phoneRef.touched"> Phone is required! </div>
+        <input type="tel" formControlName="phoneNumber" class="form-control" placeholder="Enter your phone number">
+        <div class="error-text" *ngIf="editForm.controls['phoneNumber'].touched && editForm.controls['phoneNumber'].errors?.['required']">Phone number is required!</div>
+        <div class="error-text" *ngIf="editForm.controls['phoneNumber'].touched && editForm.controls['phoneNumber'].errors?.['pattern']">Enter a valid 10-digit phone number!</div>
       </div>
 
-      <!-- Role (Readonly) -->
       <div class="row">
         <label for="role">Role</label>
-        <input id="role" [(ngModel)]="volunteer.role" name="role" class="form-control text-muted" readonly>
+        <input id="role" formControlName="role" class="form-control text-muted" readonly>
+
+        <!-- Show "Change Role" button only if the user is an Admin -->
+        <button *ngIf="isAdmin" type="button" class="btn btn-primary p-1 mt-1" (click)="openRolePopup(editForm.value.id)">
+          Change Role
+        </button>
       </div>
 
 
       <!-- Submit Button -->
       <div class="row button">
-        <button type="submit" [disabled]="loading || editForm.invalid">
+        <button type="submit">
           {{ loading ? 'Updating...' : 'Update Profile' }}
         </button>
       </div>
 
       <div class="signup-link">
-        <a routerLink="/dashboard">Go back</a>
+        <a routerLink="/home">Go back</a>
       </div>
 
     </form>

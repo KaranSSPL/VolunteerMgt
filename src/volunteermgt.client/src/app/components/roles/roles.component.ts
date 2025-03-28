@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { RoleService } from './services/roles.service'; // Import the service
+import { RoleService } from '../../../services/role/roles.service'; 
 import Swal from 'sweetalert2';
 
 @Component({
@@ -13,7 +13,7 @@ export class RolesComponent implements OnInit {
   permissions: any[] = [];
   loading = false;
 
-  constructor(private roleService: RoleService) { } // Inject the service
+  constructor(private roleService: RoleService) { } 
 
   ngOnInit() {
     this.getRoles();
