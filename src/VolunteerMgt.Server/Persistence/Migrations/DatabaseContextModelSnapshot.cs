@@ -286,7 +286,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     b.HasIndex("CouponId");
 
-                    b.ToTable("AdditionalCoupons");
+                    b.ToTable("AdditionalCoupons", (string)null);
                 });
 
             modelBuilder.Entity("VolunteerMgt.Server.Models.Coupons.Coupons", b =>
@@ -305,7 +305,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Coupons");
+                    b.ToTable("Coupons", (string)null);
                 });
 
             modelBuilder.Entity("VolunteerMgt.Server.Models.User.UserModel", b =>
@@ -346,7 +346,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User");
+                    b.ToTable("User", (string)null);
                 });
 
             modelBuilder.Entity("VolunteerMgt.Server.Models.VolunteerService.ServiceModel", b =>
@@ -367,7 +367,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Service");
+                    b.ToTable("Service", (string)null);
                 });
 
             modelBuilder.Entity("VolunteerMgt.Server.Models.VolunteerServiceMapping", b =>
@@ -405,7 +405,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     b.HasIndex("VolunteerId");
 
-                    b.ToTable("VolunteerServiceMapping");
+                    b.ToTable("VolunteerServiceMapping", (string)null);
                 });
 
             modelBuilder.Entity("VolunteerMgt.Server.Models.Volunteers.AvailabilityModel", b =>
@@ -431,7 +431,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     b.HasIndex("VolunteerId");
 
-                    b.ToTable("Availability");
+                    b.ToTable("Availability", (string)null);
                 });
 
             modelBuilder.Entity("VolunteerMgt.Server.Models.Volunteers.VolunteerModel", b =>
@@ -468,7 +468,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Volunteer");
+                    b.ToTable("Volunteer", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

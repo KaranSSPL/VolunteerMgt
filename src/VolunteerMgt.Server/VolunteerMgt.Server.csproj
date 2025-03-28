@@ -4,6 +4,9 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+	  <SpaRoot>..\volunteermgt.client</SpaRoot>
+	  <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
+	  <SpaProxyServerUrl>https://localhost:54005</SpaProxyServerUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -49,6 +52,7 @@
     <PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
     <PackageReference Include="Serilog.Sinks.Async" Version="2.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="7.2.0" />
   </ItemGroup>
@@ -60,4 +64,21 @@
     <Folder Include="Services\Features\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\volunteermgt.client\volunteermgt.client.esproj" />
+  </ItemGroup>
+
+	<Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+		<!-- Build the Angular app -->
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm install" Condition="Exists('$(SpaRoot)package.json')" ContinueOnError="false" />
+		<Exec WorkingDirectory="$(SpaRoot)" Command="npm run build -- --configuration production" Condition="Exists('$(SpaRoot)package.json')" ContinueOnError="false" />
+		<!-- Copy Angular output to wwwroot -->
+		<ItemGroup>
+			<DistFiles Include="$(SpaRoot)\dist\volunteermgt.client\browser\**" />
+			<ResolvedFileToPublish Include="@(DistFiles->'%(FullPath)')" Exclude="@(ResolvedFileToPublish)">
+				<RelativePath>wwwroot\%(RecursiveDir)%(FileName)%(Extension)</RelativePath>
+				<CopyToPublishDirectory>Always</CopyToPublishDirectory>
+			</ResolvedFileToPublish>
+		</ItemGroup>
+	</Target>
 </Project>

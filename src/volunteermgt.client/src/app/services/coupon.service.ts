@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +8,7 @@ import { environment } from '../../environments/environment';
 export class CouponService {
 
   constructor(private http: HttpClient) { }
-  private baseUrl = `${environment.apiUrl}/api`;
+  private baseUrl = `/api`;
 
   addCoupon(coupon: any): Observable<any> {
     return this.http.post<any>(`${this.baseUrl}/coupons/add`, coupon);

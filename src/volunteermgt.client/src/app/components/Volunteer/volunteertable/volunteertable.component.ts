@@ -4,7 +4,6 @@ import { Volunteer } from '../../../Models/volunteer.model';
 import { Router } from '@angular/router';
 import { DeleteconfirmationComponent } from '../../../Dialogbox/deleteconfirmation/deleteconfirmation.component';
 import { MatDialog } from '@angular/material/dialog';
-import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-volunteertable',
@@ -29,7 +28,7 @@ export class VolunteertableComponent implements OnInit {
     this.volunteerService.getVolunteers().subscribe((data) => {
       this.volunteers = data.map(volunteer => ({
         ...volunteer,
-        imagePath: volunteer.imagePath ? `${environment.apiUrl}/${volunteer.imagePath}` : ''
+        imagePath: volunteer.imagePath ? `https://localhost:7048/${volunteer.imagePath}` : ''
       }));
     });
   }
