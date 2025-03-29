@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace VolunteerMgt.Server.Models.Volunteer
 {
-    public class RegisterVolunteerModel : Entities.Volunteer
+    public class RegisterUserModel : Entities.User
     {
         [Required]
         [SwaggerSchema("Password")]

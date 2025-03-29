@@ -193,7 +193,7 @@ try
 
     // Add all endpoints here.
     app.MapAuthEndpoints();
-    app.MapVolunteerEndpoints();
+    app.MapUserEndpoints();
     app.MapRoleEndpoints();
     app.MapPermissionEndpoints();
 

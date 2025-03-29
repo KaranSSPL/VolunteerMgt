@@ -18,10 +18,10 @@ export class SignupComponent {
   ngOnInit() {
     this.signUpForm = this.formBuilder.group({
       email: ['', [Validators.required, Validators.email]],
-      username: ['', Validators.required],
+      username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(8), Validators.pattern(/^[a-z0-9-]{3,8}$/)]],
       phoneNumber: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
       role: [{ value: 'User', disabled: true }],
-      password: ['',  
+      password: ['',
         [Validators.required,
         Validators.pattern('^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,}$')
         ]],
@@ -43,7 +43,7 @@ export class SignupComponent {
     this.loading = true;
     const signupData = this.signUpForm.getRawValue();
 
-    this.http.post('/api/volunteers', signupData).subscribe({
+    this.http.post('/api/users', signupData).subscribe({
       next: (response: any) => {
         if (response.statusCode === 400) {
           Swal.fire("Signup Failed!", response.errors.join("\n"), "error");

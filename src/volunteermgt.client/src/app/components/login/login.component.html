@@ -13,11 +13,9 @@
         <label for="email">Email</label>
         <input type="text" formControlName="email" class="form-control" placeholder="Enter your email">
         <div class="text-danger">
-          <small *ngIf="loginForm.controls['email'].touched && loginForm.controls['email'].errors?.['required']">
-            Email is required
-          </small>
-          <small *ngIf="loginForm.controls['email'].touched && loginForm.controls['email'].errors?.['email']">
-            Please enter a valid email address (e.g.,example&#64;domain.com)
+          <small *ngIf="loginForm.controls['email'].touched && loginForm.controls['email'].errors as errors">
+            <span *ngIf="errors['required']">Email is required.</span>
+            <span *ngIf="!errors['required'] && errors['email']">Please enter a valid email address (e.g.,example&#64;domain.com)</span>
           </small>
         </div>
       </div>
@@ -25,11 +23,9 @@
         <label for="password">Password</label>
         <input type="password" formControlName="password" class="form-control" placeholder="Enter your password">
         <div class="text-danger">
-          <small *ngIf="loginForm.controls['password'].touched && loginForm.controls['password'].errors?.['required']">
-            Password is required
-          </small>
-          <small *ngIf="loginForm.controls['password'].touched && loginForm.controls['password'].errors?.['minlength']">
-            Password must be at least 6 characters
+          <small *ngIf="loginForm.controls['password'].touched && loginForm.controls['password'].errors as errors">
+            <span *ngIf="errors['required']">Password is required.</span>
+            <span *ngIf="!errors['required'] && errors['minlength']">Password must be at least 6 characters</span>
           </small>
         </div>
       </div>

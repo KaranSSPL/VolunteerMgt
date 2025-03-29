@@ -7,20 +7,20 @@ using VolunteerMgt.Server.Abstraction.Service.Identity;
 using VolunteerMgt.Server.Entities.Identity;
 using VolunteerMgt.Server.Models;
 using VolunteerMgt.Server.Models.PasswordModel;
-using VolunteerMgt.Server.Models.Volunteer;
+using VolunteerMgt.Server.Models.User;
 using VolunteerMgt.Server.Models.Wrapper;
 
 namespace VolunteerMgt.Server.Services
 {
-    public class VolunteerService(
+    public class UserService(
         UserManager<ApplicationUser> _userManager,
         ICurrentUserService _currentUserService,
         IMailService _mailService,
         RoleManager<ApplicationRole> _roleManager,
         SignInManager<ApplicationUser> _signInManager,
-        ILogger<VolunteerService> _logger) : IVolunteerService
+        ILogger<UserService> _logger) : IUserService
     {
-        public async Task<Result<List<VolunteerWithId>>> GetVolunteersAsync()
+        public async Task<Result<List<UserWithId>>> GetUsersAsync()
         {
             try
             {
@@ -28,14 +28,14 @@ namespace VolunteerMgt.Server.Services
 
                 if (!users.Any())
                 {
-                    return Result<List<VolunteerWithId>>.Fail("No users found.", HttpStatusCode.NotFound);
+                    return Result<List<UserWithId>>.Fail("No users found.", HttpStatusCode.NotFound);
                 }
-                var volunteers = new List<VolunteerWithId>();
+                var userWithId = new List<UserWithId>();
 
                 foreach (var x in users)
                 {
                     var roles = await _userManager.GetRolesAsync(x); // Ensure single-threaded access
-                    volunteers.Add(new VolunteerWithId()
+                    userWithId.Add(new UserWithId()
                     {
                         Id = x.Id,
                         Email = x.Email,
@@ -44,25 +44,25 @@ namespace VolunteerMgt.Server.Services
                         Role = string.Join(", ", roles)
                     });
                 }
-                return await Result<List<VolunteerWithId>>.SuccessAsync(volunteers.ToList(), HttpStatusCode.OK);
+                return await Result<List<UserWithId>>.SuccessAsync(userWithId.ToList(), HttpStatusCode.OK);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unexpected error occurred while fetching the users.");
-                return Result<List<VolunteerWithId>>.Fail("An internal error occurred while fetching the users.", HttpStatusCode.InternalServerError);
+                return Result<List<UserWithId>>.Fail("An internal error occurred while fetching the users.", HttpStatusCode.InternalServerError);
             }
         }
-        public async Task<Result<VolunteerWithId>> GetVolunteerByIdAsync(Guid Id)
+        public async Task<Result<UserWithId>> GetUserByIdAsync(Guid Id)
         {
             try
             {
                 if (Id == Guid.Empty)
                 {
-                    return Result<VolunteerWithId>.Fail("User not found, Please Login.", HttpStatusCode.BadRequest);
+                    return Result<UserWithId>.Fail("User not found, Please Login.", HttpStatusCode.BadRequest);
                 }
                 var user = await _userManager.FindByIdAsync(Id.ToString());
 
-                var volunteer = new VolunteerWithId()
+                var userWithid = new UserWithId()
                 {
                     Id = user.Id,
                     Email = user.Email,
@@ -73,24 +73,24 @@ namespace VolunteerMgt.Server.Services
 
                 if (user != null)
                 {
-                    return await Result<VolunteerWithId>.SuccessAsync(volunteer, HttpStatusCode.OK);
+                    return await Result<UserWithId>.SuccessAsync(userWithid, HttpStatusCode.OK);
                 }
-                return Result<VolunteerWithId>.Fail("An internal error occurred while finding the user.", HttpStatusCode.BadRequest);
+                return Result<UserWithId>.Fail("An internal error occurred while finding the user.", HttpStatusCode.BadRequest);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unexpected error occurred while getting user {Email}");
-                return Result<VolunteerWithId>.Fail("An internal error occurred while finding the user.", HttpStatusCode.InternalServerError);
+                return Result<UserWithId>.Fail("An internal error occurred while finding the user.", HttpStatusCode.InternalServerError);
             }
         }
-        public async Task<Result<EditVolunteerModel>> UpdateVolunteerAsync(EditVolunteerModel model)
+        public async Task<Result<EditUserModel>> UpdateUserAsync(EditUserModel model)
         {
             try
             {
                 var user = await _userManager.FindByIdAsync(model.Id);
                 if (user == null)
                 {
-                    return Result<EditVolunteerModel>.Fail("User not found.", HttpStatusCode.NotFound);
+                    return Result<EditUserModel>.Fail("User not found.", HttpStatusCode.NotFound);
                 }
 
                 // Check if the email is changed and already exists
@@ -99,7 +99,15 @@ namespace VolunteerMgt.Server.Services
                     var existingUser = await _userManager.FindByEmailAsync(model.Email);
                     if (existingUser != null)
                     {
-                        return Result<EditVolunteerModel>.Fail("Email is already registered.", HttpStatusCode.BadRequest);
+                        return Result<EditUserModel>.Fail("Email is already registered.", HttpStatusCode.BadRequest);
+                    }
+                }
+                if (user.UserName != model.Username)
+                {
+                    var existingUser = await _userManager.FindByNameAsync(model.Username);
+                    if (existingUser != null)
+                    {
+                        return Result<EditUserModel>.Fail("Username is already registered.", HttpStatusCode.BadRequest);
                     }
                 }
 
@@ -115,7 +123,7 @@ namespace VolunteerMgt.Server.Services
                 if (!result.Succeeded)
                 {
                     var errorMessage = result.Errors.Select(e => e.Description).ToList();
-                    return Result<EditVolunteerModel>.Fail(errorMessage, HttpStatusCode.BadRequest);
+                    return Result<EditUserModel>.Fail(errorMessage, HttpStatusCode.BadRequest);
                 }
 
                 if (!string.IsNullOrEmpty(model.Role))
@@ -128,12 +136,12 @@ namespace VolunteerMgt.Server.Services
                     }
                 }
 
-                return await Result<EditVolunteerModel>.SuccessAsync(model, "Successfully Updated User");
+                return await Result<EditUserModel>.SuccessAsync(model, "Successfully Updated User");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unexpected error occurred while updating user {Email}.", model.Email);
-                return Result<EditVolunteerModel>.Fail("An internal error occurred while updating the user.", HttpStatusCode.InternalServerError);
+                return Result<EditUserModel>.Fail("An internal error occurred while updating the user.", HttpStatusCode.InternalServerError);
             }
         }
 
@@ -184,14 +192,19 @@ namespace VolunteerMgt.Server.Services
                 return Result.Fail("An internal error occurred. Please try again later.", HttpStatusCode.InternalServerError);
             }
         }
-        public async Task<Result<RegisterVolunteerModel>> AddVolunteerAsync(RegisterVolunteerModel model)
+        public async Task<Result<RegisterUserModel>> AddUserAsync(RegisterUserModel model)
         {
             try
             {
                 if (await _userManager.FindByEmailAsync(model.Email) != null)
                 {
-                    return Result<RegisterVolunteerModel>.Fail("Email is already registered.", HttpStatusCode.BadRequest);
+                    return Result<RegisterUserModel>.Fail("Email is already registered.", HttpStatusCode.BadRequest);
                 }
+                if (await _userManager.FindByNameAsync(model.Username) != null)
+                {
+                    return Result<RegisterUserModel>.Fail("Username is already registered.", HttpStatusCode.BadRequest);
+                }
+
                 var currentUser = _currentUserService.GetUserEmail();
                 var user = new ApplicationUser
                 {
@@ -206,29 +219,29 @@ namespace VolunteerMgt.Server.Services
                 if (!result.Succeeded)
                 {
                     var errorMessage = result.Errors.Select(e => e.Description).ToList();
-                    return Result<RegisterVolunteerModel>.Fail(errorMessage, HttpStatusCode.BadRequest);
+                    return Result<RegisterUserModel>.Fail(errorMessage, HttpStatusCode.BadRequest);
                 }
                 var roleExists = await _roleManager.RoleExistsAsync(model.Role);
 
                 if (!roleExists)
                 {
                     _logger.LogWarning("Role '{Role}' does not exist.", model.Role);
-                    return Result<RegisterVolunteerModel>.Fail($"Role '{model.Role}' does not exist.", HttpStatusCode.BadRequest);
+                    return Result<RegisterUserModel>.Fail($"Role '{model.Role}' does not exist.", HttpStatusCode.BadRequest);
                 }
 
                 await _userManager.AddToRoleAsync(user, model.Role);
                 await _signInManager.SignInAsync(user, isPersistent: false);
 
-                return await Result<RegisterVolunteerModel>.SuccessAsync(model, "Successfully Created User");
+                return await Result<RegisterUserModel>.SuccessAsync(model, "Successfully Created User");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An unexpected error occurred while creating user {Email}.", model.Email);
-                return Result<RegisterVolunteerModel>.Fail("An internal error occurred while creating the user.", HttpStatusCode.InternalServerError);
+                return Result<RegisterUserModel>.Fail("An internal error occurred while creating the user.", HttpStatusCode.InternalServerError);
             }
         }
 
-        public async Task<Result<UserRoleMapping>> GetVolunteerRolesAsync(Guid userId)
+        public async Task<Result<UserRoleMapping>> GetUserRolesAsync(Guid userId)
         {
             try
             {
@@ -344,7 +357,7 @@ namespace VolunteerMgt.Server.Services
                 return Result.Fail("An internal error occurred while removing roles.", HttpStatusCode.InternalServerError);
             }
         }
-        public async Task<Result> DeleteVolunteerAsync(string id)
+        public async Task<Result> DeleteUserAsync(string id)
         {
             try
             {

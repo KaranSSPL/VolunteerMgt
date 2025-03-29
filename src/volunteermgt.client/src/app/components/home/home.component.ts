@@ -14,11 +14,11 @@ export class HomeComponent implements OnInit {
 
   constructor(private userService: UserService) { }
   ngOnInit() {
-    this.loadVolunteers();
+    this.loadUsers();
   }
 
-  loadVolunteers() {
-    this.userService.getVolunteers().subscribe({
+  loadUsers() {
+    this.userService.getUsers().subscribe({
       next: (response) => {
         this.users = response.payload;
       },

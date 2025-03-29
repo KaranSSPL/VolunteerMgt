@@ -2,83 +2,83 @@
 using VolunteerMgt.Server.Abstraction.Service;
 using VolunteerMgt.Server.Models;
 using VolunteerMgt.Server.Models.PasswordModel;
-using VolunteerMgt.Server.Models.Volunteer;
+using VolunteerMgt.Server.Models.User;
 using VolunteerMgt.Server.Models.Wrapper;
 
 namespace VolunteerMgt.Server.Endpoints
 {
     public static class VolunteerEndpoints
     {
-        public static void MapVolunteerEndpoints(this WebApplication app)
+        public static void MapUserEndpoints(this WebApplication app)
         {
-            var group = app.MapGroup("/api/volunteers")
+            var group = app.MapGroup("/api/users")
                 .WithOpenApi()
                 .RequireAuthorization();
 
-            group.MapGet("/", GetVolunteersAsync)
-                .WithName("getVolunteers");
+            group.MapGet("/", GetUsersAsync)
+                .WithName("getUsers");
 
-            group.MapGet("/{id}", GetVolunteerbyIdAsync)
-                .WithName("getVolunteerById");
+            group.MapGet("/{id}", GetUserbyIdAsync)
+                .WithName("getUserById");
 
-            group.MapGet("/{id}/roles", GetVolunteerRolesAsync)
-                .WithName("getVolunteerRoles");
+            group.MapGet("/{id}/roles", GetUserRolesAsync)
+                .WithName("getUserRoles");
 
-            group.MapPost("/", AddVolunteerAsync)
-                .WithName("AddVolunteer")
+            group.MapPost("/", AddUserAsync)
+                .WithName("AddUser")
                 .AllowAnonymous();
 
-            group.MapPut("/", UpdateVolunteerAsync)
-                .WithName("updateVolunteer");
+            group.MapPut("/", UpdateUserAsync)
+                .WithName("updateUser");
 
-            group.MapDelete("/{id}", DeleteVolunteerAsync)
-                .WithName("deleteVolunteer");
+            group.MapDelete("/{id}", DeleteUserAsync)
+                .WithName("deleteUser");
 
             group.MapPatch("/assign-role", AssignRoleAsync)
-                .WithName("assignVolunteerRoles");
+                .WithName("assignUserRoles");
 
             group.MapPatch("/remove-role", RemoveRoleAsync)
-                .WithName("removeVolunteerRoles");
+                .WithName("removeUserRoles");
 
             group.MapPut("/change-password", ChangePasswordAsync)
                 .WithName("changePassword");
         }
-        private static async Task<Result<List<VolunteerWithId>>> GetVolunteersAsync([FromServices] IVolunteerService volunteerService)
+        private static async Task<Result<List<UserWithId>>> GetUsersAsync([FromServices] IUserService userService)
         {
-            return await volunteerService.GetVolunteersAsync();
+            return await userService.GetUsersAsync();
         }
-        private static async Task<Result<VolunteerWithId>> GetVolunteerbyIdAsync([FromServices] IVolunteerService volunteerService, Guid id)
+        private static async Task<Result<UserWithId>> GetUserbyIdAsync([FromServices] IUserService userService, Guid id)
         {
-            return await volunteerService.GetVolunteerByIdAsync(id);
+            return await userService.GetUserByIdAsync(id);
         }
-        private static async Task<Result<EditVolunteerModel>> UpdateVolunteerAsync([FromServices] IVolunteerService volunteerService, [FromBody] EditVolunteerModel model)
+        private static async Task<Result<EditUserModel>> UpdateUserAsync([FromServices] IUserService userService, [FromBody] EditUserModel model)
         {
-            return await volunteerService.UpdateVolunteerAsync(model);
+            return await userService.UpdateUserAsync(model);
         }
 
-        private static async Task<Result> ChangePasswordAsync([FromServices] IVolunteerService volunteerService, [FromBody] ChangePasswordModel model)
+        private static async Task<Result> ChangePasswordAsync([FromServices] IUserService userService, [FromBody] ChangePasswordModel model)
         {
-            return await volunteerService.ChangePasswordAsync(model);
+            return await userService.ChangePasswordAsync(model);
         }
-        private static async Task<Result<RegisterVolunteerModel>> AddVolunteerAsync([FromServices] IVolunteerService volunteerService, [FromBody] RegisterVolunteerModel model)
+        private static async Task<Result<RegisterUserModel>> AddUserAsync([FromServices] IUserService userService, [FromBody] RegisterUserModel model)
         {
-            return await volunteerService.AddVolunteerAsync(model);
+            return await userService.AddUserAsync(model);
         }
-        private static async Task<Result> GetVolunteerRolesAsync([FromServices] IVolunteerService volunteerService, Guid id)
+        private static async Task<Result> GetUserRolesAsync([FromServices] IUserService userService, Guid id)
         {
-            return await volunteerService.GetVolunteerRolesAsync(id);
+            return await userService.GetUserRolesAsync(id);
         }
-        private static async Task<Result> AssignRoleAsync([FromServices] IVolunteerService volunteerService, [FromBody] UserRoleMapping userRole)
+        private static async Task<Result> AssignRoleAsync([FromServices] IUserService userService, [FromBody] UserRoleMapping userRole)
         {
-            return await volunteerService.AssignRoleAsync(userRole);
+            return await userService.AssignRoleAsync(userRole);
         }
-        private static async Task<Result> RemoveRoleAsync([FromServices] IVolunteerService volunteerService, [FromBody] UserRoleMapping userRole)
+        private static async Task<Result> RemoveRoleAsync([FromServices] IUserService userService, [FromBody] UserRoleMapping userRole)
         {
-            return await volunteerService.RemoveRoleAsync(userRole);
+            return await userService.RemoveRoleAsync(userRole);
         }
-        private static async Task<Result> DeleteVolunteerAsync([FromServices] IVolunteerService volunteerService, string id)
+        private static async Task<Result> DeleteUserAsync([FromServices] IUserService userService, string id)
         {
-            return await volunteerService.DeleteVolunteerAsync(id);
+            return await userService.DeleteUserAsync(id);
         }
     }
 }

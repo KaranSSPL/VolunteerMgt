@@ -41,7 +41,7 @@ export class EditComponent implements OnInit {
   getUserDetails(id: string) {
     this.loading = true;
 
-    this.http.get(`/api/volunteers/${id}`).subscribe({
+    this.http.get(`/api/users/${id}`).subscribe({
       next: (data: any) => {
         if (data && data?.payload) {
           this.editForm.patchValue(data.payload);
@@ -63,10 +63,14 @@ export class EditComponent implements OnInit {
     }
 
     this.loading = true;
-    this.http.put('/api/volunteers/', this.editForm.getRawValue()).subscribe({
+    this.http.put('/api/users/', this.editForm.getRawValue()).subscribe({
       next: (response: any) => {
+        if (response.statusCode === 400) {
+          Swal.fire("Signup Failed!", response.errors.join("\n"), "error");
+        } else {
         Swal.fire({ position: "center", icon: "success", title: "Profile updated successfully.", showConfirmButton: false, timer: 1500 });
         this.router.navigate(['/home']);
+        }
       },
       error: (error) => {
         Swal.fire("Update Failed!", error.message || "Something went wrong.", "error");

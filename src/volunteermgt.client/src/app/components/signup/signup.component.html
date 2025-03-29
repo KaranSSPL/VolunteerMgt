@@ -13,8 +13,10 @@
         <label for="email">Email</label>
         <input type="email" formControlName="email" class="form-control" placeholder="Enter your email">
         <div class="text-danger">
-          <small *ngIf="signUpForm.controls['email'].touched && signUpForm.controls['email'].errors?.['required']"> Email is required </small>
-          <small *ngIf="signUpForm.controls['email'].touched && signUpForm.controls['email'].errors?.['email']"> Invalid email format (e.g., example&#64;domain.com) </small>
+          <small *ngIf="signUpForm.controls['email'].touched && signUpForm.controls['email'].errors as errors">
+            <span *ngIf="errors['required']">Email is required.</span>
+            <span *ngIf="!errors['required'] && errors['email']">Invalid email format (e.g., example&#64;domain.com)</span>
+          </small>
         </div>
       </div>
 
@@ -22,7 +24,14 @@
         <label for="username">Username</label>
         <input type="text" formControlName="username" class="form-control" placeholder="Enter your username">
         <div class="text-danger">
-          <small *ngIf="signUpForm.controls['username'].touched && signUpForm.controls['username'].errors?.['required']"> Username is required </small>
+          <small *ngIf="signUpForm.controls['username'].touched && signUpForm.controls['username'].errors as errors">
+            <span *ngIf="errors['required']">Username is required.</span>
+            <span *ngIf="!errors['required'] && errors['minlength']">Username must be at least 3 characters long.</span>
+            <span *ngIf="!errors['required'] && !errors['minlength'] && errors['maxlength']">Username cannot be more than 8 characters long.</span>
+            <span *ngIf="!errors['required'] && !errors['minlength'] && !errors['maxlength'] && errors['pattern']">
+              Username can only contain lowercase letters, numbers, and hyphens (-).
+            </span>
+          </small>
         </div>
       </div>
 
@@ -30,9 +39,9 @@
         <label for="phoneNumber">Phone Number</label>
         <input type="tel" formControlName="phoneNumber" class="form-control" placeholder="Enter your phone number" maxlength="10">
         <div class="text-danger">
-          <small *ngIf="signUpForm.controls['phoneNumber'].touched && signUpForm.controls['phoneNumber'].errors?.['required']"> Phone number is required </small>
-          <small *ngIf="signUpForm.controls['phoneNumber'].touched && signUpForm.controls['phoneNumber'].errors?.['pattern']">
-            Please enter a valid 10-digit number
+          <small *ngIf="signUpForm.controls['phoneNumber'].touched && signUpForm.controls['phoneNumber'].errors as errors">
+            <span *ngIf="errors['required']">Phone number is required.</span>
+            <span *ngIf="!errors['required'] && errors['pattern']">Please enter a valid 10-digit number</span>
           </small>
         </div>
       </div>

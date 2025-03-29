@@ -8,11 +8,11 @@ import { catchError } from 'rxjs/operators';
 })
 export class UserService {
 
-  private endpoint = '/api/volunteers';
+  private endpoint = '/api/users';
   private roleEndpoint = '/api/roles'; 
   constructor(private http: HttpClient) { }
 
-  getVolunteers(): Observable<any> {
+  getUsers(): Observable<any> {
     return this.http.get<any>(this.endpoint).pipe(
       catchError(error => {
         console.error('Error fetching users:', error);
@@ -21,11 +21,11 @@ export class UserService {
     );
   }
 
-  getVolunteerById(id: string): Observable<any> {
+  getUserById(id: string): Observable<any> {
     return this.http.get<any>(`${this.endpoint}/${id}`).pipe(
       catchError(error => {
-        console.error('Error fetching volunteer details:', error);
-        return throwError(() => new Error('Failed to fetch volunteer details.'));
+        console.error('Error fetching user details:', error);
+        return throwError(() => new Error('Failed to fetch user details.'));
       })
     );
   }
