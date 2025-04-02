@@ -1,9 +1,14 @@
+.volunteer-container {
+  font-family: "Arial", sans-serif;
+  padding: 20px;
+}
+
 .table-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  display:block;
   margin: 20px auto;
-  max-width: 100%;
+  width: 100%;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 h2 {
   text-align: center;
@@ -15,7 +20,6 @@ h2 {
   align-self: flex-start;
   margin-bottom: 10px;
   padding: 10px 15px;
-  margin-left:15%;
   font-size: 16px;
   background: white;
   border: 1px solid #ddd;
@@ -32,14 +36,11 @@ h2 {
 }
 
 table {
-  width: 100%;
-  max-width: 1287px;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
   background-color: #fff;
-  margin-left:7%;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
-  overflow: hidden;
 }
 
 th, td {

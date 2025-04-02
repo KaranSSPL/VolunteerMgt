@@ -28,7 +28,7 @@ export class VolunteertableComponent implements OnInit {
     this.volunteerService.getVolunteers().subscribe((data) => {
       this.volunteers = data.map(volunteer => ({
         ...volunteer,
-        imagePath: volunteer.imagePath ? `https://localhost:7048/${volunteer.imagePath}` : ''
+        imagePath: volunteer.imagePath ? `${volunteer.imagePath}` : ''
       }));
     });
   }

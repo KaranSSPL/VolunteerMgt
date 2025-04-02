@@ -1,0 +1,56 @@
+<div class="assigned-service">
+  <h2>Today's Assigned Service </h2>
+  <div class="container">
+
+    <div class="search-date-container">
+      <div class="search-container">
+        <i class="material-icons search-icon">search</i>
+        <input type="text" [(ngModel)]="searchQuery" (input)="applyFilters()"
+               placeholder="Search..." class="search-input" />
+      </div>
+      <div class="date-filter">
+        <mat-form-field appearance="fill">
+          <mat-label>Select Date Range</mat-label>
+          <mat-date-range-input [rangePicker]="picker">
+            <input matStartDate placeholder="Start date" [(ngModel)]="startDate" (dateChange)="applyFilters()">
+            <input matEndDate placeholder="End date" [(ngModel)]="endDate" (dateChange)="applyFilters()">
+          </mat-date-range-input>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+      </div>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th (click)="sortTable('volunteerName')">Volunteer Name</th>
+            <th (click)="sortTable('serviceName')">Service Name</th>
+            <th>Date</th>
+            <th (click)="sortTable('timeSlot')">In Time</th>
+            <th (click)="sortTable('exitTime')">Exit Time</th>
+            <th (click)="sortTable('batchNumber')">Batch Number</th>
+            <th>Duration</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let mapping of filteredMappings">
+            <td>{{ mapping.volunteerName }}</td>
+            <td>{{ mapping.serviceName }}</td>
+            <td>{{ mapping.timeSlot | date:'dd-MM-yyyy' }}</td>
+            <td>{{ mapping.timeSlot | date:'shortTime' }}</td>
+            <td>{{ mapping.exitTime }}</td>
+            <td>{{ mapping.batchNumber }}</td>
+            <td>{{ mapping.timeDifference  }}</td>
+            <td>
+              <button class="btn-delete" (click)="openDeleteDialog(mapping.volunteerId, mapping.serviceId)">
+                ❌ Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

@@ -118,12 +118,20 @@ nav {
 }
 
 .menu-toggle {
-  display: none;
   font-size: 24px;
   background: none;
   border: none;
   color: white;
   cursor: pointer;
+}
+
+@media screen and (max-width: 700px) {
+    header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+    }
 }
 
 @media (max-width: 768px) {
@@ -141,10 +149,6 @@ nav {
   .nav-links {
     flex-direction: column;
     gap: 15px;
-  }
-
-  .menu-toggle {
-    display: block;
   }
 
   .icons {

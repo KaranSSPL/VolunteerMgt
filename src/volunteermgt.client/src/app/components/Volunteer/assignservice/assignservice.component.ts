@@ -31,6 +31,9 @@ export class AssignserviceComponent {
     }
   }
   timeSlot: string = '';
+  batchNo!: number;
+  coupon: number = 1;
+  volunteerCoupons!: number;
   serviceVolunteerCounts: AssignedVolunteer[] = [];
   volunteers: Volunteer[] = [];
   searchQuery: string = '';
@@ -57,9 +60,7 @@ export class AssignserviceComponent {
     this.volunteerService.getVolunteers().subscribe((data) => {
       this.volunteers = data;
     });
-
     this.setCurrentTime();
-    this.fetchServiceVolunteerCounts();
     this.fetchCoupons();
     this.volunteerService.getAllServices().subscribe((data) => {
       this.services = data;
@@ -70,17 +71,22 @@ export class AssignserviceComponent {
     this.couponService.getCoupons().pipe(
       switchMap((coupons) => {
         const today = new Date().toISOString().split("T")[0];
-        const todayCoupon = coupons.find(coupon => coupon.date.startsWith(today));
-        this.totalCoupons = todayCoupon ? todayCoupon.couponValue : 0;
-        return todayCoupon ? this.couponService.getAdditionalCoupons().pipe(
+        const todayCoupons = coupons.filter(coupon => coupon.date.startsWith(today));
+        this.totalCoupons = todayCoupons.reduce((sum, coupon) => sum + coupon.couponValue, 0);
+        if (todayCoupons.length === 0) {
+          return of(0);
+        }
+        return this.couponService.getAdditionalCoupons().pipe(
           map((additionalCoupons) => {
-            const matchingCoupon = additionalCoupons.find(c => c.couponId === todayCoupon.id);
-            return matchingCoupon ? matchingCoupon.totalValue : 0;
+            return todayCoupons.reduce((sum, todayCoupon) => {
+              const matchingCoupon = additionalCoupons.find(c => c.couponId === todayCoupon.id);
+              return sum + (matchingCoupon ? matchingCoupon.totalValue : 0);
+            }, 0);
           })
-        ) : of(0);
+        );
       })
     ).subscribe((additionalCouponValue) => {
-      this.additionalCoupons = additionalCouponValue; 
+      this.additionalCoupons = additionalCouponValue;
       this.fetchServiceVolunteerCounts();
     });
   }
@@ -88,6 +94,8 @@ export class AssignserviceComponent {
   fetchServiceVolunteerCounts() {
     this.volunteerService.getServiceVolunteerCounts().subscribe((data) => {
       this.serviceVolunteerCounts = data;
+      const coupons = this.serviceVolunteerCounts.map(x => x.totalCouponsToday);
+      this.volunteerCoupons = coupons[0];
       this.calculateRemainingCoupons(); 
     });
   }
@@ -125,9 +133,19 @@ export class AssignserviceComponent {
       return;
     }
     this.serviceSuggestions = this.services.filter(service =>
-      service.serviceName.toLowerCase().includes(this.serviceQuery.toLowerCase()) &&
+      service.serviceName.toLowerCase().includes(this.serviceQuery.toLowerCase()) ||
+      service.code.toString().toLowerCase().includes(this.serviceQuery.toLowerCase())
+      &&
       !this.assignedServices.includes(service.id)
     );
+  }
+
+  validateBatchNo(event: any) {
+    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 4);
+  }
+
+  validateCoupon(event: any) {
+    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
   }
 
   selectService(service: Service): void {
@@ -164,18 +182,20 @@ export class AssignserviceComponent {
     const assignedData = {
       volunteerId: this.selectedVolunteer.id,
       serviceId: this.selectedService.id,
-      timeSlot: istTime.toISOString()
+      timeSlot: istTime.toISOString(),
+      BatchNumber: this.batchNo,
+      Coupon: this.coupon
     };
     this.volunteerService.assignService(assignedData).subscribe({
       next: (response) => {
         this.showSnackbar("Service assigned successfully!", "success");
         this.assignedServices.push(this.selectedService!.id);
+    window.location.reload();
       },
       error: (error) => {
         this.showSnackbar("Failed to assign service. Please try again.", "error");
       }
     });
-    window.location.reload();
   }
 
   handleKeydown(event: KeyboardEvent, type: 'volunteer' | 'service') {

@@ -278,15 +278,11 @@ namespace VolunteerMgt.Server.Persistence.Migrations
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ServiceName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CouponId");
 
-                    b.ToTable("AdditionalCoupons", (string)null);
+                    b.ToTable("AdditionalCoupons");
                 });
 
             modelBuilder.Entity("VolunteerMgt.Server.Models.Coupons.Coupons", b =>
@@ -305,7 +301,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Coupons", (string)null);
+                    b.ToTable("Coupons");
                 });
 
             modelBuilder.Entity("VolunteerMgt.Server.Models.User.UserModel", b =>
@@ -346,7 +342,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("User", (string)null);
+                    b.ToTable("User");
                 });
 
             modelBuilder.Entity("VolunteerMgt.Server.Models.VolunteerService.ServiceModel", b =>
@@ -356,6 +352,12 @@ namespace VolunteerMgt.Server.Persistence.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Code")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("DefaultTime")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("RequiredVolunteer")
                         .IsRequired()
@@ -367,7 +369,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Service", (string)null);
+                    b.ToTable("Service");
                 });
 
             modelBuilder.Entity("VolunteerMgt.Server.Models.VolunteerServiceMapping", b =>
@@ -378,6 +380,12 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("BatchNumber")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Coupon")
+                        .HasColumnType("int");
+
                     b.Property<string>("ExitTime")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -386,6 +394,10 @@ namespace VolunteerMgt.Server.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ServiceName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TimeDifference")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -405,7 +417,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     b.HasIndex("VolunteerId");
 
-                    b.ToTable("VolunteerServiceMapping", (string)null);
+                    b.ToTable("VolunteerServiceMapping");
                 });
 
             modelBuilder.Entity("VolunteerMgt.Server.Models.Volunteers.AvailabilityModel", b =>
@@ -431,7 +443,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
 
                     b.HasIndex("VolunteerId");
 
-                    b.ToTable("Availability", (string)null);
+                    b.ToTable("Availability");
                 });
 
             modelBuilder.Entity("VolunteerMgt.Server.Models.Volunteers.VolunteerModel", b =>
@@ -462,13 +474,17 @@ namespace VolunteerMgt.Server.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("VolunteerType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("code")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Volunteer", (string)null);
+                    b.ToTable("Volunteer");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

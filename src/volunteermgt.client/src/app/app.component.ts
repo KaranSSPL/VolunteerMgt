@@ -1,5 +1,4 @@
-import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 
 @Component({
@@ -8,18 +7,19 @@ import { Router } from '@angular/router';
   standalone: false,
   styleUrl: './app.component.css'
 })
-export class AppComponent implements OnInit {
-
+export class AppComponent {
   showHeader: boolean = true;
+  isSidebarOpen = true;
 
   constructor(private router: Router) {
     this.router.events.subscribe(() => {
       this.showHeader = this.router.url !== '/login' && this.router.url !== '/register';
     });
   }
-  ngOnInit() {
-  }
 
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
 
   title = 'volunteermgt.client';
 }

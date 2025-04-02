@@ -53,6 +53,7 @@ try
     });
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     builder.Services.AddAntiforgery(options => options.SuppressXFrameOptionsHeader = true);
+    builder.Services.AddHttpContextAccessor();
 
 
     // Add Identity

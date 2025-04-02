@@ -5,6 +5,10 @@
         public int VolunteerId { get; set; }
         public int ServiceId { get; set; }
         public DateTime TimeSlot { get; set; }
+        public int BatchNumber { get; set; }
+        public int Coupon { get; set; }
         public string ExitTime { get; set; } = string.Empty;
+        public string TimeDifference { get; set; }
+
     }
 }

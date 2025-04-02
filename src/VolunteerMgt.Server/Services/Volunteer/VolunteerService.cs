@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Net;
 using VolunteerMgt.Server.Abstraction.Service.Volunteer;
+using VolunteerMgt.Server.DataModals;
+using VolunteerMgt.Server.Models;
 using VolunteerMgt.Server.Models.Volunteers;
 using VolunteerMgt.Server.Persistence;
-using System.Net;
-using VolunteerMgt.Server.Models;
-using Microsoft.AspNetCore.Hosting;
-using VolunteerMgt.Server.DataModals;
-using Newtonsoft.Json;
 
 namespace VolunteerMgt.Server.Services.Volunteer
 {
@@ -14,12 +13,13 @@ namespace VolunteerMgt.Server.Services.Volunteer
     {
         private readonly DatabaseContext _dbContext;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-
-        public VolunteerService(DatabaseContext dbContext, IWebHostEnvironment webHostEnvironment)
+        public VolunteerService(DatabaseContext dbContext, IWebHostEnvironment webHostEnvironment, IHttpContextAccessor httpContextAccessor)
         {
             _dbContext = dbContext;
             _webHostEnvironment = webHostEnvironment;
+            this._httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<ResponseModel<VolunteerModel>> AddVolunteerAsync(AddVolunteerDto request)
@@ -34,7 +34,8 @@ namespace VolunteerMgt.Server.Services.Volunteer
                     Address = request.Address,
                     Occupation = request.Occupation,
                     code = request.code,
-                    ImagePath = imagePath
+                    ImagePath = imagePath,
+                    VolunteerType = request.VolunteerType
                 };
                 var availabilities = JsonConvert.DeserializeObject<List<AvailabilityDataModel>>(request.Availabilities);
                 if (availabilities != null && availabilities.Any())
@@ -61,7 +62,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 {
                     Success = false,
                     Message = "Error adding volunteer: " + ex.Message,
-                    StatusCode = HttpStatusCode.InternalServerError,
+                    StatusCode = HttpStatusCode.BadRequest,
                     Data = null
                 };
             }
@@ -89,8 +90,21 @@ namespace VolunteerMgt.Server.Services.Volunteer
 
         public async Task<List<VolunteerModel>> GetAllVolunteersAsync()
         {
+            string appBaseUrl = _httpContextAccessor.HttpContext != null ? $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}{_httpContextAccessor.HttpContext.Request.PathBase}" : "https://localhost7048";
             return await _dbContext.Volunteer
                 .Include(v => v.Availabilities)
+                .Select(s => new VolunteerModel
+                {
+                    Id = s.Id,
+                    Address = s.Address,
+                    Availabilities = s.Availabilities,
+                    code = s.code,
+                    ImagePath = s.ImagePath != null && s.ImagePath != "" ? $"{appBaseUrl}{s.ImagePath}" : "",
+                    MobileNo = s.MobileNo,
+                    Occupation = s.Occupation,
+                    Name = s.Name,
+                    VolunteerType = s.VolunteerType
+                })
                 .ToListAsync();
         }
 
@@ -157,14 +171,16 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 if (!string.IsNullOrEmpty(request.Address)) volunteer.Address = request.Address;
                 if (!string.IsNullOrEmpty(request.Occupation)) volunteer.Occupation = request.Occupation;
                 if (!string.IsNullOrEmpty(request.code)) volunteer.code = request.code;
+                if (!string.IsNullOrEmpty(request.VolunteerType)) volunteer.VolunteerType = request.VolunteerType;
+
 
                 if (request.Image != null && request.Image.Length > 0)
                 {
-                    volunteer.ImagePath = await SaveImageAsync(request.Image); 
+                    volunteer.ImagePath = await SaveImageAsync(request.Image);
                 }
                 else if (!string.IsNullOrEmpty(request.ImagePath))
                 {
-                    volunteer.ImagePath = request.ImagePath; 
+                    volunteer.ImagePath = request.ImagePath;
                 }
 
                 var availabilities = JsonConvert.DeserializeObject<List<AvailabilityDataModel>>(request.Availabilities);

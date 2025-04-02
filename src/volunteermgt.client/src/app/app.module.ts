@@ -26,6 +26,11 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AddcoupondialogComponent } from './Dialogbox/addcoupondialog/addcoupondialog.component';
 import { CoupondialogComponent } from './Dialogbox/coupondialog/coupondialog.component';
 import { CouponComponent } from './components/Volunteer/coupon/coupon.component';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { VolunteerHistoryComponent } from './components/Volunteer/volunteer-history/volunteer-history.component';
+
+
 
 @NgModule({
   declarations: [
@@ -45,6 +50,7 @@ import { CouponComponent } from './components/Volunteer/coupon/coupon.component'
     AddcoupondialogComponent,
     CoupondialogComponent,
     CouponComponent,
+    VolunteerHistoryComponent,
   ],
   imports: [
     BrowserModule,
@@ -58,7 +64,9 @@ import { CouponComponent } from './components/Volunteer/coupon/coupon.component'
     MatInputModule,
     MatAutocompleteModule,
     BrowserAnimationsModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [DatePipe],
   bootstrap: [AppComponent]

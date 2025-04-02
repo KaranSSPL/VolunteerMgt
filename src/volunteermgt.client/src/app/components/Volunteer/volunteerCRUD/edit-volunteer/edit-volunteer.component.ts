@@ -41,6 +41,7 @@ export class EditVolunteerComponent implements OnInit {
       occupation: [this.volunteer?.occupation || ''],
       image: [this.volunteer?.image || ''],
       code: [this.volunteer?.code || ''],
+      volunteerType: [this.volunteer?.volunteerType || ''],
       availabilities: this.fb.array(this.volunteer?.availabilities?.map(avail => this.createAvailabilityGroup(avail)) || [])
     });
   }
@@ -73,6 +74,8 @@ export class EditVolunteerComponent implements OnInit {
   formData.append("address", this.volunteerForm.value.address);
    formData.append("occupation", this.volunteerForm.value.occupation);
    formData.append("code", this.volunteerForm.value.code);
+   formData.append("volunteerType", this.volunteerForm.value.volunteerType);
+
 
   if (this.uploadedPhoto) {
     formData.append("image", this.uploadedPhoto);

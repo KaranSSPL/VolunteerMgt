@@ -1,7 +1,8 @@
-<div class="sidebar">
-  <a class="active" routerLink="/assignService"><strong>Assign Service</strong></a>
-  <a class="active" routerLink="/volunteer"><strong>Volunteers</strong></a>
-  <a class="active" routerLink="/service"><strong>Service</strong></a>
-  <a class="active" routerLink="/volunteerService"><strong>Volunteer Service</strong></a>
-  <a class="active" routerLink="/coupons"><strong>Additional Coupon</strong></a>
+<div class="sidebar" [class.menu-active]="isMenuActive">
+  <a class="menu-item" routerLink="/assignService" routerLinkActive="active"><strong>Assign Service</strong></a>
+  <a class="menu-item" routerLink="/volunteer" routerLinkActive="active"><strong>Volunteers</strong></a>
+  <a class="menu-item" routerLink="/service" routerLinkActive="active"><strong>Service</strong></a>
+  <a class="menu-item" routerLink="/volunteerService" routerLinkActive="active"><strong>Volunteer Service</strong></a>
+  <a class="menu-item" routerLink="/volunteerHistory" routerLinkActive="active"><strong>Service History</strong></a>
+  <a class="menu-item" routerLink="/coupons" routerLinkActive="active"><strong>Additional Coupon History</strong></a>
 </div>

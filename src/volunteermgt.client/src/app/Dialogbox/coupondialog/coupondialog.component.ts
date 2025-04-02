@@ -12,21 +12,9 @@ import { VolunteerService } from '../../services/volunteer.service';
   styleUrl: './coupondialog.component.css'
 })
 export class CoupondialogComponent {
-  @HostListener('document:click', ['$event'])
-  onClickOutside(event: Event): void {
-    const targetElement = event.target as HTMLElement;
-    if (!targetElement.closest('.service-container')) {
-      this.serviceSuggestions = [];
-    }
-  }
+ 
   couponValue: number = 0; 
-  services: Service[] = [];
-  serviceQuery: string = '';
-  serviceSuggestions: Service[] = [];
-  selectedService: Service | null = null;
-  assignedServices: number[] = [];
-  selectedVolunteerIndex: number = -1;
-  selectedServiceIndex: number = -1;
+  
   createdDate: string = new Date().toISOString().split('T')[0];
   constructor(
     public dialogRef: MatDialogRef<CoupondialogComponent>,
@@ -36,34 +24,10 @@ export class CoupondialogComponent {
     private volunteerService: VolunteerService,
   ) {
     this.couponValue = data.coupons || 0;
-    this.volunteerService.getAllServices().subscribe((data) => {
-      this.services = data;
-    });
   }
 
   closeDialog() {
     this.dialogRef.close();
-  }
-
-  searchServices(): void {
-    if (this.serviceQuery.trim() === '') {
-      this.serviceSuggestions = [];
-      return;
-    }
-    this.serviceSuggestions = this.services.filter(service =>
-      service.serviceName.toLowerCase().includes(this.serviceQuery.toLowerCase()) &&
-      !this.assignedServices.includes(service.id)
-    );
-  }
-
-  selectService(service: Service): void {
-    if (this.assignedServices.includes(service.id)) {
-      this.showSnackbar("This service is already assigned to the selected volunteer.", "error");
-      return;
-    }
-    this.serviceQuery = service.serviceName;
-    this.serviceSuggestions = [];
-    this.selectedService = service;
   }
 
   saveCoupons() {
@@ -81,7 +45,6 @@ export class CoupondialogComponent {
           id: 0,
           additionalCouponValue: this.couponValue,
           couponId: currentCoupon.id,
-          serviceName: this.selectedService?.serviceName,
           createdDate: new Date(this.createdDate).toISOString()
         };
         this.couponService.addAdditionalCoupon(currentCoupon.id, additionalCouponData)
@@ -93,34 +56,6 @@ export class CoupondialogComponent {
           });
       } else {
         console.error('No coupon found for the current date');
-      }
-    });
-  }
-
-  handleKeydown(event: KeyboardEvent, type: 'service') {
-    if (type === 'service') {
-      if (this.serviceSuggestions.length === 0) return;
-      if (event.key === 'ArrowDown') {
-        event.preventDefault();
-        this.selectedServiceIndex = (this.selectedServiceIndex + 1) % this.serviceSuggestions.length;
-        this.scrollIntoView('service');
-      } else if (event.key === 'ArrowUp') {
-        event.preventDefault();
-        this.selectedServiceIndex = (this.selectedServiceIndex - 1 + this.serviceSuggestions.length) % this.serviceSuggestions.length;
-        this.scrollIntoView('service');
-      } else if (event.key === 'Enter' && this.selectedServiceIndex >= 0) {
-        event.preventDefault();
-        this.selectService(this.serviceSuggestions[this.selectedServiceIndex]);
-      }
-    }
-  }
-
-  scrollIntoView(type: 'volunteer' | 'service') {
-    setTimeout(() => {
-      let index = type === 'volunteer' ? this.selectedVolunteerIndex : this.selectedServiceIndex;
-      let list = document.querySelectorAll(`.${type}-suggestions li`);
-      if (list.length > 0 && index >= 0 && list[index]) {
-        list[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     });
   }

@@ -4,4 +4,5 @@ serviceName: string;
 volunteerCount: number;
 requiredVolunteer: string;
 pendingVolunteer: number;
+totalCouponsToday: number;
 }

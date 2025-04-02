@@ -1,25 +1,50 @@
+
+
 .form-container {
-  max-width: 654px;
-  margin:  auto;
-  padding: 20px;
-  background: #fff;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 8px;
+  max-width: 500px;
+  margin: 20px auto;
+  padding: 25px;
+  background: #ffffff;
+  box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  font-family: "Arial", sans-serif;
+}
+.form-container h2 {
+  margin: auto 0 20px;
+}
+
+.required {
+  color: red;
+}
+
+.error {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 5px;
 }
 
 h2 {
   text-align: center;
+  background: aliceblue;
+  padding: 10px;
 }
 
 .form-group {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 10px;
+}
+.form-block {
+  flex: 1;
+}
+.form-block input {
+  width: 100%;
 }
 
 label {
-  width: 35%;
-  font-weight: bold;
+  min-width: 28%;
+  font-weight: 500;
+  margin: 8px 0 0;
 }
 
 input {
@@ -27,19 +52,25 @@ input {
   padding: 8px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  height: 35px;
+}
+
+input:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.4);
 }
 
 .error {
   color: red;
   font-size: 12px;
-  margin-top: 2px;
+  margin-top: 8px;
   flex: 1;
-  text-align: right;
+
 }
 .availability-block h3 {
   margin: 30px 0 20px;
-  text-align: justify;
-  margin-left: 11%;
+  text-align: center;
 }
 .availability-block label {
   display: inline-block;
@@ -48,11 +79,10 @@ input {
 }
 .availability-block  input {
     display: block;
+    width: 100%;
 }
 
-.availability-block  button {
-    width:16%
-}
+
 
 .availability-block .suggestion-box {
   position: absolute;
@@ -72,9 +102,11 @@ input {
       font-weight:700;
       border-bottom:solid ;
   }
-  .availability-block .availability-group > div {
-    position: relative;
-  }
+.availability-block .availability-group > div {
+  position: relative;
+  flex: 1 1 197px;
+  max-width: 197px;
+}
 
 .availability-group {
   display: flex;
@@ -82,6 +114,11 @@ input {
   gap: 16px;
   margin-bottom: 20px;
   text-align: left;
+}
+
+.availability-block .availability-group:first-child > * {
+  flex: 1 1 auto;
+  max-width: 100%;
 }
 
 .add-btn, .remove-btn, .submit-btn {
@@ -147,30 +184,42 @@ input {
   }
 .photo-upload {
   display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.radio-group {
+  display: flex;
   align-items: center;
-  gap: 15px;
-  padding: 15px;
-  border-radius: 10px;
+  gap: 20px;
+}
+
+.radio-group label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.radio-group input[type="radio"]{
+  height: 20px;
+  width: 20px;
 }
 
 .photo-wrapper {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  border: 2px dashed #fff;
+  border: 1px solid #e9e7f7;
+  flex: 1;
   padding: 15px;
-  width: 100%;
-  max-width: 260px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.2);
+  text-align: center;
+  background-color: #f0f0f0;
 }
 
 .photo-label {
   font-size: 15px;
-  font-weight: bold;
-  width: 101%;
   color: black;
-  margin-bottom: 19px;
+  
 }
 
 .photo-upload input {
@@ -186,13 +235,6 @@ input {
 }
 
 
-.label-wrapper {
-  display: flex;
-  flex-direction: column;
-  margin-left: 8%;
-  margin-top: -10%;
-}
-
 .camera-btn {
   margin-top: 10px;
   width: 46%;
@@ -204,6 +246,7 @@ input {
   border-radius: 6px;
   cursor: pointer;
   transition: 0.3s;
+  margin: 10px auto 0;
 }
 
   .camera-btn:hover {
@@ -211,12 +254,13 @@ input {
   }
 .photo-or-label {
   margin-top: 6%;
-  font-size: large
+  font-size: large;
+  width: 100%;
 }
 
 .photo-preview {
-  width: 148px;
-  height: 126px;
+  height: 110px;
+  margin: 20px auto 0;
   position: relative;
   border: 3px solid white;
   border-radius: 10px;
@@ -245,12 +289,6 @@ input {
   cursor: pointer;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
 }
-
-  .remove-photo:hover {
-    background: darkred;
-  }
-
-
 
   .remove-photo:hover {
     background: darkred;

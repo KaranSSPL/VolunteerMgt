@@ -7,6 +7,8 @@
         public int VolunteerCount { get; set; }
         public string RequiredVolunteer { get; set; }
         public int PendingVolunteer { get; set; }
+        public int TotalCouponsToday { get; set; }
+
 
     }
 }

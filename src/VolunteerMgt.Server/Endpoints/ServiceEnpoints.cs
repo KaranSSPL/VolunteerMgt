@@ -60,7 +60,7 @@ namespace VolunteerMgt.Server.Endpoints
             [FromRoute] int id,
             [FromBody] ServiceModel serviceModel)
         {
-            var result = await serviceService.UpdateServiceNameAsync(id, serviceModel);
+            var result = await serviceService.UpdateServiceAsync(id, serviceModel);
             return result ? Results.Ok("Service name updated successfully") : Results.NotFound("Service not found");
         }
 

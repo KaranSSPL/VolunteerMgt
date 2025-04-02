@@ -6,7 +6,7 @@
            alt="illustration" class="illustration" />
       <h1 class="opacity">LOGIN</h1>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" (keydown.enter)="onSubmit()">
         <input formControlName="email" type="email" placeholder="EMAIL" />
         <div class="error" *ngIf="f['email'].invalid && (f['email'].touched || f['email'].dirty)">
           <small *ngIf="f['email'].errors?.['required']">Email is required</small>

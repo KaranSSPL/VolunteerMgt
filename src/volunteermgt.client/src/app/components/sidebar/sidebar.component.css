@@ -1,13 +1,19 @@
 .sidebar {
   margin: 0;
   padding: 0;
-  width: 200px;
+  width: 0;
   background-color: #f1f1f1;
-  position: fixed;
   height: 100%;
   overflow: auto;
   box-shadow: 0px 4px 8px rgba(0, 123, 255, 0.4);
+  transition: 0.3s all ease-in;
+  transform: translateX(-200px);
 }
+
+  .sidebar.menu-active {
+    width: 200px;
+    transform: none;
+  }
 
   .sidebar a {
     display: block;
@@ -17,13 +23,12 @@
   }
 
     .sidebar a.active {
-      background-color: white;
-      color: black;
-      border-bottom: 1px solid;
+      background-color: #007bff;
+      color: white;
     }
 
     .sidebar a:hover:not(.active) {
-      background-color: #555;
+      background-color: #007bff;
       color: white;
     }
 
@@ -35,14 +40,11 @@ div.content {
 
 @media screen and (max-width: 700px) {
   .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
+    height: calc(100vh-62px);
+    position: fixed;
+    top: 62px;
+    left: 0;
   }
-
-    .sidebar a {
-      float: left;
-    }
 
   div.content {
     margin-left: 0;

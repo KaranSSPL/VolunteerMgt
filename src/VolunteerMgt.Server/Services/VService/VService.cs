@@ -31,12 +31,17 @@ namespace VolunteerMgt.Server.Services.VService
             return await _dbContext.Service.FindAsync(id);
         }
 
-        public async Task<bool> UpdateServiceNameAsync(int id, ServiceModel serviceModel)
+        public async Task<bool> UpdateServiceAsync(int id, ServiceModel serviceModel)
         {
             var existingService = await _dbContext.Service.FindAsync(id);
             if (existingService == null) return false;
 
             existingService.ServiceName = serviceModel.ServiceName;
+            existingService.Code = serviceModel.Code;
+            existingService.RequiredVolunteer = serviceModel.RequiredVolunteer;
+            existingService.DefaultTime = serviceModel.DefaultTime; 
+
+            _dbContext.Entry(existingService).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();
             return true;
         }

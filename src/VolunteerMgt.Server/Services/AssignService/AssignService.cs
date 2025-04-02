@@ -19,39 +19,43 @@ namespace VolunteerMgt.Server.Services.AssignService
 
         public async Task<bool> AssignServiceToVolunteer(AssignRequest request)
         {
-            var volunteer = await _context.Volunteer.FindAsync(request.VolunteerId);
-            var service = await _context.Service.FindAsync(request.ServiceId);
-
-            if (volunteer == null || service == null)
+            try
             {
-                throw new ArgumentException("Invalid Volunteer ID or Service ID.");
-            }
-
-
-            var existingMapping = await _context.VolunteerServiceMapping
-                .FirstOrDefaultAsync(vs => vs.VolunteerId == request.VolunteerId && vs.ServiceId == request.ServiceId);
-
-            if (existingMapping != null)
-            {
-                existingMapping.ExitTime = request.ExitTime;
-            }
-            else
-            {
-                var mapping = new VolunteerServiceMapping
+                var volunteer = await _context.Volunteer.FindAsync(request.VolunteerId);
+                var service = await _context.Service.FindAsync(request.ServiceId);
+                if (volunteer == null || service == null)
                 {
-                    VolunteerId = request.VolunteerId,
-                    VolunteerName = volunteer.Name,
-                    ServiceId = request.ServiceId,
-                    ServiceName = service.ServiceName,
-                    TimeSlot = request.TimeSlot,
-                    ExitTime = request.ExitTime
-                };
-
-                _context.VolunteerServiceMapping.Add(mapping);
+                    throw new ArgumentException("Invalid Volunteer ID or Service ID.");
+                }
+                var existingMapping = await _context.VolunteerServiceMapping
+                    .FirstOrDefaultAsync(vs => vs.VolunteerId == request.VolunteerId && vs.ServiceId == request.ServiceId);
+                if (existingMapping != null)
+                {
+                    existingMapping.ExitTime = request.ExitTime;
+                }
+                else
+                {
+                    var mapping = new VolunteerServiceMapping
+                    {
+                        VolunteerId = request.VolunteerId,
+                        VolunteerName = volunteer.Name,
+                        ServiceId = request.ServiceId,
+                        ServiceName = service.ServiceName,
+                        TimeSlot = request.TimeSlot,
+                        BatchNumber = request.BatchNumber,
+                        ExitTime = request.ExitTime,
+                        Coupon = request.Coupon,
+                        TimeDifference = ""
+                    };
+                    _context.VolunteerServiceMapping.Add(mapping);
+                }
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
-            return true;
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+                return true;
         }
 
         public async Task<List<VolunteerServiceMapping>> GetVolunteerServices(int volunteerId)
@@ -61,9 +65,54 @@ namespace VolunteerMgt.Server.Services.AssignService
                 .ToListAsync();
         }
 
-        public async Task<List<VolunteerServiceMapping>> GetAllVolunteerServiceMappings()
+        public async Task<List<VolunteerServiceMappingDto>> GetAllVolunteerServiceMappings()
         {
-            return await _context.VolunteerServiceMapping.ToListAsync();
+            var mappings = await _context.VolunteerServiceMapping
+                .Include(v => v.Volunteer)
+                .Include(s => s.Service)
+                .ToListAsync();
+            var result = mappings.Select(mapping =>
+            {
+                DateTime exitTimeParsed;
+                DateTime timeSlotParsed = mapping.TimeSlot;
+                TimeSpan exitTime = TimeSpan.Zero;
+                if (DateTime.TryParse(mapping.ExitTime, out exitTimeParsed))
+                {
+                    exitTime = exitTimeParsed.TimeOfDay; 
+                }
+                string formattedExitTime = exitTime != TimeSpan.Zero
+                    ? exitTimeParsed.ToString("hh:mm tt")
+                    : "";
+                string timeDifferenceString = mapping.TimeDifference;
+                if (string.IsNullOrEmpty(timeDifferenceString) && exitTime != TimeSpan.Zero)
+                {
+                    TimeSpan timeSlotTime = timeSlotParsed.TimeOfDay;
+
+                    if (exitTime < timeSlotTime)
+                    {
+                        exitTime = exitTime.Add(new TimeSpan(24, 0, 0));
+                    }
+                    TimeSpan timeDifference = exitTime - timeSlotTime;
+                    timeDifferenceString = $"{(int)timeDifference.TotalHours} hours {(int)timeDifference.Minutes} minutes";
+                    mapping.TimeDifference = timeDifferenceString;
+                    _context.VolunteerServiceMapping.Update(mapping);
+                }
+                return new VolunteerServiceMappingDto
+                {
+                    Id = mapping.Id,
+                    VolunteerId = mapping.VolunteerId,
+                    VolunteerName = mapping.VolunteerName,
+                    TimeSlot = mapping.TimeSlot,
+                    ExitTime = formattedExitTime,
+                    TimeDifference = timeDifferenceString,
+                    BatchNumber = mapping.BatchNumber,
+                    Coupon = mapping.Coupon,
+                    ServiceName = mapping.ServiceName,
+                    ServiceId = mapping.ServiceId
+                };
+            }).ToList();
+            await _context.SaveChangesAsync();
+            return result;
         }
 
         public async Task<VolunteerServiceMapping?> GetVolunteerServiceMappingById(int id)
@@ -103,19 +152,25 @@ namespace VolunteerMgt.Server.Services.AssignService
 
         public async Task<List<ServiceVolunteerCountDto>> GetServiceVolunteerCountsAsync()
         {
-            var result = await _context.VolunteerServiceMapping
-                .Where(vsm => string.IsNullOrEmpty(vsm.ExitTime)) 
-                .GroupBy(vsm => new { vsm.ServiceId, vsm.ServiceName })
-                .Select(group => new
-                {
-                    ServiceId = group.Key.ServiceId,
-                    ServiceName = group.Key.ServiceName,
-                    VolunteerCount = group.Count(),
-                    RequiredVolunteer = _context.Service
-                        .Where(s => s.Id == group.Key.ServiceId)
-                        .Select(s => s.RequiredVolunteer)
-                        .FirstOrDefault() ?? "0"
-                })
+            var today = DateTime.UtcNow.Date; 
+
+            var totalCouponsToday = await _context.VolunteerServiceMapping
+                .Where(vsm => vsm.TimeSlot.Date == today && string.IsNullOrEmpty(vsm.ExitTime))
+                .SumAsync(vsm => vsm.Coupon);
+
+            var result = await _context.Service
+                .GroupJoin(
+                    _context.VolunteerServiceMapping
+                        .Where(vsm => string.IsNullOrEmpty(vsm.ExitTime)),
+                    service => service.Id,
+                    vsm => vsm.ServiceId,
+                    (service, vsmGroup) => new
+                    {
+                        ServiceId = service.Id,
+                        ServiceName = service.ServiceName,
+                        VolunteerCount = vsmGroup.Count(),
+                        RequiredVolunteer = service.RequiredVolunteer ?? "0"
+                    })
                 .ToListAsync();
 
             return result.Select(res => new ServiceVolunteerCountDto
@@ -124,7 +179,8 @@ namespace VolunteerMgt.Server.Services.AssignService
                 ServiceName = res.ServiceName,
                 VolunteerCount = res.VolunteerCount,
                 RequiredVolunteer = res.RequiredVolunteer,
-                PendingVolunteer = Math.Max((int.TryParse(res.RequiredVolunteer, out int reqVol) ? reqVol : 0) - res.VolunteerCount, 0)
+                PendingVolunteer = Math.Max((int.TryParse(res.RequiredVolunteer, out int reqVol) ? reqVol : 0) - res.VolunteerCount, 0),
+                TotalCouponsToday = totalCouponsToday 
             }).ToList();
         }
 

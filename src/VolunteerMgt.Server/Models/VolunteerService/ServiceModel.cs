@@ -17,6 +17,12 @@ namespace VolunteerMgt.Server.Models.VolunteerService
         [Required]
         public string RequiredVolunteer { get; set; } = string.Empty;
 
+        [Required]
+        public DateTime DefaultTime { get; set; } 
+
+        [Required]
+        public int Code { get; set; }
+
         [JsonIgnore]
         public virtual List<VolunteerServiceMapping> VolunteerMappings { get; set; } = [];
     }

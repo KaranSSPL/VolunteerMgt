@@ -14,8 +14,6 @@ namespace VolunteerMgt.Server.Models.Coupons
 
         public int CouponId { get; set; }
 
-        public string ServiceName { get; set; }
-
         [NotMapped] 
         public int TotalValue { get; set; }
 

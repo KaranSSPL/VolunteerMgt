@@ -7,5 +7,6 @@ export interface Volunteer {
   image: string;
   imagePath: string;
   code: string;
+  volunteerType: string;
   availabilities: { day: string; timeSlot: string }[];
 }

@@ -24,10 +24,11 @@ export class CreateVolunteerComponent {
     this.volunteerForm = this.fb.group({
       name: ['', Validators.required],
       mobileNo: ['', [Validators.required, Validators.pattern('^[0-9]{10}$')]],
-      address: ['', Validators.required],
-      occupation: ['', Validators.required],
-      image: ['', Validators.required],
-      code: ['', Validators.required],
+      address: ['', ],
+      occupation: ['',],
+      image: ['', ],
+      code: ['',],
+      volunteerType: [''],
       availabilities: this.fb.array([this.createAvailability()]),
     });
   }
@@ -146,7 +147,7 @@ export class CreateVolunteerComponent {
       volunteerData.append('occupation', this.volunteerForm.value.occupation);
       volunteerData.append('code', this.volunteerForm.value.code);
       volunteerData.append('availabilities', JSON.stringify(this.volunteerForm.value.availabilities));
-
+      volunteerData.append('volunteerType', this.volunteerForm.value.volunteerType);
       if (this.uploadedPhoto) {
         volunteerData.append('image', this.uploadedPhoto);
       }
@@ -158,6 +159,7 @@ export class CreateVolunteerComponent {
           this.availabilities.push(this.createAvailability());
           this.photoPreview = null;
           this.uploadedPhoto = null;
+          this.router.navigate(['/volunteer']);
         },
         error: (err) => {
           console.error('Error:', err);

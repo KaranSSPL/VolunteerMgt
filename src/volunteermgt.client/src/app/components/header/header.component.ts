@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -8,12 +8,14 @@ import { UserService } from '../../services/user.service';
   styleUrls: ['./header.component.css']
 })
 export class HeaderComponent {
-  isSidebarOpen = false;
   dropdownOpen = false;
 
+  @Output() menuToggle = new EventEmitter<void>();
+
   constructor(private userService: UserService) { }
+
   toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
+    this.menuToggle.emit(); 
   }
 
   toggleDropdown(event: Event) {

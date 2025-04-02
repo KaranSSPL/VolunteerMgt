@@ -8,7 +8,7 @@ namespace VolunteerMgt.Server.Abstraction.AssignService
     {
         Task<bool> AssignServiceToVolunteer(AssignRequest requests);
         Task<List<VolunteerServiceMapping>> GetVolunteerServices(int volunteerId);
-        Task<List<VolunteerServiceMapping>> GetAllVolunteerServiceMappings();
+        Task<List<VolunteerServiceMappingDto>> GetAllVolunteerServiceMappings();
         Task<VolunteerServiceMapping?> GetVolunteerServiceMappingById(int id);
         Task<bool> RemoveVolunteerService(int volunteerId, int serviceId);  
         Task<bool> DeleteVolunteerWithServices(int volunteerId);

@@ -16,6 +16,8 @@ public class AddVolunteerDto
     [NotMapped]
     public IFormFile Image { get; set; }
     public string code { get; set; } = string.Empty;
+
+    public string VolunteerType { get; set; } = string.Empty;
     [JsonProperty("availabilities")]
     public string Availabilities { get; set; } = string.Empty;
 }

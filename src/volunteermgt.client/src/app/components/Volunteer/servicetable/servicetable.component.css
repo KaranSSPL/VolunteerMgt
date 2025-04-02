@@ -1,4 +1,7 @@
-
+.service {
+  font-family: "Arial", sans-serif;
+  padding: 20px;
+}
 .container {
   display: flex;
   flex-direction: column;
@@ -9,8 +12,9 @@
 
 h2 {
   background: aliceblue;
-  width: 100%;
   padding: 10px;
+  margin: 0;
+  text-align: center;
 }
 
 .header-container {
@@ -18,8 +22,7 @@ h2 {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 800px;
-  margin-bottom: 10px;
+  margin: 11px auto 9px;
 }
 
 .add-btn {
@@ -40,7 +43,6 @@ h2 {
 
 .table-container {
   width: 100%;
-  max-width: 800px;
 }
 
 table {
@@ -131,7 +133,7 @@ th {
   }
 
 input[type="text"] {
-  width: 90%;
+  width: 100%;
   padding: 10px;
   margin-top: 10px;
   border: 1px solid #ccc;
@@ -168,3 +170,20 @@ button[type="submit"] {
   }
 }
 
+.exit-time {
+    text-align: left;
+    margin: 10px 0 0;
+    display: flex;
+    align-items: center;
+}
+
+  .exit-time input {
+    margin-left: 12px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    transition: all 0.3s ease-in-out;
+    height: 40px;
+    box-sizing: border-box;
+    text-align: left;
+  }

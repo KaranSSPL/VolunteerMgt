@@ -8,7 +8,7 @@ namespace VolunteerMgt.Server.Abstraction.Service.VService
         Task<ServiceModel> CreateServiceAsync(ServiceModel service);
         Task<List<ServiceModel>> GetAllServicesAsync();
         Task<ServiceModel?> GetServiceByIdAsync(int id);
-        Task<bool> UpdateServiceNameAsync(int id, ServiceModel serviceModel);
+        Task<bool> UpdateServiceAsync(int id, ServiceModel serviceModel);
         Task<bool> DeleteServiceAsync(int id);
     }
 }

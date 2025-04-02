@@ -7,25 +7,6 @@
   </mat-form-field>
 </div>
 
-<div class="service-container">
-  <label>Service:</label>
-  <input type="text"
-         placeholder="Search by service name..."
-         [(ngModel)]="serviceQuery"
-         (input)="searchServices()"
-         (keydown)="handleKeydown($event, 'service')"
-         class="service-search-box" />
-
-  <ul *ngIf="serviceSuggestions.length > 0" class="service-suggestions">
-    <li *ngFor="let suggestion of serviceSuggestions; let i = index"
-        [class.active]="i === selectedServiceIndex"
-        (click)="selectService(suggestion)">
-      <div class="suggestion-item">
-        <span class="value">{{ suggestion.serviceName }}</span>
-      </div>
-    </li>
-  </ul>
-</div>
 
 <div>
   <label>Date & Time:</label>

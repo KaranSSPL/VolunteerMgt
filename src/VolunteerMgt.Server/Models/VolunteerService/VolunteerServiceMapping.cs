@@ -12,13 +12,13 @@ namespace VolunteerMgt.Server.Models
         public int Id { get; set; }
 
         [Required]
-        public int VolunteerId { get; set; }
+        public int VolunteerId { get; set;}
 
         [Required]
-        public string VolunteerName { get; set; }
+        public string VolunteerName { get; set;}
 
         [ForeignKey("VolunteerId")]
-        public VolunteerModel Volunteer { get; set; }
+        public VolunteerModel Volunteer { get; set;}
 
         [Required]
         public int ServiceId { get; set; }
@@ -31,6 +31,12 @@ namespace VolunteerMgt.Server.Models
 
         [Required]
         public string ExitTime { get; set; }
+
+        public int BatchNumber { get; set; }
+
+        public int Coupon { get; set; }
+
+        public string TimeDifference { get; set; }
 
         [ForeignKey("ServiceId")]
         public ServiceModel Service { get; set; }

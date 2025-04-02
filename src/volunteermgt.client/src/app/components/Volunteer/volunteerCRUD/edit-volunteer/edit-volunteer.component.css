@@ -1,6 +1,6 @@
 .edit-volunteer-container {
   max-width: 500px;
-  margin: 50px auto;
+  margin: 20px auto;
   padding: 25px;
   background: #ffffff;
   box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.15);
@@ -15,72 +15,195 @@ h2 {
   margin-bottom: 20px;
 }
 
-.volunteer-image-preview {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 5px;
+.camera-btn {
   margin-top: 10px;
-  display: block;
+  width: 46%;
+  background: #008fd5;
+  color: white;
+  font-weight: bold;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s;
+  margin: 10px auto 0;
 }
+
+  .camera-btn:hover {
+    background: #e91e63;
+  }
+
+.photo-or-label {
+  margin-top: 6%;
+  font-size: large;
+  width: 100%;
+}
+
+.remove-photo {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: red;
+  color: white;
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  line-height: 24px;
+  text-align: center;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+  .remove-photo:hover {
+    background: darkred;
+  }
+
+.photo-preview {
+  height: 110px;
+  margin: 20px auto 0;
+  position: relative;
+  border: 3px solid white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+  .photo-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+  }
 
 .form-group {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 15px;
+  align-items: flex-start;
+  margin-bottom: 10px;
 }
 
   .form-group label {
+    min-width: 28%;
+    font-weight: 500;
+    margin: 8px 0 0;
+  }
+
+   input {
     flex: 1;
-    font-weight: 600;
-    color: #444;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    height: 35px;
   }
 
-  .form-group input {
-    flex: 2;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color 0.3s ease-in-out;
-  }
-
-    .form-group input:focus {
+    input:focus {
       border-color: #007bff;
       outline: none;
       box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.4);
     }
 
+.photo-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border: 1px solid #e9e7f7;
+  flex: 1;
+  padding: 15px;
+  border-radius: 10px;
+  text-align: center;
+  background-color: #f0f0f0;
+}
+
+.photo-label {
+  font-size: 15px;
+  color: black;
+}
+
+.photo-upload input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: none;
+  background: #fff;
+  box-shadow: 0px 4px 20px rgba(0, 180, 80, 0.3);
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.radio-group {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+  .radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .radio-group input[type="radio"] {
+    height: 20px;
+    width: 20px;
+  }
 h3 {
   margin-top: 20px;
   font-size: 20px;
   color: #333;
 }
 
-.availability-group {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin-top: 10px;
+.availability-block h3 {
+  margin: 30px 0 20px;
+  text-align: center;
 }
 
-  .availability-group input {
-    flex: 1;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-
-.availability-item input {
-    margin-left: 10px;
-}
-
-.availability-item label {
-  font-weight: 600;
+.availability-block label {
   display: inline-block;
   width: auto;
-  margin-bottom: 5px;
+  margin-bottom: 8px;
+}
+
+.availability-block input {
+  display: block;
+  width: 100%;
+}
+
+.availability-block .suggestion-box {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  box-shadow: 0px 2px 5px rgba(0, 180, 80, 0.4);
+  width: 78%;
+  left: 8%;
+  cursor: pointer;
+  border: 1px solid #dcdcdc;
+  background-color: #fff;
+  padding: 5px;
+  text-align: center;
+}
+
+  .availability-block .suggestion-box p {
+    margin: 5px;
+    font-weight: 700;
+    border-bottom: solid;
+  }
+
+.availability-block .availability-group > div {
+  position: relative;
+  flex: 1 1 197px;
+  max-width: 197px;
+}
+
+.availability-group {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.availability-block .availability-group:first-of-type > * {
+  flex: 1 1 auto;
+  max-width: 100%;
 }
 
 .add-btn,
@@ -88,18 +211,20 @@ h3 {
   background: #dc3545;
   color: white;
   border: none;
-  font-weight:700;
+  font-weight: 700;
   padding: 8px 12px;
   border-radius: 5px;
   cursor: pointer;
   font-size: 14px;
   transition: background 0.3s ease;
 }
-
-.add-btn {
-  background: #28a745;
-  margin-top: 10px;
-}
+  .remove-btn {
+      height: 35px;
+  }
+  .add-btn {
+    background: #28a745;
+    margin-top: 10px;
+  }
 
   .add-btn:hover {
     background: #218838;
@@ -112,7 +237,7 @@ h3 {
 .update-btn {
   width: 100%;
   padding: 12px;
-  border:none;
+  border: none;
   margin-top: 15px;
   border-radius: 6px;
   cursor: pointer;
@@ -143,8 +268,11 @@ h3 {
   .cancel-btn:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 1.0);
   }
+
 .suggestion-text {
-  display: inline-block;
+  position: absolute;
+  display: block;
+  width: 100%;
   margin-top: 5px;
   padding: 8px 12px;
   font-size: 14px;

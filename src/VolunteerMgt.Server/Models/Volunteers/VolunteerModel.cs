@@ -19,6 +19,8 @@ namespace VolunteerMgt.Server.Models.Volunteers
         
         public IFormFile Image { get; set; }
         public string code { get; set; } = string.Empty;
+
+        public string VolunteerType { get; set; } = string.Empty;
         public virtual List<AvailabilityModel> Availabilities { get; set; } = [];
     }
 }

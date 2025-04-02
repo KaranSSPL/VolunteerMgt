@@ -24,6 +24,8 @@ export class ServicetableComponent {
     this.serviceForm = this.fb.group({
       serviceName: ['', Validators.required],
       requiredVolunteer: ['', Validators.required],
+      code: ['', Validators.required],
+      defaultTime: ['', Validators.required],
     });
   }
 
@@ -49,13 +51,23 @@ export class ServicetableComponent {
     if (service) {
       this.editMode = true;
       this.selectedServiceId = service.id;
-      this.serviceForm.patchValue({ serviceName: service.serviceName, requiredVolunteer: service.requiredVolunteer });
+      const localDateTime = new Date(service.defaultTime);
+      const formattedTime = localDateTime.getHours().toString().padStart(2, '0') + ':' +
+        localDateTime.getMinutes().toString().padStart(2, '0');
+
+      this.serviceForm.patchValue({
+        serviceName: service.serviceName,
+        requiredVolunteer: service.requiredVolunteer,
+        code: service.code,
+        defaultTime: formattedTime
+      });
     } else {
       this.editMode = false;
       this.selectedServiceId = null;
       this.serviceForm.reset();
     }
   }
+
 
   closeModal(): void {
     this.showModal = false;
@@ -66,10 +78,17 @@ export class ServicetableComponent {
 
   addService(): void {
     if (this.serviceForm.invalid) return;
+    const today = new Date();
+    const dateString = today.getFullYear() + '-' +
+      String(today.getMonth() + 1).padStart(2, '0') + '-' +
+      String(today.getDate()).padStart(2, '0');
+    const timeString = this.serviceForm.value.defaultTime + ':00';
     const newService: Service = {
       id: 0,
       serviceName: this.serviceForm.value.serviceName,
-      requiredVolunteer: this.serviceForm.value.requiredVolunteer
+      requiredVolunteer: this.serviceForm.value.requiredVolunteer,
+      code: this.serviceForm.value.code,
+      defaultTime: `${dateString}T${timeString}`
     };
     this.volunteerService.addService(newService).subscribe({
       next: (service) => {
@@ -83,17 +102,21 @@ export class ServicetableComponent {
 
   updateService(): void {
     if (this.serviceForm.invalid || this.selectedServiceId === null) return;
+    const today = new Date();
+    const dateString = today.getFullYear() + '-' +
+      String(today.getMonth() + 1).padStart(2, '0') + '-' +
+      String(today.getDate()).padStart(2, '0');
+    const timeString = this.serviceForm.value.defaultTime + ':00';
     const updatedService: Service = {
       id: this.selectedServiceId,
       serviceName: this.serviceForm.value.serviceName,
-      requiredVolunteer: this.serviceForm.value.requiredVolunteer
+      requiredVolunteer: this.serviceForm.value.requiredVolunteer,
+      code: this.serviceForm.value.code,
+      defaultTime: `${dateString}T${timeString}`
     };
     this.volunteerService.updateService(this.selectedServiceId, updatedService).subscribe({
       next: () => {
-        const index = this.services.findIndex(s => s.id === this.selectedServiceId);
-        if (index !== -1) {
-          this.services[index].serviceName = updatedService.serviceName;
-        }
+        this.fetchServices();
         this.closeModal();
       },
       error: (err) => console.error('Error updating service:', err)
