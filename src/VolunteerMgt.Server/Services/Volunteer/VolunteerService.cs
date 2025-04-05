@@ -227,13 +227,22 @@ namespace VolunteerMgt.Server.Services.Volunteer
                     };
                 }
 
+                var availabilities = await _dbContext.Availability
+                    .Where(a => a.VolunteerId == id)
+                    .ToListAsync();
+
+                if (availabilities.Any())
+                {
+                    _dbContext.Availability.RemoveRange(availabilities);
+                }
+
                 _dbContext.Volunteer.Remove(volunteer);
                 await _dbContext.SaveChangesAsync();
 
                 return new ResponseModel<bool>
                 {
                     Success = true,
-                    Message = "Volunteer deleted successfully!",
+                    Message = "Volunteer and related data deleted successfully!",
                     StatusCode = HttpStatusCode.OK,
                     Data = true
                 };
