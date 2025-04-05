@@ -5,7 +5,7 @@
 }
 .assign-service {
   font-family: "Arial", sans-serif;
-  padding: 20px;
+  padding: 12px;
 }
 
 .title {
@@ -20,8 +20,20 @@
   align-items: center;
   gap: 20px;
   text-align: left;
-  padding: 30px 0;
+  padding: 3px 0px 10px;
 }
+.checkbox-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  align-items: center;
+  margin-top:10px;
+}
+
+  .checkbox-container label {
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
 
   .assign-container label {
     display: block;
@@ -42,22 +54,6 @@
     text-align: left;
   }
 
-/*  .time-container .input {
-    width: 20%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 25px 26px 25px;
-    font-size: 16px;
-    box-shadow: 0px 2px 5px rgba(0, 180, 80, 0.2);
-    transition: all 0.3s ease-in-out;
-    height: 40px;
-    box-sizing: border-box;
-    text-align: left;
-  }*/
-
-/*.input-group{
-    width:15%;
-}*/
 .assign-container .services {
   display: flex;
   align-items: center;
@@ -91,7 +87,6 @@ label {
 
 .volunteer-search-box,
 .service-search-box {
-  /*width: 100%;*/
   padding: 12px;
   border: 1px solid #ddd;
   border-radius: 25px 26px 25px;
@@ -200,10 +195,15 @@ table {
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-th, td {
-  padding: 12px;
+th {
+  padding: 7px;
   border: 1px solid #ddd;
   text-align: center;
+}
+td {
+  padding: 7px;
+  border: 1px solid #ddd;
+  text-align: left;
 }
 
 th {
@@ -294,8 +294,8 @@ td:last-child {
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.4);
   width: 100%;
-  max-width: 457px;
-  margin: 10px auto 40px;
+  max-width: 481px;
+  margin: 2px auto 19px;
 }
 
   .summary-container h3 {

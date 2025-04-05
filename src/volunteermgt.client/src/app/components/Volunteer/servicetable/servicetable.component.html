@@ -12,7 +12,10 @@
         <thead>
           <tr>
             <th>Service Name</th>
-            <th>Required Volunteer</th>
+            <th>Saturday Volunteer</th>
+            <th>Sunday Volunteer</th>
+            <th>Ekadashi Volunteer</th>
+            <th>Festival Volunteer</th>
             <th>Code</th>
             <th>Default Exit Time</th>
             <th>Actions</th>
@@ -21,7 +24,10 @@
         <tbody>
           <tr *ngFor="let service of services">
             <td>{{ service.serviceName }}</td>
-            <td>{{ service.requiredVolunteer }}</td>
+            <td>{{ service.saturdayVolunteerRequirement }}</td>
+            <td>{{ service.sundayVolunteerRequirement }}</td>
+            <td>{{ service.ekadashiVolunteerRequirement }}</td>
+            <td>{{ service.festivalVolunteerRequirement }}</td>
             <td>{{ service.code }}</td>
             <td>{{ service.defaultTime | date:'shortTime'}}</td>
             <td>
@@ -39,14 +45,37 @@
   <div class="modal" [style.display]="showModal ? 'flex' : 'none'">
     <div class="modal-content">
       <span class="close-btn" (click)="closeModal()">&times;</span>
-      <h3>{{ editMode ? 'Edit Service' : 'Add New Service' }}</h3>
+      <h3 class="modal-title">{{ editMode ? 'Edit Service' : 'Add New Service' }}</h3>
       <form [formGroup]="serviceForm" (ngSubmit)="editMode ? updateService() : addService()">
-        <input type="text" formControlName="serviceName" placeholder="Enter Service Name">
-        <input type="text" formControlName="requiredVolunteer" placeholder="Enter Required Volunteer">
-        <input type="text" formControlName="code" placeholder="Enter Service Code">
-        <div class="exit-time">
-          <label>Default Exit Time :</label>
-          <input type="time" formControlName="defaultTime" placeholder="Select Default Time">
+        <div class="form-block">
+          <div class="form-group w-100">
+            <label>Service Name :</label>
+            <input type="text" formControlName="serviceName" placeholder="Enter Service Name">
+          </div>
+          <div class="form-group">
+            <label> Saturday Volunteer : </label>
+            <input type="text" formControlName="saturdayVolunteerRequirement" placeholder="Enter Required Volunteer">
+          </div>
+          <div class="form-group">
+            <label> Sunday Volunteer : </label>
+            <input type="text" formControlName="sundayVolunteerRequirement" placeholder="Enter Required Volunteer">
+          </div>
+          <div class="form-group">
+            <label> Ekadashi Volunteer : </label>
+            <input type="text" formControlName="ekadashiVolunteerRequirement" placeholder="Enter Required Volunteer">
+          </div>
+          <div class="form-group">
+            <label> Festival Volunteer : </label>
+            <input type="text" formControlName="festivalVolunteerRequirement" placeholder="Enter Required Volunteer">
+          </div>
+          <div class="form-group">
+            <label>Code : </label>
+            <input type="text" formControlName="code" placeholder="Enter Service Code">
+          </div>
+          <div class="exit-time form-group">
+            <label>Default Exit Time :</label>
+            <input type="time" formControlName="defaultTime" placeholder="Select Default Time">
+          </div>
         </div>
         <button type="submit" [disabled]="serviceForm.invalid">
           {{ editMode ? 'Update Service' : 'Add Service' }}

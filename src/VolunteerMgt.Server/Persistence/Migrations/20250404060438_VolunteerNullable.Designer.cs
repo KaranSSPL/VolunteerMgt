@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using VolunteerMgt.Server.Persistence;
 
@@ -11,9 +12,11 @@ using VolunteerMgt.Server.Persistence;
 namespace VolunteerMgt.Server.Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250404060438_VolunteerNullable")]
+    partial class VolunteerNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -359,23 +362,11 @@ namespace VolunteerMgt.Server.Persistence.Migrations
                     b.Property<DateTime>("DefaultTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("EkadashiVolunteerRequirement")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("FestivalVolunteerRequirement")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SaturdayVolunteerRequirement")
+                    b.Property<string>("RequiredVolunteer")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ServiceName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SundayVolunteerRequirement")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -441,12 +432,14 @@ namespace VolunteerMgt.Server.Persistence.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Day")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TimeSlot")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("VolunteerId")
+                    b.Property<int>("VolunteerId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -468,6 +461,7 @@ namespace VolunteerMgt.Server.Persistence.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImagePath")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("MobileNo")
@@ -577,7 +571,9 @@ namespace VolunteerMgt.Server.Persistence.Migrations
                 {
                     b.HasOne("VolunteerMgt.Server.Models.Volunteers.VolunteerModel", "Volunteer")
                         .WithMany("Availabilities")
-                        .HasForeignKey("VolunteerId");
+                        .HasForeignKey("VolunteerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Volunteer");
                 });

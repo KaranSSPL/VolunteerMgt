@@ -1,0 +1,96 @@
+.edit-container {
+  max-width: 550px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+  .edit-container h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #333;
+    background-color: aliceblue;
+    padding:10px;
+  }
+.form-group {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.form-block {
+  flex: 1;
+}
+
+  .form-block input {
+    width: 100%;
+  }
+
+.form-group label {
+  min-width: 28%;
+  font-weight: 500;
+  margin: 8px 0 0;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+label {
+  font-weight: 600;
+  color: #555;
+}
+
+input{
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  height: 35px;
+}
+
+.cancel {
+  padding: 12px;
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+  border-radius: 8px;
+  font-weight:600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.update {
+  padding: 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  border-radius: 8px;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.snackbar-success .mdc-snackbar__surface {
+  background-color: #109710 !important;
+  color: white !important;
+}
+
+.snackbar-error .mdc-snackbar__surface {
+  background-color: red !important;
+  color: white !important;
+}
+
+.snackbar-error .mat-mdc-snack-bar-action {
+  color: white !important;
+}
+
+.snackbar-success .mat-mdc-snack-bar-action {
+  color: white !important;
+}

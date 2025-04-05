@@ -11,9 +11,7 @@ namespace VolunteerMgt.Server.Abstraction.AssignService
         Task<List<VolunteerServiceMappingDto>> GetAllVolunteerServiceMappings();
         Task<VolunteerServiceMapping?> GetVolunteerServiceMappingById(int id);
         Task<bool> RemoveVolunteerService(int volunteerId, int serviceId);  
-        Task<bool> DeleteVolunteerWithServices(int volunteerId);
-
-        Task<List<ServiceVolunteerCountDto>> GetServiceVolunteerCountsAsync();
-
+        Task<List<ServiceVolunteerCountDto>> GetServiceVolunteerCountsAsync(string day);
+        Task<bool> UpdateVolunteerServiceMappingAsync(VolunteerServiceMapping updatedMapping);
     }
 }

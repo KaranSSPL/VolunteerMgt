@@ -52,6 +52,8 @@ export class AssignserviceComponent {
   selectedVolunteerIndex: number = -1;
   selectedServiceIndex: number = -1;
   totalValue: number = 0;
+  isEkadashi: boolean = false;
+  isFestival: boolean = false;
 
   constructor(private volunteerService: VolunteerService,
     private snackBar: MatSnackBar,
@@ -62,6 +64,7 @@ export class AssignserviceComponent {
     });
     this.setCurrentTime();
     this.fetchCoupons();
+    this.loadCheckboxState();
     this.volunteerService.getAllServices().subscribe((data) => {
       this.services = data;
     });
@@ -92,12 +95,53 @@ export class AssignserviceComponent {
   }
 
   fetchServiceVolunteerCounts() {
-    this.volunteerService.getServiceVolunteerCounts().subscribe((data) => {
+    const day = this.getSelectedDay();
+
+    this.volunteerService.getServiceVolunteerCounts(day).subscribe((data) => {
       this.serviceVolunteerCounts = data;
       const coupons = this.serviceVolunteerCounts.map(x => x.totalCouponsToday);
       this.volunteerCoupons = coupons[0];
-      this.calculateRemainingCoupons(); 
+      this.calculateRemainingCoupons();
     });
+  }
+
+  getSelectedDay(): string {
+    if (this.isFestival) {
+      return "festival";
+    } else if (this.isEkadashi) {
+      return "ekadashi";
+    }
+    return this.getCurrentDay();
+  }
+
+  getCurrentDay(): string {
+    const days = ["sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
+    const todayIndex = new Date().getDay();
+    return days[todayIndex];
+  }
+
+  saveCheckboxState() {
+    localStorage.setItem("isEkadashi", JSON.stringify(this.isEkadashi));
+    localStorage.setItem("isFestival", JSON.stringify(this.isFestival));
+  }
+
+  loadCheckboxState() {
+    const ekadashiStored = localStorage.getItem("isEkadashi");
+    const festivalStored = localStorage.getItem("isFestival");
+
+    this.isEkadashi = ekadashiStored ? JSON.parse(ekadashiStored) : false;
+    this.isFestival = festivalStored ? JSON.parse(festivalStored) : false;
+  }
+
+  onCheckboxChange(type: 'ekadashi' | 'festival') {
+    if (type === 'ekadashi') {
+      this.isFestival = false; 
+    } else if (type === 'festival') {
+      this.isEkadashi = false; 
+    }
+
+    this.saveCheckboxState(); 
+    this.fetchServiceVolunteerCounts(); 
   }
 
   calculateRemainingCoupons() {

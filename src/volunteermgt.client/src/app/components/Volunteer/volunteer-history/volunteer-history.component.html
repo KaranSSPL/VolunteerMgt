@@ -24,17 +24,36 @@
       <table>
         <thead>
           <tr>
-            <th (click)="sortTable('volunteerName')">Volunteer Name</th>
-            <th (click)="sortTable('serviceName')">Service Name</th>
+            <th (click)="sortTable('volunteerName')">
+              Volunteer Name
+              <span *ngIf="sortColumn === 'volunteerName'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+            </th>
+            <th (click)="sortTable('serviceName')">
+              Service Name
+              <span *ngIf="sortColumn === 'serviceName'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+            </th>
             <th>Date</th>
-            <th (click)="sortTable('timeSlot')">In Time</th>
-            <th (click)="sortTable('exitTime')">Exit Time</th>
-            <th (click)="sortTable('batchNumber')">Batch Number</th>
+            <th (click)="sortTable('timeSlot')">
+              In Time
+              <span *ngIf="sortColumn === 'timeSlot'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+            </th>
+            <th (click)="sortTable('exitTime')">
+              Exit Time
+              <span *ngIf="sortColumn === 'exitTime'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+            </th>
+            <th (click)="sortTable('batchNumber')">
+              Batch Number
+              <span *ngIf="sortColumn === 'batchNumber'">{{ sortDirection === 'asc' ? '↑' : '↓' }}</span>
+            </th>
             <th>Duration</th>
+            <th>Coupon</th>
             <th>Action</th>
           </tr>
         </thead>
         <tbody>
+          <tr *ngIf="filteredMappings.length === 0">
+            <td colspan="8" class="no-data">No data available</td>
+          </tr>
           <tr *ngFor="let mapping of filteredMappings">
             <td>{{ mapping.volunteerName }}</td>
             <td>{{ mapping.serviceName }}</td>
@@ -43,6 +62,7 @@
             <td>{{ mapping.exitTime }}</td>
             <td>{{ mapping.batchNumber }}</td>
             <td>{{ mapping.timeDifference  }}</td>
+            <td>{{ mapping.coupon  }}</td>
             <td>
               <button class="btn-delete" (click)="openDeleteDialog(mapping.volunteerId, mapping.serviceId)">
                 ❌ Delete

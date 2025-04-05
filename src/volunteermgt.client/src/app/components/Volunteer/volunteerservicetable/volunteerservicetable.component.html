@@ -11,10 +11,14 @@
           <th>Exit Time</th>
           <th>Batch Number</th>
           <th>Duration</th>
+          <th>Coupon</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
+        <tr *ngIf="filteredVolunteerServiceMappings.length === 0">
+          <td colspan="8" class="no-data">No data available</td>
+        </tr>
         <tr *ngFor="let mapping of filteredVolunteerServiceMappings">
           <td>{{ mapping.volunteerName }}</td>
           <td>{{ mapping.serviceName }}</td>
@@ -23,8 +27,10 @@
           <td>{{ mapping.exitTime }}</td>
           <td>{{ mapping.batchNumber }}</td>
           <td>{{ mapping.timeDifference  }}</td>
+          <td>{{mapping.coupon}}</td>
           <td>
-            <button class="btn-edit" (click)="exitVolunteer(mapping.volunteerId)">Exit</button>
+            <button class="btn-exit" (click)="exitVolunteer(mapping.volunteerId)">Exit</button>
+            <button class="btn-edit" (click)="editVolunteerService(mapping.id)">Edit</button>
             <button class="btn-delete" (click)="openDeleteDialog(mapping.volunteerId, mapping.serviceId)">
               ❌ Delete
             </button>

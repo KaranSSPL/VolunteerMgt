@@ -23,7 +23,10 @@ export class ServicetableComponent {
   constructor(private volunteerService: VolunteerService, private fb: FormBuilder, private dialog: MatDialog) {
     this.serviceForm = this.fb.group({
       serviceName: ['', Validators.required],
-      requiredVolunteer: ['', Validators.required],
+      saturdayVolunteerRequirement: ['', Validators.required],
+      sundayVolunteerRequirement: ['', Validators.required],
+      ekadashiVolunteerRequirement: ['', Validators.required],
+      festivalVolunteerRequirement: ['', Validators.required],
       code: ['', Validators.required],
       defaultTime: ['', Validators.required],
     });
@@ -57,7 +60,10 @@ export class ServicetableComponent {
 
       this.serviceForm.patchValue({
         serviceName: service.serviceName,
-        requiredVolunteer: service.requiredVolunteer,
+        saturdayVolunteerRequirement: service.saturdayVolunteerRequirement,
+        sundayVolunteerRequirement: service.sundayVolunteerRequirement,
+        ekadashiVolunteerRequirement: service.ekadashiVolunteerRequirement,
+        festivalVolunteerRequirement: service.festivalVolunteerRequirement,
         code: service.code,
         defaultTime: formattedTime
       });
@@ -86,7 +92,10 @@ export class ServicetableComponent {
     const newService: Service = {
       id: 0,
       serviceName: this.serviceForm.value.serviceName,
-      requiredVolunteer: this.serviceForm.value.requiredVolunteer,
+      saturdayVolunteerRequirement: this.serviceForm.value.saturdayVolunteerRequirement,
+      sundayVolunteerRequirement: this.serviceForm.value.sundayVolunteerRequirement,
+      ekadashiVolunteerRequirement: this.serviceForm.value.ekadashiVolunteerRequirement,
+      festivalVolunteerRequirement: this.serviceForm.value.festivalVolunteerRequirement,
       code: this.serviceForm.value.code,
       defaultTime: `${dateString}T${timeString}`
     };
@@ -110,7 +119,10 @@ export class ServicetableComponent {
     const updatedService: Service = {
       id: this.selectedServiceId,
       serviceName: this.serviceForm.value.serviceName,
-      requiredVolunteer: this.serviceForm.value.requiredVolunteer,
+      saturdayVolunteerRequirement: this.serviceForm.value.saturdayVolunteerRequirement,
+      sundayVolunteerRequirement: this.serviceForm.value.sundayVolunteerRequirement,
+      ekadashiVolunteerRequirement: this.serviceForm.value.ekadashiVolunteerRequirement,
+      festivalVolunteerRequirement: this.serviceForm.value.festivalVolunteerRequirement,
       code: this.serviceForm.value.code,
       defaultTime: `${dateString}T${timeString}`
     };

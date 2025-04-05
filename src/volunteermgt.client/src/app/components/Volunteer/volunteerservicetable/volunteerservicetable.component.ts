@@ -1,20 +1,23 @@
- import { Component } from '@angular/core';
+ import { Component, ViewEncapsulation } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { VolunteerService } from '../../../services/volunteer.service';
 import { DeleteconfirmationComponent } from '../../../Dialogbox/deleteconfirmation/deleteconfirmation.component';
 import { formatDate } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-volunteerservicetable',
   standalone: false,
   templateUrl: './volunteerservicetable.component.html',
-  styleUrl: './volunteerservicetable.component.css'
+  styleUrl: './volunteerservicetable.component.css',
+  encapsulation: ViewEncapsulation.None,
+
 })
 export class VolunteerservicetableComponent {
   volunteerServiceMappings: any[] = []; 
   filteredVolunteerServiceMappings: any[] = [];
 
-  constructor(private volunteerService: VolunteerService, public dialog: MatDialog) { }
+  constructor(private volunteerService: VolunteerService, public dialog: MatDialog, private router: Router) { }
 
   ngOnInit(): void {
     this.volunteerService.getVolunteerServiceMappings().subscribe(
@@ -62,6 +65,10 @@ export class VolunteerservicetableComponent {
       },
       error: (err) => console.error('Error fetching services for volunteer:', err)
     });
+  }
+
+  editVolunteerService(id: number) {
+    this.router.navigate(['/volunteer-service/edit', id]);
   }
 
   getFormattedTime(): string {

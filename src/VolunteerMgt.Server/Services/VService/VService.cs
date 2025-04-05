@@ -38,8 +38,11 @@ namespace VolunteerMgt.Server.Services.VService
 
             existingService.ServiceName = serviceModel.ServiceName;
             existingService.Code = serviceModel.Code;
-            existingService.RequiredVolunteer = serviceModel.RequiredVolunteer;
-            existingService.DefaultTime = serviceModel.DefaultTime; 
+            existingService.SaturdayVolunteerRequirement = serviceModel.SaturdayVolunteerRequirement;
+            existingService.SundayVolunteerRequirement = serviceModel.SundayVolunteerRequirement;
+            existingService.EkadashiVolunteerRequirement = serviceModel.EkadashiVolunteerRequirement;
+            existingService.FestivalVolunteerRequirement = serviceModel.FestivalVolunteerRequirement;
+            existingService.DefaultTime = serviceModel.DefaultTime;
 
             _dbContext.Entry(existingService).State = EntityState.Modified;
             await _dbContext.SaveChangesAsync();

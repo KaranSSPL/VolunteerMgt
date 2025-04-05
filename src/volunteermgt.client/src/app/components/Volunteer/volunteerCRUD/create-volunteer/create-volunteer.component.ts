@@ -83,8 +83,8 @@ export class CreateVolunteerComponent {
 
   createAvailability(): FormGroup {
     return this.fb.group({
-      day: ['', Validators.required],
-      timeSlot: ['', Validators.required],
+      day: ['', ],
+      timeSlot: ['', ],
     });
   }
 

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VolunteerMgt.Server.Abstraction.AssignService;
+using VolunteerMgt.Server.Models;
 using VolunteerMgt.Server.Models.VolunteerService;
 
 namespace VolunteerMgt.Server.Endpoints
@@ -26,11 +27,11 @@ namespace VolunteerMgt.Server.Endpoints
             group.MapDelete("/volunteer/{volunteerId}/service/{serviceId}", RemoveVolunteerServiceAsync)
                 .WithName("remove-volunteer-service");
 
-            group.MapDelete("/volunteer/{volunteerId}", DeleteVolunteerWithServicesAsync)
-                .WithName("delete-volunteer-with-services");
-
             group.MapGet("/service-volunteer-counts", GetServiceVolunteerCountsAsync)
                 .WithName("get-service-volunteer-counts");
+
+            group.MapPut("/volunteer-service-mappings/{id}", UpdateVolunteerServiceMappingAsync)
+    .WithName("update-volunteer-service-mapping");
         }
 
         private static async Task<IResult> AssignServiceAsync(
@@ -82,20 +83,24 @@ namespace VolunteerMgt.Server.Endpoints
             return result ? Results.Ok("Service removed successfully.") : Results.NotFound("Service not found for this volunteer.");
         }
 
-        private static async Task<IResult> DeleteVolunteerWithServicesAsync(
-            [FromServices] IAssignService assignService,
-            int volunteerId)
+        private static async Task<IResult> GetServiceVolunteerCountsAsync(
+             [FromServices] IAssignService assignService,
+             [FromQuery] string day)  
         {
-            var result = await assignService.DeleteVolunteerWithServices(volunteerId);
-            return result ? Results.Ok("Volunteer and all assigned services deleted successfully.")
-                          : Results.NotFound("Volunteer not found.");
+            var counts = await assignService.GetServiceVolunteerCountsAsync(day); 
+            return counts.Any() ? Results.Ok(counts) : Results.NotFound("No data found.");
         }
 
-        private static async Task<IResult> GetServiceVolunteerCountsAsync(
-            [FromServices] IAssignService assignService)
+        private static async Task<IResult> UpdateVolunteerServiceMappingAsync(
+            [FromServices] IAssignService assignService,
+            [FromRoute] int id,
+            [FromBody] VolunteerServiceMapping mapping)
         {
-            var counts = await assignService.GetServiceVolunteerCountsAsync();
-            return counts.Any() ? Results.Ok(counts) : Results.NotFound("No data found.");
+            if (id != mapping.Id)
+                return Results.BadRequest("Mapping ID mismatch.");
+
+            var result = await assignService.UpdateVolunteerServiceMappingAsync(mapping);
+            return result ? Results.Ok("Volunteer service mapping updated successfully.") : Results.NotFound("Mapping not found or invalid data.");
         }
     }
 }

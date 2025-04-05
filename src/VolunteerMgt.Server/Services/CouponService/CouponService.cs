@@ -21,41 +21,73 @@ namespace VolunteerMgt.Server.Services.CouponService
 
         public async Task<Coupons?> GetCouponByIdAsync(int id)
         {
-            return await _db.Coupons.Include(c => c.AdditionalCoupons).FirstOrDefaultAsync(c => c.Id == id);
+            try
+            {
+                return await _db.Coupons
+                    .Include(c => c.AdditionalCoupons)
+                    .FirstOrDefaultAsync(c => c.Id == id);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching coupon by ID: {ex.Message}\n{ex.InnerException?.Message}");
+                return null;
+            }
         }
 
         public async Task<Coupons> AddCouponAsync(Coupons coupon)
         {
-            _db.Coupons.Add(coupon);
-            await _db.SaveChangesAsync();
-            return coupon;
+            try
+            {
+                await _db.Coupons.AddAsync(coupon);
+                await _db.SaveChangesAsync();
+                return coupon;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding coupon: {ex.Message}\n{ex.InnerException?.Message}");
+                return null;
+            }
         }
 
         public async Task<List<AdditionalCoupon>> GetAllAdditionalCouponsAsync()
         {
-            var additionalCoupons = await _db.AdditionalCoupons.ToListAsync();
-
-            var totalValues = await _db.AdditionalCoupons
-                                       .GroupBy(ac => ac.CouponId)
-                                       .Select(g => new { CouponId = g.Key, TotalValue = g.Sum(ac => ac.AdditionalCouponValue) })
-                                       .ToListAsync();
-
-            additionalCoupons.ForEach(ac =>
+            try
             {
-                ac.TotalValue = totalValues.FirstOrDefault(tv => tv.CouponId == ac.CouponId)?.TotalValue ?? 0;
-            });
+                var additionalCoupons = await _db.AdditionalCoupons.ToListAsync();
 
-            return additionalCoupons;
+                if (!additionalCoupons.Any()) return additionalCoupons;
+
+                var totalValuesDict = await _db.AdditionalCoupons
+                    .GroupBy(ac => ac.CouponId)
+                    .ToDictionaryAsync(g => g.Key, g => g.Sum(ac => ac.AdditionalCouponValue));
+
+                additionalCoupons.ForEach(ac => ac.TotalValue = totalValuesDict.GetValueOrDefault(ac.CouponId, 0));
+
+                return additionalCoupons;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error fetching additional coupons: {ex.Message}\n{ex.InnerException?.Message}");
+                return new List<AdditionalCoupon>();
+            }
         }
 
         public async Task<AdditionalCoupon?> AddAdditionalCouponAsync(int couponId, AdditionalCoupon additionalCoupon)
         {
-            var coupon = await _db.Coupons.FindAsync(couponId);
-            if (coupon == null) return null;   
+            try
+            {
+                if (!await _db.Coupons.AnyAsync(c => c.Id == couponId))
+                    return null;
                 additionalCoupon.CouponId = couponId;
-                _db.AdditionalCoupons.Add(additionalCoupon);
+                await _db.AdditionalCoupons.AddAsync(additionalCoupon);
                 await _db.SaveChangesAsync();
                 return additionalCoupon;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding additional coupon: {ex.Message}\n{ex.InnerException?.Message}");
+                return null; 
+            }
         }
     }
 }

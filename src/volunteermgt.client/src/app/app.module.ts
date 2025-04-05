@@ -29,6 +29,7 @@ import { CouponComponent } from './components/Volunteer/coupon/coupon.component'
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { VolunteerHistoryComponent } from './components/Volunteer/volunteer-history/volunteer-history.component';
+import { EditVolunteerServiceComponent } from './components/Volunteer/edit-volunteer-service/edit-volunteer-service.component';
 
 
 
@@ -51,6 +52,7 @@ import { VolunteerHistoryComponent } from './components/Volunteer/volunteer-hist
     CoupondialogComponent,
     CouponComponent,
     VolunteerHistoryComponent,
+    EditVolunteerServiceComponent,
   ],
   imports: [
     BrowserModule,

@@ -12,6 +12,7 @@ import { AssignserviceComponent } from './components/Volunteer/assignservice/ass
 import { CouponComponent } from './components/Volunteer/coupon/coupon.component';
 import { RegisterComponent } from './components/register/register.component';
 import { VolunteerHistoryComponent } from './components/Volunteer/volunteer-history/volunteer-history.component';
+import { EditVolunteerServiceComponent } from './components/Volunteer/edit-volunteer-service/edit-volunteer-service.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -25,7 +26,7 @@ const routes: Routes = [
   { path: 'volunteerHistory', component: VolunteerHistoryComponent, canActivate: [AuthGuard] },
   { path: 'service', component: ServicetableComponent, canActivate: [AuthGuard] },
   { path: 'coupons', component: CouponComponent, canActivate: [AuthGuard] },
-
+  { path: 'volunteer-service/edit/:id', component: EditVolunteerServiceComponent, canActivate: [AuthGuard] }
 ];
 
 @NgModule({

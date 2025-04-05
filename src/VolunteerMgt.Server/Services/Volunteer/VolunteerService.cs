@@ -154,7 +154,6 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 var volunteer = await _dbContext.Volunteer
                     .Include(v => v.Availabilities)
                     .FirstOrDefaultAsync(v => v.Id == id);
-
                 if (volunteer == null)
                 {
                     return new ResponseModel<VolunteerModel>
@@ -165,15 +164,12 @@ namespace VolunteerMgt.Server.Services.Volunteer
                         Data = null
                     };
                 }
-
                 if (!string.IsNullOrEmpty(request.Name)) volunteer.Name = request.Name;
                 if (!string.IsNullOrEmpty(request.MobileNo)) volunteer.MobileNo = request.MobileNo;
                 if (!string.IsNullOrEmpty(request.Address)) volunteer.Address = request.Address;
                 if (!string.IsNullOrEmpty(request.Occupation)) volunteer.Occupation = request.Occupation;
                 if (!string.IsNullOrEmpty(request.code)) volunteer.code = request.code;
                 if (!string.IsNullOrEmpty(request.VolunteerType)) volunteer.VolunteerType = request.VolunteerType;
-
-
                 if (request.Image != null && request.Image.Length > 0)
                 {
                     volunteer.ImagePath = await SaveImageAsync(request.Image);
@@ -182,7 +178,6 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 {
                     volunteer.ImagePath = request.ImagePath;
                 }
-
                 var availabilities = JsonConvert.DeserializeObject<List<AvailabilityDataModel>>(request.Availabilities);
                 if (availabilities != null && availabilities.Any())
                 {
@@ -193,10 +188,8 @@ namespace VolunteerMgt.Server.Services.Volunteer
                         TimeSlot = a.TimeSlot
                     }).ToList();
                 }
-
                 _dbContext.Volunteer.Update(volunteer);
                 await _dbContext.SaveChangesAsync();
-
                 return new ResponseModel<VolunteerModel>
                 {
                     Success = true,

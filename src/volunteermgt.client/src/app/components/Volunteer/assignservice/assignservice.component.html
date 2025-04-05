@@ -1,5 +1,4 @@
 <div class="assign-service">
-  <h2 class="title">Assign Service</h2>
   <div class="assign-container">
     <div class="services">
       <div class="volunteer-container">
@@ -56,14 +55,13 @@
       </div>
       <div class="input-group">
         <label>coupon:</label>
-        <input type="text" class="input" [(ngModel)]="coupon" placeholder="coupon" maxlength="2" min="1" max="99"  />
+        <input type="text" class="input" [(ngModel)]="coupon" placeholder="coupon" maxlength="2" min="1" max="99" />
       </div>
       <div class="button-group">
         <button (click)="onAssign()" class="assign-btn">Assign</button>
         <button (click)="onAddCoupons()" class="add-coupon"><p>Add Coupons</p></button>
       </div>
     </div>
-
   </div>
   <div class="summary-container">
     <div class="date-wrapper">
@@ -71,6 +69,17 @@
       <h4>{{ todayDate | date: 'dd-MM-yyyy' }}</h4>
       <hr />
       <h1>Volunteers :{{ getTotal('volunteerCount') }}</h1>
+
+      <div class="checkbox-container">
+        <label>
+          <input type="checkbox" [(ngModel)]="isEkadashi" (change)="onCheckboxChange('ekadashi')" />
+          Ekadashi
+        </label>
+        <label>
+          <input type="checkbox" [(ngModel)]="isFestival" (change)="onCheckboxChange('festival')" />
+          Festival
+        </label>
+      </div>
     </div>
     <hr class="hr" />
     <div class="coupens">
@@ -92,6 +101,7 @@
       </ul>
     </div>
   </div>
+
   <div class="table-container">
     <table>
       <thead>

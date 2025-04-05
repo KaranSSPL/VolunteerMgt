@@ -91,7 +91,7 @@
       </div>
     </div>
     <button type="button" class="add-btn" (click)="addAvailability()">Add More Availability</button>
-    <button type="submit" class="submit-btn" (click)="submitForm()">Add Volunteer</button>
+    <button type="submit" class="submit-btn" [disabled]="volunteerForm.invalid" (click)="submitForm()">Add Volunteer</button>
     <button type="button" class="cancel-btn" (click)="cancel()">Cancel</button>
   </form>
 </div>

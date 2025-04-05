@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Volunteer } from '../../../../Models/volunteer.model';
 import { VolunteerService } from '../../../../services/volunteer.service';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
@@ -35,8 +35,8 @@ export class EditVolunteerComponent implements OnInit {
 
   initializeForm(): void {
     this.volunteerForm = this.fb.group({
-      name: [this.volunteer?.name || ''],
-      mobileNo: [this.volunteer?.mobileNo || ''],
+      name: [this.volunteer?.name || '', Validators.required],
+      mobileNo: [this.volunteer?.mobileNo || '', Validators.required],
       address: [this.volunteer?.address || ''],
       occupation: [this.volunteer?.occupation || ''],
       image: [this.volunteer?.image || ''],
@@ -57,7 +57,6 @@ export class EditVolunteerComponent implements OnInit {
   }
 
   addAvailability(): void {
-
     this.availabilities.push(this.createAvailabilityGroup());
   }
 
@@ -66,7 +65,7 @@ export class EditVolunteerComponent implements OnInit {
   }
 
  updateVolunteer(): void {
-  if (!this.volunteer || !this.volunteerForm.valid) return;
+  if (!this.volunteer) return;
 
   const formData = new FormData();
   formData.append("name", this.volunteerForm.value.name);
@@ -76,12 +75,10 @@ export class EditVolunteerComponent implements OnInit {
    formData.append("code", this.volunteerForm.value.code);
    formData.append("volunteerType", this.volunteerForm.value.volunteerType);
 
-
   if (this.uploadedPhoto) {
     formData.append("image", this.uploadedPhoto);
   }
   formData.append("availabilities", JSON.stringify(this.volunteerForm.value.availabilities));
-
   this.volunteerService.updateVolunteer(this.volunteer.id, formData).subscribe(
     () => {
       this.showSnackbar("Volunteer updated successfully!", "success");

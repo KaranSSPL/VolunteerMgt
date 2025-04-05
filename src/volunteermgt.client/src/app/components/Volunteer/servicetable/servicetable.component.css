@@ -113,11 +113,13 @@ th {
   width: 400px;
   border-radius: 10px;
   box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
-  text-align: center;
   position: relative;
   animation: fadeIn 0.3s ease-in-out;
 }
-
+.modal-title {
+    text-align: center;
+    margin-bottom: 30px;
+}
 .close-btn {
   position: absolute;
   top: 10px;
@@ -131,15 +133,35 @@ th {
   .close-btn:hover {
     color: #000;
   }
-
-input[type="text"] {
-  width: 100%;
-  padding: 10px;
-  margin-top: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
+.modal-content .form-block {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 12px;
+    justify-content: space-between;
 }
+  .modal-content .form-block .form-group {
+    width: calc(50% - 12px);
+    flex: 0 0 auto;
+    margin: 0 0 20px;
+  }
+
+label {
+    font-size: 14px;
+    font-weight: 500;
+}
+.modal-content .form-block .w-100 {
+  width: 100%;
+}
+  input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+
+
 
 button[type="submit"] {
   width: 100%;
@@ -170,20 +192,23 @@ button[type="submit"] {
   }
 }
 
-.exit-time {
-    text-align: left;
-    margin: 10px 0 0;
-    display: flex;
-    align-items: center;
-}
 
   .exit-time input {
-    margin-left: 12px;
+    margin-top: 6px;
     padding: 10px;
     border: 1px solid #ccc;
     font-size: 16px;
     transition: all 0.3s ease-in-out;
-    height: 40px;
+    height: 38px;
     box-sizing: border-box;
     text-align: left;
+    border-radius: 5px;
+    width: 100%;
+  }
+
+
+  @media screen and (max-width: 480px) {
+    .modal-content .form-block .form-group {
+      width: 100%;
+    }
   }

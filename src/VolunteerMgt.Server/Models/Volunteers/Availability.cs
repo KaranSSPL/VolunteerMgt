@@ -10,9 +10,9 @@ namespace VolunteerMgt.Server.Models.Volunteers
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public int VolunteerId { get; set; } 
-        public string Day { get; set; } = string.Empty;
-        public string TimeSlot { get; set; } = string.Empty;
+        public int? VolunteerId { get; set; } 
+        public string? Day { get; set; }
+        public string? TimeSlot { get; set; }
         [JsonIgnore]
         public virtual VolunteerModel Volunteer { get; set; }
     }

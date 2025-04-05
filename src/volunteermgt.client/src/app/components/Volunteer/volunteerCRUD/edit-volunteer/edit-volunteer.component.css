@@ -15,6 +15,19 @@ h2 {
   margin-bottom: 20px;
 }
 
+.error {
+  color: red;
+  font-size: 0.9em;
+  margin-top: 5px;
+}
+.form-block {
+  flex: 1;
+}
+
+  .form-block input {
+    width: 100%;
+  }
+
 .camera-btn {
   margin-top: 10px;
   width: 46%;

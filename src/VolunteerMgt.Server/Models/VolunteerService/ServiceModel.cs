@@ -15,7 +15,16 @@ namespace VolunteerMgt.Server.Models.VolunteerService
         public string ServiceName { get; set; } = string.Empty;
 
         [Required]
-        public string RequiredVolunteer { get; set; } = string.Empty;
+        public string SaturdayVolunteerRequirement { get; set; } = string.Empty;
+        
+        [Required]
+        public string SundayVolunteerRequirement { get; set; } = string.Empty;
+        
+        [Required]
+        public string EkadashiVolunteerRequirement { get; set; } = string.Empty;
+        
+        [Required]
+        public string FestivalVolunteerRequirement { get; set; } = string.Empty;
 
         [Required]
         public DateTime DefaultTime { get; set; } 

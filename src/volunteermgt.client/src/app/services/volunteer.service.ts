@@ -72,11 +72,11 @@ export class VolunteerService {
     return this.http.delete(`${this.apiUrl}/volunteer-service/volunteer/${volunteerId}/service/${serviceId}`);
   }
 
-  deleteVolunteerandService(volunteerId: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/volunteer-service/volunteer/${volunteerId}`);
+  getServiceVolunteerCounts(day: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/volunteer-service/service-volunteer-counts?day=${day}`);
   }
 
-  getServiceVolunteerCounts(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/volunteer-service/service-volunteer-counts`);
+  updateVolunteerService(id: number, data: any): Observable<any> {
+    return this.http.put(`${this.apiUrl}/volunteer-service/volunteer-service-mappings/${id}`, data);
   }
 }
