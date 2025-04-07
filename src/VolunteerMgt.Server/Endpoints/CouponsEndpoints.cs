@@ -1,5 +1,5 @@
 ﻿using VolunteerMgt.Server.Abstraction.CouponService;
-using VolunteerMgt.Server.Models.Coupons;
+using VolunteerMgt.Server.Entities;
 
 namespace VolunteerMgt.Server.Endpoints;
 

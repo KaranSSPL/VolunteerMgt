@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.ComponentModel.DataAnnotations.Schema;
-using VolunteerMgt.Server.Models.Volunteers;
 
 namespace VolunteerMgt.Server.DataModals;
 

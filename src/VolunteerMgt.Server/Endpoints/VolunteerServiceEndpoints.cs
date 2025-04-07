@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VolunteerMgt.Server.Abstraction.AssignService;
-using VolunteerMgt.Server.Models;
 using VolunteerMgt.Server.Models.VolunteerService;
 
 namespace VolunteerMgt.Server.Endpoints

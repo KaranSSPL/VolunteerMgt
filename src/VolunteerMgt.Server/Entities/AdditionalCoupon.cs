@@ -2,24 +2,20 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace VolunteerMgt.Server.Models.Coupons
+namespace VolunteerMgt.Server.Entities
 {
     public class AdditionalCoupon
     {
-        [Required]
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int AdditionalCouponValue { get; set; }
 
         public int CouponId { get; set; }
 
-        [NotMapped] 
         public int TotalValue { get; set; }
 
         public DateTime CreatedDate { get; set; }
 
         [JsonIgnore]
-        public  Coupons Coupon { get; set; }
+        public  Coupons? Coupon { get; set; }
     }
 }

@@ -64,31 +64,30 @@ export class EditVolunteerComponent implements OnInit {
     this.availabilities.removeAt(index);
   }
 
- updateVolunteer(): void {
-  if (!this.volunteer) return;
+  updateVolunteer(): void {
+    if (!this.volunteer) return;
 
-  const formData = new FormData();
-  formData.append("name", this.volunteerForm.value.name);
-  formData.append("mobileNo", this.volunteerForm.value.mobileNo);
-  formData.append("address", this.volunteerForm.value.address);
-   formData.append("occupation", this.volunteerForm.value.occupation);
-   formData.append("code", this.volunteerForm.value.code);
-   formData.append("volunteerType", this.volunteerForm.value.volunteerType);
+    const formData = new FormData();
+    formData.append("name", this.volunteerForm.value.name);
+    formData.append("mobileNo", this.volunteerForm.value.mobileNo);
+    formData.append("address", this.volunteerForm.value.address);
+    formData.append("occupation", this.volunteerForm.value.occupation);
+    formData.append("code", this.volunteerForm.value.code);
+    formData.append("volunteerType", this.volunteerForm.value.volunteerType);
 
-  if (this.uploadedPhoto) {
-    formData.append("image", this.uploadedPhoto);
+    if (this.uploadedPhoto) {
+      formData.append("image", this.uploadedPhoto);
+    }
+    formData.append("availabilities", JSON.stringify(this.volunteerForm.value.availabilities));
+    this.volunteerService.updateVolunteer(this.volunteer.id, formData).subscribe(
+      () => {
+        this.showSnackbar("Volunteer updated successfully!", "success");
+        this.cancelEdit.emit();
+        window.location.reload();
+      },
+      (error) => console.error("Error updating volunteer:", error)
+    );
   }
-  formData.append("availabilities", JSON.stringify(this.volunteerForm.value.availabilities));
-  this.volunteerService.updateVolunteer(this.volunteer.id, formData).subscribe(
-    () => {
-      this.showSnackbar("Volunteer updated successfully!", "success");
-      this.cancelEdit.emit();
-      window.location.reload();
-    },
-    (error) => console.error("Error updating volunteer:", error)
-  );
-}
-
 
   cancel(): void {
     this.cancelEdit.emit();  

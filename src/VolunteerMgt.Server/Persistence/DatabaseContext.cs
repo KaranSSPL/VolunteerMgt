@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using VolunteerMgt.Server.Entities;
 using VolunteerMgt.Server.Entities.Identity;
-using VolunteerMgt.Server.Models;
-using VolunteerMgt.Server.Models.Coupons;
-using VolunteerMgt.Server.Models.User;
-using VolunteerMgt.Server.Models.Volunteers;
 using VolunteerMgt.Server.Models.VolunteerService;
+using VolunteerMgt.Server.Persistence.Configurations;
 
 namespace VolunteerMgt.Server.Persistence;
 
@@ -14,13 +12,13 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser, ApplicationRol
     public DatabaseContext() { }
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options) { }
 
-    public DbSet<UserModel> User { get; set; }
+    public DbSet<User> User { get; set; }
     
-    public DbSet<AvailabilityModel> Availability { get; set; }
+    public DbSet<Availability> Availability { get; set; }
 
-    public DbSet<VolunteerModel> Volunteer { get; set; }
+    public DbSet<Volunteer> Volunteer { get; set; }
 
-    public DbSet<ServiceModel> Service { get; set; }
+    public DbSet<Service> Service { get; set; }
 
     public DbSet<VolunteerServiceMapping> VolunteerServiceMapping { get; set; }
 
@@ -30,6 +28,12 @@ public class DatabaseContext : IdentityDbContext<ApplicationUser, ApplicationRol
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfiguration(new CouponConfiguration());
+        modelBuilder.ApplyConfiguration(new AdditionalCouponConfiguration());
+        modelBuilder.ApplyConfiguration(new UserConfiguration());
+        modelBuilder.ApplyConfiguration(new VolunteerConfiguration());
+        modelBuilder.ApplyConfiguration(new AvailabilityConfiguration());
+        modelBuilder.ApplyConfiguration(new ServiceConfiguration());
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(GetType().Assembly);
     }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VolunteerMgt.Server.Abstraction.Service.VService;
-using VolunteerMgt.Server.Models.VolunteerService;
+using VolunteerMgt.Server.Entities;
 
 namespace VolunteerMgt.Server.Endpoints
 {
@@ -34,7 +34,7 @@ namespace VolunteerMgt.Server.Endpoints
 
         private static async Task<IResult> AddServiceAsync(
             [FromServices] IVService serviceService,
-            [FromBody] ServiceModel service)
+            [FromBody] Service service)
         {
             var result = await serviceService.CreateServiceAsync(service);
             return Results.Ok(result);
@@ -58,7 +58,7 @@ namespace VolunteerMgt.Server.Endpoints
         private static async Task<IResult> EditServiceNameAsync(
             [FromServices] IVService serviceService,
             [FromRoute] int id,
-            [FromBody] ServiceModel serviceModel)
+            [FromBody] Service serviceModel)
         {
             var result = await serviceService.UpdateServiceAsync(id, serviceModel);
             return result ? Results.Ok("Service name updated successfully") : Results.NotFound("Service not found");

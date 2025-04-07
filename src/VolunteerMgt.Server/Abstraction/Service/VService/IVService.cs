@@ -1,14 +1,14 @@
 ﻿using VolunteerMgt.Server.Abstraction.Service.Common;
-using VolunteerMgt.Server.Models.VolunteerService;
+using VolunteerMgt.Server.Entities;
 
 namespace VolunteerMgt.Server.Abstraction.Service.VService
 {
     public interface IVService : IScopedService
     {
-        Task<ServiceModel> CreateServiceAsync(ServiceModel service);
-        Task<List<ServiceModel>> GetAllServicesAsync();
-        Task<ServiceModel?> GetServiceByIdAsync(int id);
-        Task<bool> UpdateServiceAsync(int id, ServiceModel serviceModel);
+        Task<Entities.Service> CreateServiceAsync(Entities.Service service);
+        Task<List<Entities.Service>> GetAllServicesAsync();
+        Task<Entities.Service?> GetServiceByIdAsync(int id);
+        Task<bool> UpdateServiceAsync(int id, Entities.Service serviceModel);
         Task<bool> DeleteServiceAsync(int id);
     }
 }

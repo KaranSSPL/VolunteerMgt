@@ -3,8 +3,8 @@ using Newtonsoft.Json;
 using System.Net;
 using VolunteerMgt.Server.Abstraction.Service.Volunteer;
 using VolunteerMgt.Server.DataModals;
+using VolunteerMgt.Server.Entities;
 using VolunteerMgt.Server.Models;
-using VolunteerMgt.Server.Models.Volunteers;
 using VolunteerMgt.Server.Persistence;
 
 namespace VolunteerMgt.Server.Services.Volunteer
@@ -22,12 +22,12 @@ namespace VolunteerMgt.Server.Services.Volunteer
             this._httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ResponseModel<VolunteerModel>> AddVolunteerAsync(AddVolunteerDto request)
+        public async Task<ResponseModel<Entities.Volunteer>> AddVolunteerAsync(AddVolunteerDto request)
         {
             try
             {
                 string imagePath = await SaveImageAsync(request.Image);
-                var volunteer = new VolunteerModel
+                var volunteer = new Entities.Volunteer
                 {
                     Name = request.Name,
                     MobileNo = request.MobileNo,
@@ -40,7 +40,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 var availabilities = JsonConvert.DeserializeObject<List<AvailabilityDataModel>>(request.Availabilities);
                 if (availabilities != null && availabilities.Any())
                 {
-                    volunteer.Availabilities = availabilities.Select(a => new AvailabilityModel
+                    volunteer.Availabilities = availabilities.Select(a => new Availability
                     {
                         Day = a.Day,
                         TimeSlot = a.TimeSlot,
@@ -48,7 +48,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 }
                 _dbContext.Volunteer.Add(volunteer);
                 await _dbContext.SaveChangesAsync();
-                return new ResponseModel<VolunteerModel>
+                return new ResponseModel<Entities.Volunteer>
                 {
                     Success = true,
                     Message = "Volunteer added successfully!",
@@ -58,7 +58,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
             }
             catch (Exception ex)
             {
-                return new ResponseModel<VolunteerModel>
+                return new ResponseModel<Entities.Volunteer>
                 {
                     Success = false,
                     Message = "Error adding volunteer: " + ex.Message,
@@ -88,12 +88,12 @@ namespace VolunteerMgt.Server.Services.Volunteer
             return $"/images/{uniqueFileName}";
         }
 
-        public async Task<List<VolunteerModel>> GetAllVolunteersAsync()
+        public async Task<List<Entities.Volunteer>> GetAllVolunteersAsync()
         {
             string appBaseUrl = _httpContextAccessor.HttpContext != null ? $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}{_httpContextAccessor.HttpContext.Request.PathBase}" : "https://localhost7048";
             return await _dbContext.Volunteer
                 .Include(v => v.Availabilities)
-                .Select(s => new VolunteerModel
+                .Select(s => new Entities.Volunteer 
                 {
                     Id = s.Id,
                     Address = s.Address,
@@ -108,7 +108,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 .ToListAsync();
         }
 
-        public async Task<ResponseModel<VolunteerModel>> GetVolunteerByIdAsync(int id)
+        public async Task<ResponseModel<Entities.Volunteer>> GetVolunteerByIdAsync(int id)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
 
                 if (volunteer == null)
                 {
-                    return new ResponseModel<VolunteerModel>
+                    return new ResponseModel<Entities.Volunteer>
                     {
                         Success = false,
                         Message = "Volunteer not found!",
@@ -127,7 +127,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                     };
                 }
 
-                return new ResponseModel<VolunteerModel>
+                return new ResponseModel<Entities.Volunteer>
                 {
                     Success = true,
                     Message = "Volunteer retrieved successfully!",
@@ -137,7 +137,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
             }
             catch (Exception ex)
             {
-                return new ResponseModel<VolunteerModel>
+                return new ResponseModel<Entities.Volunteer>
                 {
                     Success = false,
                     Message = "Error retrieving volunteer: " + ex.Message,
@@ -147,7 +147,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
             }
         }
 
-        public async Task<ResponseModel<VolunteerModel>> UpdateVolunteerAsync(int id, AddVolunteerDto request)
+        public async Task<ResponseModel<Entities.Volunteer>> UpdateVolunteerAsync(int id, AddVolunteerDto request)
         {
             try
             {
@@ -156,7 +156,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                     .FirstOrDefaultAsync(v => v.Id == id);
                 if (volunteer == null)
                 {
-                    return new ResponseModel<VolunteerModel>
+                    return new ResponseModel<Entities.Volunteer>
                     {
                         Success = false,
                         Message = "Volunteer not found!",
@@ -182,7 +182,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 if (availabilities != null && availabilities.Any())
                 {
                     _dbContext.Availability.RemoveRange(volunteer.Availabilities);
-                    volunteer.Availabilities = availabilities.Select(a => new AvailabilityModel
+                    volunteer.Availabilities = availabilities.Select(a => new Availability
                     {
                         Day = a.Day,
                         TimeSlot = a.TimeSlot
@@ -190,7 +190,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 }
                 _dbContext.Volunteer.Update(volunteer);
                 await _dbContext.SaveChangesAsync();
-                return new ResponseModel<VolunteerModel>
+                return new ResponseModel<Entities.Volunteer>
                 {
                     Success = true,
                     Message = "Volunteer updated successfully!",
@@ -200,7 +200,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
             }
             catch (Exception ex)
             {
-                return new ResponseModel<VolunteerModel>
+                return new ResponseModel<Entities.Volunteer>
                 {
                     Success = false,
                     Message = "Error updating volunteer: " + ex.Message,

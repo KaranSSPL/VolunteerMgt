@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VolunteerMgt.Server.Abstraction.CouponService;
-using VolunteerMgt.Server.Models.Coupons;
+using VolunteerMgt.Server.Entities;
 using VolunteerMgt.Server.Persistence;
 
 namespace VolunteerMgt.Server.Services.CouponService

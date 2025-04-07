@@ -1,6 +1,5 @@
 ﻿using VolunteerMgt.Server.Abstraction.AssignService;
 using VolunteerMgt.Server.Models.VolunteerService;
-using VolunteerMgt.Server.Models;
 using VolunteerMgt.Server.Persistence;
 using Microsoft.EntityFrameworkCore;
 

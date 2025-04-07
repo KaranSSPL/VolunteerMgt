@@ -9,6 +9,5 @@
         public int Coupon { get; set; }
         public string ExitTime { get; set; } = string.Empty;
         public string TimeDifference { get; set; }
-
     }
 }

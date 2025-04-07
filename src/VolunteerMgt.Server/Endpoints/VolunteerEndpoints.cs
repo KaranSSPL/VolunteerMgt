@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VolunteerMgt.Server.Abstraction.Service.Volunteer;
 using VolunteerMgt.Server.DataModals;
-using VolunteerMgt.Server.Models.Volunteers;
 
 public static class VolunteerEndpoints
 {

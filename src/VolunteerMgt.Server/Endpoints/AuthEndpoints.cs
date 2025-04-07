@@ -2,7 +2,7 @@
 using VolunteerMgt.Server.Abstraction.Service.Identity;
 using VolunteerMgt.Server.Models.Auth;
 using VolunteerMgt.Server.Models.Wrapper;
-using VolunteerMgt.Server.Models.User;
+using VolunteerMgt.Server.Entities;
 
 namespace VolunteerMgt.Server.Endpoints;
 
@@ -29,7 +29,7 @@ public static class AuthEndpoints
 
     private static async Task<Result<TokenResponse>> RegisterAsync(
         [FromServices] IAuthService authService,
-        [FromBody] UserModel request)
+        [FromBody] User request)
     {
         return await authService.RegisterAsync(request);
     }

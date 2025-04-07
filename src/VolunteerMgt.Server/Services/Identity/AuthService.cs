@@ -6,8 +6,8 @@ using System.Security.Claims;
 using System.Text;
 using VolunteerMgt.Server.Abstraction.Service.Identity;
 using VolunteerMgt.Server.Common.Settings;
+using VolunteerMgt.Server.Entities;
 using VolunteerMgt.Server.Models.Auth;
-using VolunteerMgt.Server.Models.User;
 using VolunteerMgt.Server.Models.Wrapper;
 using VolunteerMgt.Server.Persistence;
 
@@ -26,7 +26,7 @@ public class AuthService : IAuthService
         _jwtConfig = jwtConfig.Value;
     }
 
-    public async Task<Result<TokenResponse>> RegisterAsync(UserModel request)
+    public async Task<Result<TokenResponse>> RegisterAsync(User request)
     {
         if (_context.User.Any(u => u.Email == request.Email))
         {
@@ -35,7 +35,7 @@ public class AuthService : IAuthService
 
         string hashedPassword = BCrypt.Net.BCrypt.HashPassword(request.Password);
 
-        var user = new UserModel
+        var user = new User
         {
             Firstname = request.Firstname,
             Lastname = request.Lastname,
@@ -73,7 +73,7 @@ public class AuthService : IAuthService
         });
     }
 
-    private Tuple<string, DateTime> GenerateJwtToken(UserModel user)
+    private Tuple<string, DateTime> GenerateJwtToken(User user)
     {
         var authClaims = new List<Claim>
         {

@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using VolunteerMgt.Server.Abstraction.Service.VService;
-using VolunteerMgt.Server.Models.VolunteerService;
+using VolunteerMgt.Server.Entities;
 using VolunteerMgt.Server.Persistence;
 
 namespace VolunteerMgt.Server.Services.VService
@@ -14,24 +14,24 @@ namespace VolunteerMgt.Server.Services.VService
             _dbContext = dbContext;
         }
 
-        public async Task<ServiceModel> CreateServiceAsync(ServiceModel service)
+        public async Task<Service> CreateServiceAsync(Service service)
         {
             _dbContext.Service.Add(service);
             await _dbContext.SaveChangesAsync();
             return service;
         }
 
-        public async Task<List<ServiceModel>> GetAllServicesAsync()
+        public async Task<List<Service>> GetAllServicesAsync()
         {
             return await _dbContext.Service.ToListAsync();
         }
 
-        public async Task<ServiceModel?> GetServiceByIdAsync(int id)
+        public async Task<Service?> GetServiceByIdAsync(int id)
         {
             return await _dbContext.Service.FindAsync(id);
         }
 
-        public async Task<bool> UpdateServiceAsync(int id, ServiceModel serviceModel)
+        public async Task<bool> UpdateServiceAsync(int id, Service serviceModel)
         {
             var existingService = await _dbContext.Service.FindAsync(id);
             if (existingService == null) return false;

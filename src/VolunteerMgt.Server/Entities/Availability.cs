@@ -2,18 +2,18 @@
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace VolunteerMgt.Server.Models.Coupons
+namespace VolunteerMgt.Server.Entities
 {
-    public class Coupons
+    public class Availability
     {
         [Required]
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        public DateTime Date { get; set; }
-        public int CouponValue { get; set; }
-
+        public int? VolunteerId { get; set; } 
+        public string? Day { get; set; }
+        public string? TimeSlot { get; set; }
         [JsonIgnore]
-        public  List<AdditionalCoupon> AdditionalCoupons { get; set; }
+        public virtual Volunteer Volunteer { get; set; }
     }
 }

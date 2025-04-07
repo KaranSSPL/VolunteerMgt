@@ -1,35 +1,23 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using VolunteerMgt.Server.Models.Volunteers;
-using VolunteerMgt.Server.Models.VolunteerService;
+﻿using VolunteerMgt.Server.Entities;
 
-namespace VolunteerMgt.Server.Models
+namespace VolunteerMgt.Server.Models.VolunteerService
 {
     public class VolunteerServiceMapping
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
-        [Required]
         public int VolunteerId { get; set;}
 
-        [Required]
         public string VolunteerName { get; set;}
 
-        [ForeignKey("VolunteerId")]
-        public VolunteerModel Volunteer { get; set;}
+        public Volunteer Volunteer { get; set;}
 
-        [Required]
         public int ServiceId { get; set; }
 
-        [Required]
         public string ServiceName { get; set; }
 
-        [Required]
         public DateTime TimeSlot { get; set; }
 
-        [Required]
         public string ExitTime { get; set; }
 
         public int BatchNumber { get; set; }
@@ -38,7 +26,6 @@ namespace VolunteerMgt.Server.Models
 
         public string TimeDifference { get; set; }
 
-        [ForeignKey("ServiceId")]
-        public ServiceModel Service { get; set; }
+        public Service Service { get; set; }
     }
 }

@@ -1,5 +1,4 @@
 ﻿using VolunteerMgt.Server.Abstraction.Service.Common;
-using VolunteerMgt.Server.Models;
 using VolunteerMgt.Server.Models.VolunteerService;
 
 namespace VolunteerMgt.Server.Abstraction.AssignService
