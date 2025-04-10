@@ -30,23 +30,31 @@ namespace VolunteerMgt.Server.Endpoints
                 .WithName("get-service-volunteer-counts");
 
             group.MapPut("/volunteer-service-mappings/{id}", UpdateVolunteerServiceMappingAsync)
-    .WithName("update-volunteer-service-mapping");
+                .WithName("update-volunteer-service-mapping");
         }
 
         private static async Task<IResult> AssignServiceAsync(
-            [FromServices] IAssignService assignService,
-            [FromBody] AssignRequest requests)
+        [FromServices] IAssignService assignService,
+        [FromBody] AssignRequest request)
         {
-            var result = await assignService.AssignServiceToVolunteer(requests);
-            return result ? Results.Ok("Services assigned successfully.") : Results.BadRequest("Failed to assign services.");
+            var result = await assignService.AssignServiceToVolunteer(request);
+            if (result.Success)
+            {
+                return Results.Ok(result);
+            }
+            return Results.Json(result, statusCode: (int)result.StatusCode);
         }
 
         private static async Task<IResult> GetVolunteerServicesAsync(
-            [FromServices] IAssignService assignService,
-            int id)
+        [FromServices] IAssignService assignService,
+        int id)
         {
-            var services = await assignService.GetVolunteerServices(id);
-            return services.Any() ? Results.Ok(services) : Results.NotFound("No services found for this volunteer.");
+            var result = await assignService.GetVolunteerServices(id);
+            if (result.Success && result.Data != null && result.Data.Any())
+            {
+                return Results.Ok(result);
+            }
+            return Results.Json(result, statusCode: (int)result.StatusCode);
         }
 
         private static async Task<IResult> GetAllVolunteerServiceMappingsAsync(
@@ -74,12 +82,16 @@ namespace VolunteerMgt.Server.Endpoints
         }
 
         private static async Task<IResult> RemoveVolunteerServiceAsync(
-            [FromServices] IAssignService assignService,
-            int volunteerId,
-            int serviceId)
+        [FromServices] IAssignService assignService,
+        int volunteerId,
+        int serviceId)
         {
             var result = await assignService.RemoveVolunteerService(volunteerId, serviceId);
-            return result ? Results.Ok("Service removed successfully.") : Results.NotFound("Service not found for this volunteer.");
+            if (result.Success)
+            {
+                return Results.Ok(result);
+            }
+            return Results.Json(result, statusCode: (int)result.StatusCode);
         }
 
         private static async Task<IResult> GetServiceVolunteerCountsAsync(

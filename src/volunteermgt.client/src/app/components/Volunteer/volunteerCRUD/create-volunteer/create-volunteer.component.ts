@@ -76,7 +76,6 @@ export class CreateVolunteerComponent {
       fileInput.value = ''; 
     }
   }
-
   get availabilities() {
     return this.volunteerForm.get('availabilities') as FormArray;
   }

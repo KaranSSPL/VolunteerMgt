@@ -22,7 +22,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
             this._httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<ResponseModel<Entities.Volunteer>> AddVolunteerAsync(AddVolunteerDto request)
+        public async Task<Response<Entities.Volunteer>> AddVolunteerAsync(AddVolunteerDto request)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 }
                 _dbContext.Volunteer.Add(volunteer);
                 await _dbContext.SaveChangesAsync();
-                return new ResponseModel<Entities.Volunteer>
+                return new Response<Entities.Volunteer>
                 {
                     Success = true,
                     Message = "Volunteer added successfully!",
@@ -58,7 +58,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
             }
             catch (Exception ex)
             {
-                return new ResponseModel<Entities.Volunteer>
+                return new Response<Entities.Volunteer>
                 {
                     Success = false,
                     Message = "Error adding volunteer: " + ex.Message,
@@ -108,7 +108,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 .ToListAsync();
         }
 
-        public async Task<ResponseModel<Entities.Volunteer>> GetVolunteerByIdAsync(int id)
+        public async Task<Response<Entities.Volunteer>> GetVolunteerByIdAsync(int id)
         {
             try
             {
@@ -118,7 +118,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
 
                 if (volunteer == null)
                 {
-                    return new ResponseModel<Entities.Volunteer>
+                    return new Response<Entities.Volunteer>
                     {
                         Success = false,
                         Message = "Volunteer not found!",
@@ -127,7 +127,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                     };
                 }
 
-                return new ResponseModel<Entities.Volunteer>
+                return new Response<Entities.Volunteer>
                 {
                     Success = true,
                     Message = "Volunteer retrieved successfully!",
@@ -137,7 +137,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
             }
             catch (Exception ex)
             {
-                return new ResponseModel<Entities.Volunteer>
+                return new Response<Entities.Volunteer>
                 {
                     Success = false,
                     Message = "Error retrieving volunteer: " + ex.Message,
@@ -147,7 +147,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
             }
         }
 
-        public async Task<ResponseModel<Entities.Volunteer>> UpdateVolunteerAsync(int id, AddVolunteerDto request)
+        public async Task<Response<Entities.Volunteer>> UpdateVolunteerAsync(int id, AddVolunteerDto request)
         {
             try
             {
@@ -156,7 +156,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                     .FirstOrDefaultAsync(v => v.Id == id);
                 if (volunteer == null)
                 {
-                    return new ResponseModel<Entities.Volunteer>
+                    return new Response<Entities.Volunteer>
                     {
                         Success = false,
                         Message = "Volunteer not found!",
@@ -190,7 +190,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 }
                 _dbContext.Volunteer.Update(volunteer);
                 await _dbContext.SaveChangesAsync();
-                return new ResponseModel<Entities.Volunteer>
+                return new Response<Entities.Volunteer>
                 {
                     Success = true,
                     Message = "Volunteer updated successfully!",
@@ -200,7 +200,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
             }
             catch (Exception ex)
             {
-                return new ResponseModel<Entities.Volunteer>
+                return new Response<Entities.Volunteer>
                 {
                     Success = false,
                     Message = "Error updating volunteer: " + ex.Message,
@@ -210,7 +210,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
             }
         }
 
-        public async Task<ResponseModel<bool>> DeleteVolunteerAsync(int id)
+        public async Task<Response<bool>> DeleteVolunteerAsync(int id)
         {
             try
             {
@@ -218,7 +218,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
 
                 if (volunteer == null)
                 {
-                    return new ResponseModel<bool>
+                    return new Response<bool>
                     {
                         Success = false,
                         Message = "Volunteer not found!",
@@ -239,7 +239,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
                 _dbContext.Volunteer.Remove(volunteer);
                 await _dbContext.SaveChangesAsync();
 
-                return new ResponseModel<bool>
+                return new Response<bool>
                 {
                     Success = true,
                     Message = "Volunteer and related data deleted successfully!",
@@ -249,7 +249,7 @@ namespace VolunteerMgt.Server.Services.Volunteer
             }
             catch (Exception ex)
             {
-                return new ResponseModel<bool>
+                return new Response<bool>
                 {
                     Success = false,
                     Message = "Error deleting volunteer: " + ex.Message,

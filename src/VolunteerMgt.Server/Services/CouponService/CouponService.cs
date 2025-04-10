@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Net;
 using VolunteerMgt.Server.Abstraction.CouponService;
 using VolunteerMgt.Server.Entities;
+using VolunteerMgt.Server.Models;
 using VolunteerMgt.Server.Persistence;
 
 namespace VolunteerMgt.Server.Services.CouponService
@@ -34,19 +36,28 @@ namespace VolunteerMgt.Server.Services.CouponService
             }
         }
 
-        public async Task<Coupons> AddCouponAsync(Coupons coupon)
+        public async Task<Response<Coupons>> AddCouponAsync(Coupons coupon)
         {
+            var response = new Response<Coupons>();
+
             try
             {
                 await _db.Coupons.AddAsync(coupon);
                 await _db.SaveChangesAsync();
-                return coupon;
+
+                response.Success = true;
+                response.Message = "Coupon added successfully.";
+                response.StatusCode = HttpStatusCode.Created;
+                response.Data = coupon;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error adding coupon: {ex.Message}\n{ex.InnerException?.Message}");
-                return null;
+                response.Success = false;
+                response.Message = $"Error adding coupon: {ex.Message}";
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Data = null;
             }
+            return response;
         }
 
         public async Task<List<AdditionalCoupon>> GetAllAdditionalCouponsAsync()

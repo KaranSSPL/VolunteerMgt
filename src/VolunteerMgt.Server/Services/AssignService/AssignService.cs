@@ -2,6 +2,8 @@
 using VolunteerMgt.Server.Models.VolunteerService;
 using VolunteerMgt.Server.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
+using VolunteerMgt.Server.Models;
 
 namespace VolunteerMgt.Server.Services.AssignService
 {
@@ -14,23 +16,23 @@ namespace VolunteerMgt.Server.Services.AssignService
             _context = context;
         }
 
-        public async Task<bool> AssignServiceToVolunteer(AssignRequest request)
+        public async Task<Response<VolunteerServiceMapping>> AssignServiceToVolunteer(AssignRequest request)
         {
+            var response = new Response<VolunteerServiceMapping>();
             try
             {
-                var volunteer = await _context.Volunteer.FindAsync(request.VolunteerId)
-                                 ?? throw new ArgumentException("Invalid Volunteer ID.");
-                var service = await _context.Service.FindAsync(request.ServiceId)
-                                 ?? throw new ArgumentException("Invalid Service ID.");
-                var mapping = await _context.VolunteerServiceMapping
+                var volunteer = await _context.Volunteer.FindAsync(request.VolunteerId);
+                var service = await _context.Service.FindAsync(request.ServiceId); 
+                VolunteerServiceMapping? mapping = await _context.VolunteerServiceMapping
                     .FirstOrDefaultAsync(vs => vs.VolunteerId == request.VolunteerId && vs.ServiceId == request.ServiceId);
+
                 if (mapping != null)
                 {
                     mapping.ExitTime = request.ExitTime;
-                }   
+                }
                 else
                 {
-                    _context.VolunteerServiceMapping.Add(new VolunteerServiceMapping
+                    mapping = new VolunteerServiceMapping
                     {
                         VolunteerId = request.VolunteerId,
                         VolunteerName = volunteer.Name,
@@ -41,30 +43,52 @@ namespace VolunteerMgt.Server.Services.AssignService
                         ExitTime = request.ExitTime,
                         Coupon = request.Coupon,
                         TimeDifference = ""
-                    });
+                    };
+                    _context.VolunteerServiceMapping.Add(mapping);
                 }
+
                 await _context.SaveChangesAsync();
-                return true;
+
+                response.Success = true;
+                response.Message = "Service assigned successfully.";
+                response.StatusCode = HttpStatusCode.OK;
+                response.Data = mapping;
+                return response;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}\n{ex.InnerException?.Message}");
-                return false;
+                response.Success = false;
+                response.Message = $"An error occurred: {ex.Message}";
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                return response;
             }
         }
 
-        public async Task<List<VolunteerServiceMapping>> GetVolunteerServices(int volunteerId)
+        public async Task<Response<List<VolunteerServiceMapping>>> GetVolunteerServices(int volunteerId)
         {
+            var response = new Response<List<VolunteerServiceMapping>>();
             try
             {
-                return await _context.VolunteerServiceMapping
+                var services = await _context.VolunteerServiceMapping
                     .Where(vs => vs.VolunteerId == volunteerId)
                     .ToListAsync();
+
+                response.Success = true;
+                response.StatusCode = HttpStatusCode.OK;
+                response.Data = services;
+                response.Message = services.Any()
+                    ? "Volunteer services fetched successfully."
+                    : "No services found for this volunteer.";
+
+                return response;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error fetching services: {ex.Message}\n{ex.InnerException?.Message}");
-                return new List<VolunteerServiceMapping>();
+                response.Success = false;
+                response.Message = $"Error fetching services: {ex.Message}";
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Data = new List<VolunteerServiceMapping>();
+                return response;
             }
         }
 
@@ -137,25 +161,40 @@ namespace VolunteerMgt.Server.Services.AssignService
             return await _context.VolunteerServiceMapping.FindAsync(id);
         }
 
-        public async Task<bool> RemoveVolunteerService(int volunteerId, int serviceId)
+        public async Task<Response<string>> RemoveVolunteerService(int volunteerId, int serviceId)
         {
+            var response = new Response<string>();
+
             try
             {
                 var mapping = await _context.VolunteerServiceMapping
                     .FirstOrDefaultAsync(vs => vs.VolunteerId == volunteerId && vs.ServiceId == serviceId);
+
                 if (mapping == null)
                 {
-                    Console.WriteLine("Mapping not found.");
-                    return false;
+                    response.Success = false;
+                    response.Message = "Mapping not found.";
+                    response.StatusCode = HttpStatusCode.NotFound;
+                    response.Data = null;
+                    return response;
                 }
+
                 _context.VolunteerServiceMapping.Remove(mapping);
                 await _context.SaveChangesAsync();
-                return true;
+
+                response.Success = true;
+                response.Message = "Mapping removed successfully.";
+                response.StatusCode = HttpStatusCode.OK;
+                response.Data = "Removed";
+                return response;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error removing mapping: {ex.Message}\n{ex.InnerException?.Message}");
-                return false;
+                response.Success = false;
+                response.Message = $"Error removing mapping: {ex.Message}";
+                response.StatusCode = HttpStatusCode.InternalServerError;
+                response.Data = null;
+                return response;
             }
         }
 

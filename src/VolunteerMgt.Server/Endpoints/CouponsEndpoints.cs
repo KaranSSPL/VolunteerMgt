@@ -1,4 +1,5 @@
-﻿using VolunteerMgt.Server.Abstraction.CouponService;
+﻿using System.Net;
+using VolunteerMgt.Server.Abstraction.CouponService;
 using VolunteerMgt.Server.Entities;
 
 namespace VolunteerMgt.Server.Endpoints;
@@ -21,8 +22,13 @@ public static class CouponsEndpoints
 
         group.MapPost("/add", async (Coupons coupon, ICouponService service) =>
         {
-            var createdCoupon = await service.AddCouponAsync(coupon);
-            return Results.Created($"/api/coupons/{createdCoupon.Id}", createdCoupon);
+            var result = await service.AddCouponAsync(coupon);
+
+            return result.StatusCode switch
+            {
+                HttpStatusCode.Created => Results.Created($"/api/coupons/{result.Data?.Id}", result),
+                _ => Results.Problem(result.Message, statusCode: (int)result.StatusCode)
+            };
         });
 
         group.MapPost("/{couponId}/additional", async (int couponId, AdditionalCoupon additionalCoupon, ICouponService service) =>

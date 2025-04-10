@@ -49,7 +49,6 @@ export class VolunteerHistoryComponent {
 
         matchesDateRange = slotDate >= this.startDate && slotDate <= endOfDay;
       }
-
       return matchesSearch && matchesDateRange;
     });
   }

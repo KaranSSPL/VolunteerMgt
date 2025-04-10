@@ -1,5 +1,6 @@
 ﻿using VolunteerMgt.Server.Abstraction.Service.Common;
 using VolunteerMgt.Server.Entities;
+using VolunteerMgt.Server.Models;
 
 namespace VolunteerMgt.Server.Abstraction.CouponService
 {
@@ -7,7 +8,7 @@ namespace VolunteerMgt.Server.Abstraction.CouponService
     {
         Task<List<Coupons>> GetAllCouponsAsync();
         Task<Coupons?> GetCouponByIdAsync(int id);
-        Task<Coupons> AddCouponAsync(Coupons coupon);
+        Task<Response<Coupons>> AddCouponAsync(Coupons coupon);
         Task<AdditionalCoupon?> AddAdditionalCouponAsync(int couponId, AdditionalCoupon additionalCoupon);
         Task<List<AdditionalCoupon>> GetAllAdditionalCouponsAsync();
     }

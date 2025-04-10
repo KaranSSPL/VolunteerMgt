@@ -74,7 +74,6 @@ export class ServicetableComponent {
     }
   }
 
-
   closeModal(): void {
     this.showModal = false;
     this.editMode = false;

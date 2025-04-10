@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using VolunteerMgt.Server.Abstraction.Service.VService;
 using VolunteerMgt.Server.Entities;
 
@@ -56,12 +57,18 @@ namespace VolunteerMgt.Server.Endpoints
         }
 
         private static async Task<IResult> EditServiceNameAsync(
-            [FromServices] IVService serviceService,
-            [FromRoute] int id,
-            [FromBody] Service serviceModel)
+           [FromServices] IVService serviceService,
+           [FromRoute] int id,
+           [FromBody] Service serviceModel)
         {
             var result = await serviceService.UpdateServiceAsync(id, serviceModel);
-            return result ? Results.Ok("Service name updated successfully") : Results.NotFound("Service not found");
+
+            return result.StatusCode switch
+            {
+                HttpStatusCode.OK => Results.Ok(result),
+                HttpStatusCode.NotFound => Results.NotFound(result),
+                _ => Results.Problem(result.Message, statusCode: (int)result.StatusCode)
+            };
         }
 
         private static async Task<IResult> DeleteServiceAsync(
@@ -69,7 +76,14 @@ namespace VolunteerMgt.Server.Endpoints
             [FromRoute] int id)
         {
             var result = await serviceService.DeleteServiceAsync(id);
-            return result ? Results.Ok("Service deleted successfully") : Results.NotFound("Service not found");
+
+            return result.StatusCode switch
+            {
+                HttpStatusCode.OK => Results.Ok(result),
+                HttpStatusCode.NotFound => Results.NotFound(result),
+                _ => Results.Problem(result.Message, statusCode: (int)result.StatusCode)
+            };
         }
+
     }
 }

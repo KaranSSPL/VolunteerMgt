@@ -2,7 +2,7 @@
 
 namespace VolunteerMgt.Server.Models
 {
-    public class ResponseModel<T>
+    public class Response<T>
     {
         public bool Success { get; set; }
         public string Message { get; set; }
