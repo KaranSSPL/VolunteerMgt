@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Volunteer } from '../../../../Models/volunteer.model';
 import { VolunteerService } from '../../../../services/volunteer.service';
@@ -10,7 +10,6 @@ import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
   standalone: false,
   templateUrl: './edit-volunteer.component.html',
   styleUrls: ['./edit-volunteer.component.css'],
-  encapsulation: ViewEncapsulation.None,
 })
 export class EditVolunteerComponent implements OnInit {
   @Input() volunteer: Volunteer | null = null; 

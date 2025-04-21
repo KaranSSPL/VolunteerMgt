@@ -19,6 +19,26 @@
           <mat-date-range-picker #picker></mat-date-range-picker>
         </mat-form-field>
       </div>
+      <div class="dropdown-wrapper">
+        <div class="form-block">
+          <label for="equalCoupon">Coupon EqualTo:</label>
+          <select id="equalCoupon" class="coupon-dropdown" [(ngModel)]="selectedEqualCoupon" (change)="filterByCoupon()">
+            <option [ngValue]="null">All</option>
+            <option *ngFor="let value of couponValues" [ngValue]="value">{{ value }}</option>
+          </select>
+        </div>
+
+        <span>OR</span>
+
+        <div class="form-block">
+          <label for="greaterThanCoupon">Greater Than:</label>
+          <select id="greaterThanCoupon" class="coupon-dropdown" [(ngModel)]="selectedGreaterThanCoupon" (change)="filterByCoupon()">
+            <option [ngValue]="null">All</option>
+            <option *ngFor="let value of couponValues" [ngValue]="value">{{ value }}</option>
+          </select>
+        </div>
+      </div>
+
     </div>
     <div class="table-container">
       <table>

@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { VolunteerService } from '../../../services/volunteer.service';
 import { DeleteconfirmationComponent } from '../../../Dialogbox/deleteconfirmation/deleteconfirmation.component';
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-volunteer-history',
   standalone: false,
   templateUrl: './volunteer-history.component.html',
-  styleUrl: './volunteer-history.component.css'
+  styleUrl: './volunteer-history.component.css',
 })
 export class VolunteerHistoryComponent {
   volunteerServiceMappings: any[] = [];
@@ -17,19 +18,21 @@ export class VolunteerHistoryComponent {
   sortDirection: 'asc' | 'desc' = 'asc';
   startDate: Date | null = null;
   endDate: Date | null = null;
+  couponValues: number[] = Array.from({ length: 21 }, (_, i) => i);
+  selectedEqualCoupon: number | null = null;
+  selectedGreaterThanCoupon: number | null = null;
 
-
-  constructor(private volunteerService: VolunteerService, public dialog: MatDialog) { }
+  constructor(private volunteerService: VolunteerService, public dialog: MatDialog, private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.getVolunteerServiceMappings();
+    this.updateExitTimeForPastSlots();
   }
 
   getVolunteerServiceMappings() {
     this.volunteerService.getVolunteerServiceMappings().subscribe(data => {
       this.volunteerServiceMappings = data;
       this.filteredMappings = [...data];
-      this.updateExitTimeForPastSlots();
     });
   }
 
@@ -37,9 +40,7 @@ export class VolunteerHistoryComponent {
     let query = this.searchQuery.toLowerCase();
     this.filteredMappings = this.volunteerServiceMappings.filter(mapping => {
       let matchesSearch = mapping.volunteerName?.toLowerCase().includes(query) ||
-        (mapping.serviceName && mapping.serviceName.toLowerCase().includes(query)) ||
-        (mapping.timeSlot && new Date(mapping.timeSlot).toLocaleDateString().includes(query));
-
+        (mapping.serviceName && mapping.serviceName.toLowerCase().includes(query));
       let matchesDateRange = true;
       if (this.startDate && this.endDate) {
         let slotDate = new Date(mapping.timeSlot);
@@ -50,6 +51,18 @@ export class VolunteerHistoryComponent {
         matchesDateRange = slotDate >= this.startDate && slotDate <= endOfDay;
       }
       return matchesSearch && matchesDateRange;
+    });
+  }
+
+  filterByCoupon(): void {
+    this.filteredMappings = this.volunteerServiceMappings.filter(mapping => {
+      const equalMatch =
+        this.selectedEqualCoupon === null || mapping.coupon === this.selectedEqualCoupon;
+
+      const greaterThanMatch =
+        this.selectedGreaterThanCoupon === null || mapping.coupon > this.selectedGreaterThanCoupon;
+
+      return equalMatch && greaterThanMatch;
     });
   }
 
@@ -92,11 +105,13 @@ export class VolunteerHistoryComponent {
             if (serviceId === id && !exitTime && currDate !== timeSlot.split('T')[0]) {
               const formattedExitTime = `${defHour % 12 || 12}:${defMin.toString().padStart(2, '0')} ${defHour >= 12 ? 'PM' : 'AM'}`;
               this.volunteerService.assignService({ volunteerId, serviceId, timeSlot, exitTime: formattedExitTime }).subscribe({
-                next: () => this.getVolunteerServiceMappings(),
-                error: (err) => console.error('Error updating exit time:', err),
+                next: () => {
+                  this.getVolunteerServiceMappings()
+                  this.showSnackbar("Updated Exit Time For Past Slots","success")
+                },
+                error: (err) => this.showSnackbar("Error Updating Exit Time For Past Slots","error"),
               });
-            }
-          });
+            }});
         });
       },
       error: (err) => console.error('Error fetching services:', err),
@@ -119,8 +134,25 @@ export class VolunteerHistoryComponent {
     this.volunteerService.deleteVolunteerService(volunteerId, serviceId).subscribe({
       next: () => {
         this.getVolunteerServiceMappings();
+        this.showSnackbar("Assigned Service is Deleted Successfully", "success");
       },
-      error: (err) => console.error('Error deleting volunteer:', err)
+      error: (err) => {
+        this.showSnackbar("Error Deleting Assigned Service", "error");
+      }
+    });
+  }
+
+  showSnackbar(message: string, type: "success" | "error") {
+    const snackbarRef: MatSnackBarRef<any> = this.snackBar.open(message, "close", {
+      duration: 3000,
+      verticalPosition: "top",
+      horizontalPosition: "center",
+    });
+    snackbarRef.afterOpened().subscribe(() => {
+      const snackbarElement = document.querySelector('.mat-mdc-snack-bar-container');
+      if (snackbarElement) {
+        snackbarElement.classList.add(type === "success" ? "snackbar-success" : "snackbar-error");
+      }
     });
   }
 }

@@ -267,24 +267,6 @@ td:last-child {
   background-color: #0056b3;
 }
 
-.snackbar-success .mdc-snackbar__surface {
-  background-color: #109710 !important;
-  color: white !important;
-}
-
-.snackbar-error .mdc-snackbar__surface {
-  background-color: red !important;
-  color: white !important;
-}
-
-.snackbar-error .mat-mdc-snack-bar-action {
-  color: white !important;
-}
-
-.snackbar-success .mat-mdc-snack-bar-action {
-  color: white !important;
-}
-
 .summary-container {
   text-align: center;
   display: flex;

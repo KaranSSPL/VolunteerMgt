@@ -94,7 +94,7 @@ h1 {
     -webkit-animation: wobble 0.3s ease-in;
   }
 
-.login-container form button {
+ button {
   background-color: var(--primary-color);
   color: var(--color);
   box-shadow: 0 0 36px 1px rgba(0, 0, 0, 0.2);

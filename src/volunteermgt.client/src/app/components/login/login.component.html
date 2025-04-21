@@ -6,7 +6,7 @@
            alt="illustration" class="illustration" />
       <h1 class="opacity">LOGIN</h1>
 
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" (keydown.enter)="onSubmit()">
+      <form [formGroup]="loginForm"  (keydown.enter)="onSubmit()">
         <input formControlName="email" type="email" placeholder="EMAIL" />
         <div class="error" *ngIf="f['email'].invalid && (f['email'].touched || f['email'].dirty)">
           <small *ngIf="f['email'].errors?.['required']">Email is required</small>
@@ -18,9 +18,8 @@
           <small *ngIf="f['password'].errors?.['required']">Password is required</small>
           <small *ngIf="f['password'].errors?.['minlength']">Must be at least 6 characters</small>
         </div>
-
-        <button class="opacity" type="submit" [disabled]="loginForm.invalid">SUBMIT</button>
       </form>
+        <button class="opacity" type="submit" [disabled]="loginForm.invalid" (click)="onSubmit()">SUBMIT</button>
 
       <div class="error-message" *ngIf="errorMessage">
         <p>{{ errorMessage }}</p>

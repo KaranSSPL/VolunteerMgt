@@ -1,6 +1,6 @@
 import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { CouponService } from '../../services/coupon.service';
 import { DatePipe } from '@angular/common';
 
@@ -26,25 +26,37 @@ export class AddcoupondialogComponent {
 
   addCoupon(): void {
     if (this.couponValue <= 0) {
-      this.snackBar.open('Please enter a valid coupon value!', 'Close', { duration: 3000, panelClass: 'snackbar-error' });
+      this.showSnackbar('Please enter a valid coupon value!', 'error');
       return;
     }
-
     const couponData = {
       id: 0,
       date: new Date().toISOString(),
       couponValue: this.couponValue
     };
-
     this.couponService.addCoupon(couponData).subscribe(
       (response) => {
-        this.snackBar.open('Coupon added successfully!', 'Close', { duration: 3000, panelClass: 'snackbar-success' });
+        this.showSnackbar('Coupon added successfully!', 'success');
         this.dialogRef.close(response);
         window.location.reload();
       },
       (error) => {
-        this.snackBar.open('Error adding coupon. Try again.', 'Close', { duration: 3000, panelClass: 'snackbar-error' });
+        this.showSnackbar('Error adding coupon. Try again.', 'error');
       }
     );
+  }
+
+  showSnackbar(message: string, type: "success" | "error") {
+    const snackbarRef: MatSnackBarRef<any> = this.snackBar.open(message, "close", {
+      duration: 3000,
+      verticalPosition: "top",
+      horizontalPosition: "center",
+    });
+    snackbarRef.afterOpened().subscribe(() => {
+      const snackbarElement = document.querySelector('.mat-mdc-snack-bar-container');
+      if (snackbarElement) {
+        snackbarElement.classList.add(type === "success" ? "snackbar-success" : "snackbar-error");
+      }
+    });
   }
 }

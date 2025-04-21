@@ -1,4 +1,4 @@
-import { Component, HostListener, ViewEncapsulation } from '@angular/core';
+import { Component, HostListener } from '@angular/core';
 import { Volunteer } from '../../../Models/volunteer.model';
 import { VolunteerService } from '../../../services/volunteer.service';
 import { Service } from '../../../Models/voluteerService.model';
@@ -15,7 +15,6 @@ import { map, of, switchMap } from 'rxjs';
   standalone: false,
   templateUrl: './assignservice.component.html',
   styleUrl: './assignservice.component.css',
-  encapsulation: ViewEncapsulation.None,
 })
 export class AssignserviceComponent {
   @HostListener('document:click', ['$event'])
@@ -30,6 +29,7 @@ export class AssignserviceComponent {
       this.serviceSuggestions = [];
     }
   }
+
   timeSlot: string = '';
   batchNo!: number;
   coupon: number = 1;
@@ -166,8 +166,18 @@ export class AssignserviceComponent {
     this.searchSuggestions = [];
     this.selectedVolunteer = volunteer;
     this.selectedVolunteerIndex = -1;
-    this.volunteerService.getServiceVolunteerById(volunteer.id).subscribe((assignedServices) => {
-      this.assignedServices = assignedServices.map((service: { serviceId: any; }) => service.serviceId);
+    this.volunteerService.getServiceVolunteerById(volunteer.id).subscribe((response) => {
+      if (Array.isArray(response.data)) {
+        const activeAssignments = response.data.filter(
+          (service: any) => !service.exitTime
+        );
+        this.assignedServices = activeAssignments.map(
+          (service: { serviceId: any }) => service.serviceId
+        );
+      } else {
+        this.assignedServices = [];
+        console.error('Expected array in response.data but got:', response.data);
+      }
     });
   }
 
@@ -177,19 +187,12 @@ export class AssignserviceComponent {
       return;
     }
     this.serviceSuggestions = this.services.filter(service =>
-      service.serviceName.toLowerCase().includes(this.serviceQuery.toLowerCase()) ||
-      service.code.toString().toLowerCase().includes(this.serviceQuery.toLowerCase())
-      &&
+      (
+        service.serviceName.toLowerCase().includes(this.serviceQuery.toLowerCase()) ||
+        service.code.toString().toLowerCase().includes(this.serviceQuery.toLowerCase())
+      ) &&
       !this.assignedServices.includes(service.id)
     );
-  }
-
-  validateBatchNo(event: any) {
-    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 4);
-  }
-
-  validateCoupon(event: any) {
-    event.target.value = event.target.value.replace(/\D/g, '').slice(0, 2);
   }
 
   selectService(service: Service): void {

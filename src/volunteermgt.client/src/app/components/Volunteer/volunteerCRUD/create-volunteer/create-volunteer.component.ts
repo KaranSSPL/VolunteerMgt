@@ -1,4 +1,4 @@
-import { Component, ViewEncapsulation } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { VolunteerService } from '../../../../services/volunteer.service';
@@ -10,7 +10,6 @@ import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
   standalone: false,
   templateUrl: './create-volunteer.component.html',
   styleUrls: ['./create-volunteer.component.css'],
-  encapsulation: ViewEncapsulation.None,
 })
 export class CreateVolunteerComponent {
   volunteerForm: FormGroup;

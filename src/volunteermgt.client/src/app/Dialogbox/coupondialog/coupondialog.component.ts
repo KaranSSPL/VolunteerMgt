@@ -1,9 +1,7 @@
-import { Component, HostListener, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { CouponService } from '../../services/coupon.service';
-import { Service } from '../../Models/voluteerService.model';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
-import { VolunteerService } from '../../services/volunteer.service';
 
 @Component({
   selector: 'app-coupondialog',
@@ -14,14 +12,12 @@ import { VolunteerService } from '../../services/volunteer.service';
 export class CoupondialogComponent {
  
   couponValue: number = 0; 
-  
   createdDate: string = new Date().toISOString().split('T')[0];
   constructor(
     public dialogRef: MatDialogRef<CoupondialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { coupons: number },
     private couponService: CouponService,
     private snackBar: MatSnackBar,
-    private volunteerService: VolunteerService,
   ) {
     this.couponValue = data.coupons || 0;
   }
@@ -51,11 +47,12 @@ export class CoupondialogComponent {
           .subscribe(response => {
             this.dialogRef.close(this.couponValue);
             window.location.reload();
+            this.showSnackbar("Additional Coupon Added Successfully", "success");
           }, error => {
             console.error('Error updating coupon', error);
           });
       } else {
-        console.error('No coupon found for the current date');
+        this.showSnackbar("First Add Coupon then only you're able to add additional coupon", "error");
       }
     });
   }
@@ -66,7 +63,6 @@ export class CoupondialogComponent {
       verticalPosition: "top",
       horizontalPosition: "center",
     });
-
     snackbarRef.afterOpened().subscribe(() => {
       const snackbarElement = document.querySelector('.mat-mdc-snack-bar-container');
       if (snackbarElement) {

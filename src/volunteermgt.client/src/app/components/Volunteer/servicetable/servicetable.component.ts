@@ -5,6 +5,7 @@ import { Service } from '../../../Models/voluteerService.model';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { DeleteconfirmationComponent } from '../../../Dialogbox/deleteconfirmation/deleteconfirmation.component';
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 @Component({
   selector: 'app-servicetable',
   standalone: false,
@@ -20,7 +21,7 @@ export class ServicetableComponent {
   editMode: boolean = false;
   selectedServiceId: number | null = null;
 
-  constructor(private volunteerService: VolunteerService, private fb: FormBuilder, private dialog: MatDialog) {
+  constructor(private volunteerService: VolunteerService, private fb: FormBuilder, private dialog: MatDialog, private snackBar: MatSnackBar) {
     this.serviceForm = this.fb.group({
       serviceName: ['', Validators.required],
       saturdayVolunteerRequirement: ['', Validators.required],
@@ -43,7 +44,7 @@ export class ServicetableComponent {
         this.isLoading = false;
       },
       error: (err) => {
-        console.error('Error fetching services:', err);
+        this.showSnackbar("Error Fetching Services", "error");
         this.isLoading = false;
       }
     });
@@ -102,9 +103,11 @@ export class ServicetableComponent {
       next: (service) => {
         this.services.push(service);
         this.closeModal();
+        this.showSnackbar("Service Added Successfully", "success");
         this.serviceForm.reset();
+        this.fetchServices();
       },
-      error: (err) => console.error('Error adding service:', err)
+      error: (err) => this.showSnackbar("Error Adding Service", "error")
     });
   }
 
@@ -129,8 +132,9 @@ export class ServicetableComponent {
       next: () => {
         this.fetchServices();
         this.closeModal();
+        this.showSnackbar("Service Updated Successfully", "success");
       },
-      error: (err) => console.error('Error updating service:', err)
+      error: (err) => this.showSnackbar("Error Updating Service", "error")
     });
   }
 
@@ -145,9 +149,25 @@ export class ServicetableComponent {
         this.volunteerService.deleteService(serviceId).subscribe({
           next: () => {
             this.services = this.services.filter(service => service.id !== serviceId);
+            this.showSnackbar("Service Deleted Successfully", "success");
           },
-          error: (err) => console.error('Error deleting service:', err)
+          error: (err) => this.showSnackbar("Error Deleting Service", "error")
         });
+      }
+    });
+  }
+
+  showSnackbar(message: string, type: "success" | "error") {
+    const snackbarRef: MatSnackBarRef<any> = this.snackBar.open(message, "close", {
+      duration: 3000,
+      verticalPosition: "top",
+      horizontalPosition: "center",
+    });
+
+    snackbarRef.afterOpened().subscribe(() => {
+      const snackbarElement = document.querySelector('.mat-mdc-snack-bar-container');
+      if (snackbarElement) {
+        snackbarElement.classList.add(type === "success" ? "snackbar-success" : "snackbar-error");
       }
     });
   }

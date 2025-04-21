@@ -12,3 +12,21 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
   padding: 0;
   box-sizing: border-box;
 }
+
+.snackbar-success .mdc-snackbar__surface {
+  background-color: #109710 !important;
+  color: white !important;
+}
+
+.snackbar-error .mdc-snackbar__surface {
+  background-color: red !important;
+  color: white !important;
+}
+
+.snackbar-error .mat-mdc-snack-bar-action {
+  color: white !important;
+}
+
+.snackbar-success .mat-mdc-snack-bar-action {
+  color: white !important;
+}

@@ -28,9 +28,7 @@ export class LoginComponent implements OnInit {
 
   onSubmit(): void {
     if (this.loginForm.invalid) return;
-
     const credentials = this.loginForm.value;
-
     this.userService.login(credentials).subscribe({
       next: (response) => {
         if (response.body.statusCode === 200) {

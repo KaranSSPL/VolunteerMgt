@@ -84,6 +84,5 @@ namespace VolunteerMgt.Server.Endpoints
                 _ => Results.Problem(result.Message, statusCode: (int)result.StatusCode)
             };
         }
-
     }
 }
