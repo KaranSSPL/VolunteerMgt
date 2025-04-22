@@ -45,6 +45,10 @@ h2 {
   width: 100%;
 }
 
+.required{
+    color: red;
+}
+
 table {
   width: 100%;
   border: 1px solid #dee2e6;

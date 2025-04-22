@@ -110,7 +110,7 @@ export class VolunteerservicetableComponent {
     this.volunteerService.deleteVolunteerService(volunteerId, serviceId).subscribe({
       next: () => {
         this.getVolunteerServiceMappings();
-        this.showSnackbar("Assigned Service is Deleted Successfully", "success");
+        this.showSnackbar("Volunteers Assigned Service is Deleted Successfully", "success");
       },
       error: (err) => console.error('Error deleting volunteer:', err)
     });

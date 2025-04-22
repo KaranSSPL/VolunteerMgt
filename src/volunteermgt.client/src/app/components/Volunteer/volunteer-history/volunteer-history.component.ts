@@ -107,7 +107,6 @@ export class VolunteerHistoryComponent {
               this.volunteerService.assignService({ volunteerId, serviceId, timeSlot, exitTime: formattedExitTime }).subscribe({
                 next: () => {
                   this.getVolunteerServiceMappings()
-                  this.showSnackbar("Updated Exit Time For Past Slots","success")
                 },
                 error: (err) => this.showSnackbar("Error Updating Exit Time For Past Slots","error"),
               });
@@ -134,10 +133,10 @@ export class VolunteerHistoryComponent {
     this.volunteerService.deleteVolunteerService(volunteerId, serviceId).subscribe({
       next: () => {
         this.getVolunteerServiceMappings();
-        this.showSnackbar("Assigned Service is Deleted Successfully", "success");
+        this.showSnackbar("Volunteers Assigned Service is Deleted Successfully", "success");
       },
       error: (err) => {
-        this.showSnackbar("Error Deleting Assigned Service", "error");
+        this.showSnackbar("Error Deleting Volunteers Assigned Service", "error");
       }
     });
   }

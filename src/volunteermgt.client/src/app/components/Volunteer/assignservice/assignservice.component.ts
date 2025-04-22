@@ -166,18 +166,9 @@ export class AssignserviceComponent {
     this.searchSuggestions = [];
     this.selectedVolunteer = volunteer;
     this.selectedVolunteerIndex = -1;
-    this.volunteerService.getServiceVolunteerById(volunteer.id).subscribe((response) => {
-      if (Array.isArray(response.data)) {
-        const activeAssignments = response.data.filter(
-          (service: any) => !service.exitTime
-        );
-        this.assignedServices = activeAssignments.map(
-          (service: { serviceId: any }) => service.serviceId
-        );
-      } else {
-        this.assignedServices = [];
-        console.error('Expected array in response.data but got:', response.data);
-      }
+    this.volunteerService.getServiceVolunteerById(volunteer.id).subscribe((response) => {      
+      const services = response.data || [];
+      this.assignedServices = services.map((service: { serviceId: any }) => service.serviceId);
     });
   }
 
@@ -187,24 +178,23 @@ export class AssignserviceComponent {
       return;
     }
     this.serviceSuggestions = this.services.filter(service =>
-      (
-        service.serviceName.toLowerCase().includes(this.serviceQuery.toLowerCase()) ||
-        service.code.toString().toLowerCase().includes(this.serviceQuery.toLowerCase())
-      ) &&
+      service.serviceName.toLowerCase().includes(this.serviceQuery.toLowerCase()) &&
       !this.assignedServices.includes(service.id)
     );
   }
 
   selectService(service: Service): void {
-    if (this.assignedServices.includes(service.id)) {
+    if (this.assignedServices.map(id => +id).includes(+service.id)) {
       this.showSnackbar("This service is already assigned to the selected volunteer.", "error");
       return;
     }
+
     this.serviceQuery = service.serviceName;
     this.serviceSuggestions = [];
     this.selectedServiceIndex = -1;
     this.selectedService = service;
   }
+
 
   private setCurrentTime(): void {
     const now = new Date();

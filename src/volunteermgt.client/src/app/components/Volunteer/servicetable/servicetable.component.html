@@ -49,35 +49,35 @@
       <form [formGroup]="serviceForm" (ngSubmit)="editMode ? updateService() : addService()">
         <div class="form-block">
           <div class="form-group w-100">
-            <label>Service Name :</label>
+            <label>Service Name <span class="required">*</span>:</label>
             <input type="text" formControlName="serviceName" placeholder="Enter Service Name">
           </div>
           <div class="form-group">
-            <label> Saturday Volunteer : </label>
+            <label> Saturday Volunteer <span class="required">*</span>: </label>
             <input type="text" formControlName="saturdayVolunteerRequirement" placeholder="Enter Required Volunteer">
           </div>
           <div class="form-group">
-            <label> Sunday Volunteer : </label>
+            <label> Sunday Volunteer <span class="required">*</span>: </label>
             <input type="text" formControlName="sundayVolunteerRequirement" placeholder="Enter Required Volunteer">
           </div>
           <div class="form-group">
-            <label> Ekadashi Volunteer : </label>
+            <label> Ekadashi Volunteer <span class="required">*</span>: </label>
             <input type="text" formControlName="ekadashiVolunteerRequirement" placeholder="Enter Required Volunteer">
           </div>
           <div class="form-group">
-            <label> Festival Volunteer : </label>
+            <label> Festival Volunteer <span class="required">*</span>: </label>
             <input type="text" formControlName="festivalVolunteerRequirement" placeholder="Enter Required Volunteer">
           </div>
           <div class="form-group">
-            <label>Code : </label>
+            <label>Code <span class="required">*</span>: </label>
             <input type="text" formControlName="code" placeholder="Enter Service Code">
           </div>
           <div class="exit-time form-group">
-            <label>Default Exit Time :</label>
+            <label>Default Exit Time <span class="required">*</span>:</label>
             <input type="time" formControlName="defaultTime" placeholder="Select Default Time">
           </div>
         </div>
-        <button type="submit" [disabled]="serviceForm.invalid">
+        <button type="submit">
           {{ editMode ? 'Update Service' : 'Add Service' }}
         </button>
       </form>
