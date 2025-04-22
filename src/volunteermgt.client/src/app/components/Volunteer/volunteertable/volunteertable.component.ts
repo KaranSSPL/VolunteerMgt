@@ -4,6 +4,7 @@ import { Volunteer } from '../../../Models/volunteer.model';
 import { Router } from '@angular/router';
 import { DeleteconfirmationComponent } from '../../../Dialogbox/deleteconfirmation/deleteconfirmation.component';
 import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-volunteertable',
@@ -17,7 +18,7 @@ export class VolunteertableComponent implements OnInit {
   selectedVolunteer: Volunteer | null = null;
   isEditing: boolean = false;  
 
-  constructor(private volunteerService: VolunteerService, private router: Router, private dialog: MatDialog)
+  constructor(private volunteerService: VolunteerService, private router: Router, private dialog: MatDialog, private snackBar: MatSnackBar)
  { }
 
   ngOnInit(): void {
@@ -53,7 +54,22 @@ export class VolunteertableComponent implements OnInit {
       if (result) {
         this.volunteerService.deleteVolunteer(id).subscribe(() => {
           this.volunteers = this.volunteers.filter(v => v.id !== id);
+          this.showSnackbar("Volunteer Deleted Successfully", "success");
         });
+      }
+    });
+  }
+
+  showSnackbar(message: string, type: "success" | "error") {
+    const snackbarRef: MatSnackBarRef<any> = this.snackBar.open(message, "close", {
+      duration: 3000,
+      verticalPosition: "top",
+      horizontalPosition: "center",
+    });
+    snackbarRef.afterOpened().subscribe(() => {
+      const snackbarElement = document.querySelector('.mat-mdc-snack-bar-container');
+      if (snackbarElement) {
+        snackbarElement.classList.add(type === "success" ? "snackbar-success" : "snackbar-error");
       }
     });
   }
