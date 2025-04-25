@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { VolunteerService } from '../../services/volunteer.service';
 import { UserService } from '../../services/user.service';
+import { NgForm } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -10,21 +11,27 @@ import { UserService } from '../../services/user.service';
 })
 export class RegisterComponent {
   user = {
-    id: 0, 
+    id: 0,
     firstname: '',
     lastname: '',
     username: '',
-    roles: 'User', 
+    roles: 'User',
     email: '',
     phone: '',
     password: ''
   };
-  constructor(private userService: UserService) { }
 
-  registerUser() {
+  constructor(private userService: UserService, private router: Router) { }
+
+  registerUser(form: NgForm) {
+    if (form.invalid) {
+      return;
+    }
+
     this.userService.register(this.user).subscribe({
       next: (response) => {
         console.log('User registered successfully', response);
+        this.router.navigate(['/login']);
       },
       error: (error) => {
         console.error('Registration failed', error);

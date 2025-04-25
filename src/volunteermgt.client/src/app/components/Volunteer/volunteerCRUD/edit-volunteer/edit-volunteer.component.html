@@ -40,12 +40,12 @@
       <div class="form-group photo-upload">
         <label class="photo-label" for="imageUpload">Image:</label>
         <div class="photo-wrapper">
-          <input type="file" id="imageUpload" (change)="onFileSelected($event)" accept="image/*" />
+          <input type="file" id="imageUpload" formControlName="image" (change)="onFileSelected($event)" accept="image/*" />
           <div class="photo-preview">
             <img *ngIf="photoPreview || volunteer?.imagePath"
                  [src]="photoPreview || volunteer?.imagePath"
                  alt="Volunteer Image" />
-            <span class="remove-photo">✖</span>
+            <span class="remove-photo" (click)="removeImage()">✖</span>
           </div>
           <label class="photo-or-label">or</label>
           <button type="button" class="camera-btn"> Take Photo</button>

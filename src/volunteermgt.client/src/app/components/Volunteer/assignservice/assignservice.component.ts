@@ -203,37 +203,45 @@ export class AssignserviceComponent {
     this.timeSlot = `${hours}:${minutes}`;
   }
 
-  onAssign() {
-    if (!this.selectedVolunteer || !this.selectedService || !this.timeSlot) {
-      this.showSnackbar("Please fill all fields before assigning.", "error");
-      return;
+  onAssign(): void {
+    if (!this.selectedVolunteer) {
+      return this.showSnackbar("Please select a volunteer.", "error");
     }
-    if (this.assignedServices.includes(this.selectedService.id)) {
-      this.showSnackbar("This service is already assigned to the selected volunteer.", "error");
-      return;
+    if (!this.selectedService) {
+      return this.showSnackbar("Please select a service.", "error");
     }
+    if (!this.timeSlot) {
+      return this.showSnackbar("Please select a time slot.", "error");
+    }
+    if (!this.batchNo) {
+      return this.showSnackbar("Please provide a Batch Number.", "error");
+    }
+    if (!this.coupon) {
+      return this.showSnackbar("Please enter coupon value.", "error");
+    }
+
     const [hours, minutes] = this.timeSlot.split(":").map(Number);
     const currentDate = new Date();
     currentDate.setHours(hours, minutes, 0, 0);
     const istTime = new Date(currentDate.getTime() - currentDate.getTimezoneOffset() * 60000);
-    const assignedData = {
+
+    const payload = {
       volunteerId: this.selectedVolunteer.id,
       serviceId: this.selectedService.id,
       timeSlot: istTime.toISOString(),
       BatchNumber: this.batchNo,
       Coupon: this.coupon
     };
-    this.volunteerService.assignService(assignedData).subscribe({
-      next: (response) => {
+
+    this.volunteerService.assignService(payload).subscribe({
+      next: () => {
         this.showSnackbar("Service assigned successfully!", "success");
         this.assignedServices.push(this.selectedService!.id);
-    window.location.reload();
+        window.location.reload();
       },
-      error: (error) => {
-        this.showSnackbar("Failed to assign service. Please try again.", "error");
-      }
+      error: () => this.showSnackbar("Assignment failed. Try again.", "error")
     });
-  }
+  };
 
   handleKeydown(event: KeyboardEvent, type: 'volunteer' | 'service') {
     if (type === 'volunteer') {

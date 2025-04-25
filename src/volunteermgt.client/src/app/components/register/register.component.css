@@ -12,6 +12,11 @@ html {
   scroll-behavior: smooth;
 }
 
+.error-msg {
+  color: #ff4d4f;
+  font-size: 14px;
+}
+
 body {
   margin: 0;
   box-sizing: border-box;
@@ -68,7 +73,7 @@ h1 {
   display: block;
   padding: 14.5px;
   width: 100%;
-  margin: 2rem 0;
+  margin: 12px 0px 6px;
   color: var(--color);
   outline: none;
   background-color: #9191911f;

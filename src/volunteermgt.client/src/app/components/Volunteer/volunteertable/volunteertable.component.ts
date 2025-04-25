@@ -16,7 +16,8 @@ import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 export class VolunteertableComponent implements OnInit {
   volunteers: Volunteer[] = [];
   selectedVolunteer: Volunteer | null = null;
-  isEditing: boolean = false;  
+  isEditing: boolean = false;
+  searchText: string = '';
 
   constructor(private volunteerService: VolunteerService, private router: Router, private dialog: MatDialog, private snackBar: MatSnackBar)
  { }
@@ -32,6 +33,14 @@ export class VolunteertableComponent implements OnInit {
         imagePath: volunteer.imagePath ? `${volunteer.imagePath}` : ''
       }));
     });
+  }
+
+  get filteredVolunteers(): Volunteer[] {
+    const search = this.searchText.toLowerCase();
+    return this.volunteers.filter(v =>
+      v.name.toLowerCase().includes(search) ||
+      v.mobileNo.includes(search)
+    );
   }
 
   editVolunteer(volunteer: Volunteer): void {

@@ -2,7 +2,7 @@
   <div class="assign-container">
     <div class="services">
       <div class="volunteer-container">
-        <label>Volunteer:</label>
+        <label>Volunteer <span class="required">*</span>:</label>
         <input type="text"
                placeholder="Search Volunteer..."
                [(ngModel)]="searchQuery"
@@ -23,7 +23,7 @@
         </ul>
       </div>
       <div class="service-container">
-        <label>Service:</label>
+        <label>Service <span class="required">*</span>:</label>
         <input type="text"
                placeholder="Search by service name..."
                [(ngModel)]="serviceQuery"
@@ -46,15 +46,15 @@
     </div>
     <div class="time-container">
       <div class="input-group">
-        <label>Time Slot:</label>
+        <label>Time Slot <span class="required">*</span>:</label>
         <input type="time" [(ngModel)]="timeSlot" class="input" />
       </div>
       <div class="input-group">
-        <label>Batch No:</label>
+        <label>Batch No <span class="required">*</span>:</label>
         <input type="text" [(ngModel)]="batchNo" class="input" placeholder="Batch No." maxlength="4" min="1000" max="9999" />
       </div>
       <div class="input-group">
-        <label>coupon:</label>
+        <label>coupon <span class="required">*</span>:</label>
         <input type="text" class="input" [(ngModel)]="coupon" placeholder="coupon" maxlength="2" min="1" max="99" />
       </div>
       <div class="button-group">

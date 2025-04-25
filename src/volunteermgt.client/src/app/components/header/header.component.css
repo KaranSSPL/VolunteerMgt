@@ -95,12 +95,12 @@ nav {
   gap: 15px;
 }
 
-.user-icon,
-.cart-icon {
+.user-icon {
   text-decoration: none;
   color: #fff;
   font-size: 20px;
   position: relative;
+  background-color: aliceblue;
 }
 
 .cart-count {

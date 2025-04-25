@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, Output } from '@angular/core';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -15,7 +15,7 @@ export class HeaderComponent {
   constructor(private userService: UserService) { }
 
   toggleSidebar() {
-    this.menuToggle.emit(); 
+    this.menuToggle.emit();
   }
 
   toggleDropdown(event: Event) {
@@ -25,5 +25,14 @@ export class HeaderComponent {
 
   logout() {
     this.userService.logout();
+  }
+
+  // Close dropdown if the user clicks outside of it
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const clickedInside = (event.target as HTMLElement).closest('.user-dropdown');
+    if (!clickedInside) {
+      this.dropdownOpen = false;
+    }
   }
 }

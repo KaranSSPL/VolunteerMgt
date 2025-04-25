@@ -17,7 +17,7 @@ import { EditVolunteerServiceComponent } from './components/Volunteer/edit-volun
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [LoginGuard] },
-  { path: 'register', component: RegisterComponent, canActivate: [LoginGuard] },
+  { path: 'register', component: RegisterComponent},
   { path: 'assignService', component: AssignserviceComponent, canActivate: [AuthGuard] },
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard] },
   { path: 'volunteer', component: VolunteertableComponent, canActivate: [AuthGuard] },

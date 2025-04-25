@@ -122,6 +122,22 @@ export class EditVolunteerComponent implements OnInit {
     }
   }
 
+  removeImage(): void {
+    this.photoPreview = ''; 
+    this.uploadedPhoto = null; 
+    this.volunteerForm.patchValue({
+      image: ''
+    });
+    if (this.volunteer) {
+      this.volunteer.imagePath = '';
+      this.volunteer.image = '';
+    }
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = '';
+    }
+  }
+
   hideSuggestions(index: number) {
     setTimeout(() => {
       this.suggestedDays[index] = [];

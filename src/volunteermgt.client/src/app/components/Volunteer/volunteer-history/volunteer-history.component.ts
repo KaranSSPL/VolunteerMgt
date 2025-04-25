@@ -11,7 +11,6 @@ import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 })
 export class VolunteerHistoryComponent {
   volunteerServiceMappings: any[] = [];
-  defaultTime: string = '10:00 PM';
   searchQuery: string = '';
   filteredMappings: any[] = [];
   sortColumn: string = '';
@@ -134,6 +133,9 @@ export class VolunteerHistoryComponent {
       next: () => {
         this.getVolunteerServiceMappings();
         this.showSnackbar("Volunteers Assigned Service is Deleted Successfully", "success");
+        this.startDate = null;
+        this.endDate = null;
+        this.searchQuery = '';
       },
       error: (err) => {
         this.showSnackbar("Error Deleting Volunteers Assigned Service", "error");
